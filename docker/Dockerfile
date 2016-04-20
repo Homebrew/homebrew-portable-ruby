@@ -5,7 +5,8 @@ MAINTAINER Xu Cheng <xucheng@me.com>
 RUN yum groupinstall 'Development Tools' -y && \
     yum install curl git python-setuptools libyaml-devel openssl-devel readline-devel zlib-devel -y
 RUN git clone --depth=1 https://github.com/rbenv/rbenv.git /opt/rbenv && \
-    echo 'export PATH=/opt/rbenv/bin:$PATH; eval "$(rbenv init -)"' >>/etc/profile
+    echo 'export PATH=/opt/rbenv/bin:$PATH; export RBENV_ROOT=/opt/rbenv/var/rbenv; eval "$(rbenv init -)"' >>/etc/profile && \
+    echo 'source /etc/profile' >>/etc/bashrc
 RUN source /etc/profile && \
     git clone --depth=1 https://github.com/rbenv/ruby-build.git /opt/rbenv/plugins/ruby-build && \
     (cd /opt/rbenv/plugins/ruby-build; ./install.sh) && \
