@@ -52,7 +52,7 @@ class PortableOpenssl < PortableFormula
       --openssldir=#{openssldir}
       no-ssl2
       zlib-dynamic
-      shared
+      no-shared
       enable-cms
     ]
   end
@@ -87,28 +87,17 @@ class PortableOpenssl < PortableFormula
 
       if build.with? "universal"
         cp "include/openssl/opensslconf.h", dir
-        cp Dir["*.?.?.?.dylib", "*.a", "apps/openssl"], dir
-        cp Dir["engines/**/*.dylib"], "#{dir}/engines"
+        cp Dir["*.a", "apps/openssl"], dir
       end
     end
 
-    system "make", "install", "MANDIR=#{buildpath}/stage/man", "MANSUFFIX=ssl"
+    system "make", "install", "MANDIR=#{man}", "MANSUFFIX=ssl"
 
     if build.with? "universal"
       %w[libcrypto libssl].each do |libname|
-        system "lipo", "-create", "#{dirs.first}/#{libname}.1.0.0.dylib",
-                                  "#{dirs.last}/#{libname}.1.0.0.dylib",
-                       "-output", "#{lib}/#{libname}.1.0.0.dylib"
         system "lipo", "-create", "#{dirs.first}/#{libname}.a",
                                   "#{dirs.last}/#{libname}.a",
                        "-output", "#{lib}/#{libname}.a"
-      end
-
-      Dir.glob("#{dirs.first}/engines/*.dylib") do |engine|
-        libname = File.basename(engine)
-        system "lipo", "-create", "#{dirs.first}/engines/#{libname}",
-                                  "#{dirs.last}/engines/#{libname}",
-                       "-output", "#{lib}/engines/#{libname}"
       end
 
       system "lipo", "-create", "#{dirs.first}/openssl",
