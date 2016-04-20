@@ -80,9 +80,7 @@ class PortableFormula < Formula
 
     brewed_dylibs.each do |file, dylibs|
       dylibs.each do |dylib|
-        new_dylib = lib/File.basename(dylib)
-        raise "Missing library: #{new_dylib}" unless new_dylib.file?
-        new_dylib = new_dylib.relative_path_from(file.dirname)
+        new_dylib = dylib.relative_path_from(file.dirname)
         file.ensure_writable do
           if file.dylib? || file.mach_o_bundle?
             system "install_name_tool", "-change", dylib, "@loader_path/#{new_dylib}", file
