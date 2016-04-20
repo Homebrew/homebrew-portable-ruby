@@ -64,7 +64,7 @@ class PortableOpenssl < PortableFormula
     # https://langui.sh/2015/11/27/sip-and-dlopen
     inreplace "crypto/comp/c_zlib.c",
               'zlib_dso = DSO_load(NULL, "z", NULL, 0);',
-              'zlib_dso = DSO_load(NULL, "/usr/lib/libz.dylib", NULL, DSO_FLAG_NO_NAME_TRANSLATION);'
+              'zlib_dso = DSO_load(NULL, "/usr/lib/libz.dylib", NULL, DSO_FLAG_NO_NAME_TRANSLATION);' if OS.mac?
 
     ENV.permit_arch_flags if build.with? "universal"
 
