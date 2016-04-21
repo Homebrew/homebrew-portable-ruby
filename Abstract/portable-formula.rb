@@ -8,6 +8,15 @@ module PortableFormulaInstall
       EOS
     end
 
+    if OS.linux?
+      # reset Linuxbrew env, because we want to build formula against
+      # libraries offered by system (CentOS docker) rather than Linuxbrew.
+      ENV.delete "LDFLAGS"
+      ENV.delete "LIBRARY_PATH"
+      ENV.delete "LD_RUN_PATH"
+      ENV.delete "LD_LIBRARY_PATH"
+    end
+
     super
   end
 end
