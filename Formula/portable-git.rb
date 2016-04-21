@@ -9,6 +9,9 @@ class PortableGit < PortableFormula
   depends_on "portable-curl" => :build
 
   def install
+    curl = Formula["portable-curl"]
+    ENV.append "LDFLAGS", `#{curl.opt_prefix/"bin/curl-config"} --static-libs`.chomp
+
     # If these things are installed, tell Git build system to not use them
     ENV["NO_FINK"] = "1"
     ENV["NO_DARWIN_PORTS"] = "1"
@@ -27,5 +30,21 @@ class PortableGit < PortableFormula
       LDFLAGS=#{ENV.ldflags}
     ]
     system "make", "install", *args
+
+    (libexec/"bin").mkpath
+    (libexec/"bin").install bin/"git"
+    (bin/"git").write <<-EOS.undent
+      #!/bin/bash
+      GIT_LIBEXEC="$(cd "${0%/*}/.." && pwd -P)/libexec"
+      GIT_SSL_CAINFO="$GIT_LIBEXEC/cert.pem" exec "$GIT_LIBEXEC/bin/git" "$@"
+    EOS
+    cp curl.opt_prefix/"libexec/cert.pem", libexec/"cert.pem"
+  end
+
+  test do
+    cp_r Dir["#{prefix}/*"], testpath
+    ENV["PATH"] = "/usr/bin:/bin"
+    ENV["GIT_CURL_VERBOSE"] = "1"
+    system testpath/"bin/git", "clone", "https://github.com/isaacs/github"
   end
 end
