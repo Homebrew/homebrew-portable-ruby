@@ -3,7 +3,7 @@ module PortableFormulaInstall
     if OS.mac? && OS::Mac.version > :leopard
       opoo <<-EOS.undent
         You are building portable formula on #{OS::Mac.version}.
-        As result, Ruby interpreter won't be able to work for OS X at lower version.
+        As result, formula won't be able to work for OS X at lower version.
         It's recommended to build this formula on OS X Leopard.
       EOS
     end
