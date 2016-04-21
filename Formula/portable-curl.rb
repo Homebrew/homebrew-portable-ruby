@@ -45,6 +45,7 @@ class PortableCurl < PortableFormula
   test do
     cp_r Dir["#{prefix}/*"], testpath
     ENV["PATH"] = "/usr/bin:/bin"
+    system testpath/"bin/curl", "-V"
     system testpath/"bin/curl", "-v", "-I", "https://www.google.com"
   end
 end
