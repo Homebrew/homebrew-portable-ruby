@@ -13,8 +13,6 @@ class PortableRuby < PortableFormula
   depends_on "portable-openssl" => :build
 
   def install
-    ENV.universal_binary if build.with? "universal"
-
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
@@ -25,12 +23,16 @@ class PortableRuby < PortableFormula
       --enable-load-relative
       --with-static-linked-ext
       --disable-dln
-      --with-arch=#{archs.join(",")}
       --with-out-ext=tk,sdbm,gdbm,dbm,dl,coverage
       --disable-install-doc
       --disable-install-rdoc
       --disable-dtrace
     ]
+
+    if build.with? "universal"
+      ENV.universal_binary
+      args << "--with-arch=#{archs.join(",")}"
+    end
 
     paths = [
       readline.opt_prefix,
