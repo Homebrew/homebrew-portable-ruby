@@ -3,7 +3,7 @@ FROM centos:centos6
 MAINTAINER Xu Cheng <xucheng@me.com>
 
 RUN yum groupinstall 'Development Tools' -y && \
-    yum install curl git python-setuptools libyaml-devel openssl-devel readline-devel zlib-devel -y
+    yum install sudo curl git python-setuptools libyaml-devel openssl-devel readline-devel zlib-devel -y
 RUN git clone --depth=1 https://github.com/rbenv/rbenv.git /opt/rbenv && \
     echo 'export PATH=/opt/rbenv/bin:$PATH; export RBENV_ROOT=/opt/rbenv/var/rbenv; eval "$(rbenv init -)"' >>/etc/profile && \
     echo 'source /etc/profile' >>/etc/bashrc
