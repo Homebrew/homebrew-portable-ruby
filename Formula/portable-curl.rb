@@ -20,7 +20,6 @@ class PortableCurl < PortableFormula
       --enable-static
       --prefix=#{prefix}
       --with-ssl=#{Formula["portable-openssl"].opt_prefix}
-      --with-ca-bundle=#{Formula["portable-openssl"].opt_prefix/"libexec/openssl/cert.pem"}
       --disable-ldap
       --disable-ares
     ]
@@ -30,5 +29,22 @@ class PortableCurl < PortableFormula
     system "make", "LDFLAGS=-all-static"
     system "make", "install"
     rm_rf man
+
+    (libexec/"bin").mkpath
+    bin.children.each do |file|
+      (libexec/"bin").install file
+      file.write <<-EOS.undent
+        #!/bin/bash
+        CURL_LIBEXEC="$(cd "${0%/*}/.." && pwd -P)/libexec"
+        CURL_CA_BUNDLE="$CURL_LIBEXEC/cert.pem" exec "$CURL_LIBEXEC/bin/#{file.basename}" "$@"
+      EOS
+    end
+    cp Formula["portable-openssl"].opt_prefix/"libexec/etc/openssl/cert.pem", libexec/"cert.pem"
+  end
+
+  test do
+    cp_r Dir["#{prefix}/*"], testpath
+    ENV["PATH"] = "/usr/bin:/bin"
+    system testpath/"bin/curl", "-v", "-I", "https://www.google.com"
   end
 end
