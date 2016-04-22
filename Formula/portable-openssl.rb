@@ -75,7 +75,6 @@ class PortableOpenssl < PortableFormula
         dir = "build-#{arch}"
         dirs << dir
         mkdir dir
-        mkdir "#{dir}/engines"
         system "make", "clean"
       end
 
@@ -91,7 +90,8 @@ class PortableOpenssl < PortableFormula
       end
     end
 
-    system "make", "install", "MANDIR=#{man}", "MANSUFFIX=ssl"
+    system "make", "install", "MANDIR=#{man}"
+    rm_rf man
 
     if build.with? "universal"
       %w[libcrypto libssl].each do |libname|
