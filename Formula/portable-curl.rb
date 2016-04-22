@@ -24,11 +24,49 @@ class PortableCurl < PortableFormula
       --disable-ares
     ]
 
-    system "./configure", *args
-    rm_rf "src/curl"
-    system "make", "LDFLAGS=-all-static"
-    system "make", "install"
+    ENV.permit_arch_flags if build.with? "universal"
+    dirs = []
+
+    archs.each do |arch|
+      if build.with? "universal"
+        ENV["CFLAGS"] = "-arch #{arch}"
+        dir = "build-#{arch}"
+        dirs << dir
+        mkdir dir
+      end
+
+      system "./configure", *args
+      system "make", "clean"
+      system "make", "LDFLAGS=-all-static"
+      system "make", "install"
+
+      if build.with? "universal"
+        cp "#{include}/curl/curlbuild.h", dir
+        cp Dir["#{lib}/*.a", "#{bin}/*"], dir
+      end
+    end
+
     rm_rf man
+    rm_rf share/"zsh"
+
+    if build.with? "universal"
+      system "lipo", "-create", "#{dirs.first}/libcurl.a",
+                                "#{dirs.last}/libcurl.a",
+                     "-output", "#{lib}/libcurl.a"
+
+      system "lipo", "-create", "#{dirs.first}/curl",
+                                "#{dirs.last}/curl",
+                     "-output", "#{bin}/curl"
+
+      confs = archs.map do |arch|
+        <<-EOS.undent
+          #ifdef __#{arch}__
+          #{(buildpath/"build-#{arch}/curlbuild.h").read}
+          #endif
+          EOS
+      end
+      (include/"curl/curlbuild.h").atomic_write confs.join("\n")
+    end
 
     (libexec/"bin").mkpath
     bin.children.each do |file|
