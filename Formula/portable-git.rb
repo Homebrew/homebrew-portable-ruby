@@ -11,6 +11,7 @@ class PortableGit < PortableFormula
   def install
     curl = Formula["portable-curl"]
     ENV.append "LDFLAGS", `#{curl.opt_prefix/"bin/curl-config"} --static-libs`.chomp
+    ENV.universal_binary if build.with? "universal"
 
     # If these things are installed, tell Git build system to not use them
     ENV["NO_FINK"] = "1"
