@@ -19,7 +19,6 @@ class PortableRuby < PortableFormula
 
     args = %W[
       --prefix=#{prefix}
-      --enable-static
       --enable-load-relative
       --with-static-linked-ext
       --disable-dln
