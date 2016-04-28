@@ -10,6 +10,7 @@ class PortableCurl < PortableFormula
   depends_on "pkg-config" => :build
 
   # Ref: https://curl.haxx.se/mail/archive-2003-03/0115.html
+  #      https://curl.haxx.se/mail/lib-2011-12/0093.html
   def install
     ENV.prepend_path "PKG_CONFIG_PATH", "#{Formula["portable-openssl"].opt_prefix}/lib/pkgconfig"
     args = %W[
@@ -37,7 +38,7 @@ class PortableCurl < PortableFormula
 
       system "./configure", *args
       system "make", "clean"
-      system "make", "LDFLAGS=-all-static"
+      system "make", "LDFLAGS=-all-static -Wl,-search_paths_first"
       system "make", "install"
 
       if build.with? "universal"
