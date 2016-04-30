@@ -3,7 +3,7 @@ FROM centos:centos5
 MAINTAINER Xu Cheng <xucheng@me.com>
 
 RUN yum groupinstall 'Development Tools' -y
-RUN yum install sudo vim curl -y
+RUN yum install sudo vim curl which -y
 RUN curl http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm \
          -L -o rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm && \
     rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt && \
@@ -11,10 +11,13 @@ RUN curl http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el5
     rpm -i rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm
 RUN yum install git python-setuptools libyaml-devel openssl-devel readline-devel zlib-devel -y
 RUN git clone --depth=1 https://github.com/rbenv/rbenv.git /opt/rbenv && \
-    echo 'export PATH=/opt/rbenv/bin:$PATH; export RBENV_ROOT=/opt/rbenv/var/rbenv; eval "$(rbenv init -)"' >>/etc/profile && \
+    echo 'export PATH=/opt/rbenv/bin:$PATH; \
+          export RBENV_ROOT=/opt/rbenv/var/rbenv; \
+          eval "$(rbenv init -)"' >>/etc/profile && \
     echo 'source /etc/profile' >>/etc/bashrc
 RUN source /etc/profile && \
-    git clone --depth=1 https://github.com/rbenv/ruby-build.git /opt/rbenv/plugins/ruby-build && \
+    git clone --depth=1 https://github.com/rbenv/ruby-build.git \
+        /opt/rbenv/plugins/ruby-build && \
     (cd /opt/rbenv/plugins/ruby-build; ./install.sh) && \
     rbenv install 2.0.0-p648 && \
     rbenv global 2.0.0-p648
@@ -23,11 +26,14 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
     echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
 RUN source /etc/profile && \
     git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
-    git clone --depth=1 https://github.com/Linuxbrew/homebrew-core /home/linuxbrew/.linuxbrew/Library/Taps/homebrew/homebrew-core && \
-    git clone --depth=1 https://github.com/xu-cheng/homebrew-portable /home/linuxbrew/.linuxbrew/Library/Taps/xu-cheng/homebrew-portable && \
-    ln -s $(which gcc) /home/linuxbrew/.linuxbrew/bin/gcc-$(gcc -dumpversion | cut -d. -f1,2) && \
-    ln -s $(which g++) /home/linuxbrew/.linuxbrew/bin/g++-$(g++ -dumpversion | cut -d. -f1,2) && \
+    git clone --depth=1 https://github.com/Linuxbrew/homebrew-core \
+        /home/linuxbrew/.linuxbrew/Library/Taps/homebrew/homebrew-core && \
+    git clone --depth=1 https://github.com/xu-cheng/homebrew-portable \
+        /home/linuxbrew/.linuxbrew/Library/Taps/xu-cheng/homebrew-portable && \
+    ln -s $(which gcc) /home/linuxbrew/.linuxbrew/bin/gcc-$(gcc -dumpversion|cut -d. -f1,2) && \
+    ln -s $(which g++) /home/linuxbrew/.linuxbrew/bin/g++-$(g++ -dumpversion|cut -d. -f1,2) && \
     chown -R linuxbrew:linuxbrew /home/linuxbrew/.linuxbrew
 USER linuxbrew
 WORKDIR /home/linuxbrew
-ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/opt/rbenv/bin:$PATH SHELL=/bin/bash
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/opt/rbenv/bin:$PATH \
+    SHELL=/bin/bash
