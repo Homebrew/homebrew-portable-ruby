@@ -3,7 +3,7 @@ FROM centos:centos5
 MAINTAINER Xu Cheng <xucheng@me.com>
 
 RUN yum groupinstall 'Development Tools' -y
-RUN yum install sudo vim curl which -y
+RUN yum install sudo vim-enhanced curl which -y
 RUN curl http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm \
          -L -o rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm && \
     rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt && \
@@ -36,4 +36,5 @@ RUN source /etc/profile && \
 USER linuxbrew
 WORKDIR /home/linuxbrew
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/opt/rbenv/bin:$PATH \
-    SHELL=/bin/bash
+    SHELL=/bin/bash \
+    HOMEBREW_BUILD_FROM_SOURCE=1
