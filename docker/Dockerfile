@@ -2,14 +2,11 @@
 FROM centos:centos5
 MAINTAINER Xu Cheng <xucheng@me.com>
 
+ADD city-fan.repo /etc/yum.repos.d/city-fan.repo
+RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
 RUN yum groupinstall 'Development Tools' -y
-RUN yum install sudo vim-enhanced curl which -y
-RUN curl http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm \
-         -L -o rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm && \
-    rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt && \
-    rpm -K rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm && \
-    rpm -i rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm
-RUN yum install git python-setuptools libyaml-devel openssl-devel readline-devel zlib-devel -y
+RUN yum install sudo vim-enhanced which curl git python-setuptools libyaml-devel openssl-devel \
+                readline-devel zlib-devel -y
 RUN git clone --depth=1 https://github.com/rbenv/rbenv.git /opt/rbenv && \
     echo 'export PATH=/opt/rbenv/bin:$PATH; \
           export RBENV_ROOT=/opt/rbenv/var/rbenv; \
