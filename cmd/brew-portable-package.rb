@@ -3,18 +3,29 @@ require "keg"
 
 include FileUtils
 
+def tag(build)
+  if OS.mac?
+    if build.with? "universal"
+      "darwin_#{Hardware::CPU.type}_universal"
+    else
+      "darwin_#{OS::Mac.preferred_arch}"
+    end
+  else
+    "x86_64_linux"
+  end
+end
+
 raise FormulaUnspecifiedError if ARGV.named.empty?
 f = ARGV.formulae.first
 keg = Keg.new f.prefix
-filename = "#{f.name}-#{f.pkg_version}.tar.gz"
+tab = Tab.for_keg(keg)
+filename = "#{f.name}-#{f.pkg_version}.#{tag(tab)}.tar.gz"
 tar_filename = filename.to_s.sub(/.gz$/, "")
 tar_path = Pathname.pwd/tar_filename
 
 ohai "Packaging #{filename}..."
 keg.lock do
   begin
-    Tab.clear_cache
-    tab = Tab.for_keg(keg)
     original_tab = tab.dup
     tab.poured_from_bottle = false
     tab.HEAD = nil
