@@ -5,13 +5,14 @@ include FileUtils
 
 def tag(build)
   if OS.mac?
+    kernel_version = `uname -r`.split(".").first
     if build.with? "universal"
-      "darwin_#{Hardware::CPU.type}_universal"
+      "universal-darwin#{kernel_version}"
     else
-      "darwin_#{OS::Mac.preferred_arch}"
+      "#{OS::Mac.preferred_arch}-darwin#{kernel_version}"
     end
   else
-    "x86_64_linux"
+    "x86_64-linux"
   end
 end
 
