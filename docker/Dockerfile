@@ -2,7 +2,6 @@
 FROM centos:centos5
 MAINTAINER Xu Cheng <xucheng@me.com>
 
-ADD city-fan.repo /etc/yum.repos.d/city-fan.repo
 RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
 RUN yum groupinstall 'Development Tools' -y
 RUN yum install sudo vim-enhanced which curl git python-setuptools libyaml-devel openssl-devel \
