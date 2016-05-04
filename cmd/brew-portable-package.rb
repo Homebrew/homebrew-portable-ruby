@@ -3,13 +3,13 @@ require "keg"
 
 include FileUtils
 
-def tag(build)
+def tag(f)
   if OS.mac?
     kernel_version = `uname -r`.split(".").first
-    if build.with? "universal"
+    if f.build.with? "universal"
       "universal-darwin#{kernel_version}"
     else
-      "#{OS::Mac.preferred_arch}-darwin#{kernel_version}"
+      "#{f.archs.first}-darwin#{kernel_version}"
     end
   else
     "x86_64-linux"
@@ -17,10 +17,10 @@ def tag(build)
 end
 
 raise FormulaUnspecifiedError if ARGV.named.empty?
-f = ARGV.formulae.first
+f = ARGV.resolved_formulae.first
 keg = Keg.new f.prefix
 tab = Tab.for_keg(keg)
-filename = "#{f.name}-#{f.pkg_version}.#{tag(tab)}.tar.gz"
+filename = "#{f.name}-#{f.pkg_version}.#{tag(f)}.tar.gz"
 tar_filename = filename.to_s.sub(/.gz$/, "")
 tar_path = Pathname.pwd/tar_filename
 
