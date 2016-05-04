@@ -34,4 +34,5 @@ USER linuxbrew
 WORKDIR /home/linuxbrew
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/opt/rbenv/bin:$PATH \
     SHELL=/bin/bash \
-    HOMEBREW_BUILD_FROM_SOURCE=1
+    HOMEBREW_BUILD_FROM_SOURCE=1 \
+    HOMEBREW_NO_ANALYTICS=1
