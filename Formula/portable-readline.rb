@@ -13,17 +13,12 @@ class PortableReadline < PortableFormula
     sha256 "ef4fd6f24103b8f1d1199a6254d81a0cd63329bd2449ea9b93e66caf76d7ab89"
   end
 
-  depends_on "portable-ncurses" => :build if OS.linux?
-
   def install
     ENV.universal_binary if build.with? "universal"
     system "./configure", "--prefix=#{prefix}",
                           "--enable-multibyte",
                           "--enable-static",
-                          "--disable-shared",
-                          ("--with-curses" if OS.linux?)
-    args = []
-    args << "SHLIB_LIBS=-lcurses" if OS.linux?
-    system "make", "install", *args
+                          "--disable-shared"
+    system "make", "install"
   end
 end
