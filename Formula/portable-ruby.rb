@@ -46,9 +46,14 @@ class PortableRuby < PortableFormula
     if OS.linux?
       # We want Ruby to link to our ncurses, instead of libtermcap in CentOS 5
       paths << ncurses.opt_prefix
-      inreplace "ext/readline/extconf.rb", "dir_config('termcap')", ""
-      inreplace "ext/readline/extconf.rb", 'have_library("termcap", "tgetnum") ||', ""
-      inreplace "ext/curses/extconf.rb", "dir_config('termcap')", ""
+      inreplace "ext/readline/extconf.rb" do |s|
+        s.gsub! "dir_config('termcap')", ""
+        s.gsub! 'have_library("termcap", "tgetnum") ||', ""
+      end
+      inreplace "ext/curses/extconf.rb" do |s|
+        s.gsub! "dir_config('termcap')", ""
+        s.gsub! 'or have_library("termcap", "tgetent")', ""
+      end
     end
 
     args << "--with-opt-dir=#{paths.join(":")}"
