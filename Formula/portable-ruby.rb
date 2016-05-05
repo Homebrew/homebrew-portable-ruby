@@ -11,6 +11,7 @@ class PortableRuby < PortableFormula
   depends_on "portable-readline" => :build
   depends_on "portable-libyaml" => :build
   depends_on "portable-openssl" => :build
+  depends_on "portable-ncurses" => :build if OS.linux?
 
   def install
     ENV.append "LDFLAGS", "-Wl,-search_paths_first"
@@ -18,6 +19,7 @@ class PortableRuby < PortableFormula
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
+    ncurses = Formula["portable-ncurses"]
 
     args = %W[
       --prefix=#{prefix}
@@ -40,6 +42,14 @@ class PortableRuby < PortableFormula
       libyaml.opt_prefix,
       openssl.opt_prefix,
     ]
+
+    if OS.linux?
+      # We want Ruby to link to our ncurses, instead of libtermcap in CentOS 5
+      paths << ncurses.opt_prefix
+      inreplace "ext/readline/extconf.rb", "dir_config('termcap')", ""
+      inreplace "ext/readline/extconf.rb", 'have_library("termcap", "tgetnum") ||', ""
+      inreplace "ext/curses/extconf.rb", "dir_config('termcap')", ""
+    end
 
     args << "--with-opt-dir=#{paths.join(":")}"
 
