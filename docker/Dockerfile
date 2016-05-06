@@ -22,10 +22,9 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
     echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
 RUN source /etc/profile && \
     git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
-    git clone --depth=1 https://github.com/Linuxbrew/homebrew-core \
-        /home/linuxbrew/.linuxbrew/Library/Taps/homebrew/homebrew-core && \
-    git clone --depth=1 https://github.com/xu-cheng/homebrew-portable \
-        /home/linuxbrew/.linuxbrew/Library/Taps/xu-cheng/homebrew-portable && \
+    /home/linuxbrew/.linuxbrew/bin/brew analytics off && \
+    /home/linuxbrew/.linuxbrew/bin/brew tap homebrew/core && \
+    /home/linuxbrew/.linuxbrew/bin/brew tap xu-cheng/portable && \
     ln -s $(which gcc) /home/linuxbrew/.linuxbrew/bin/gcc-$(gcc -dumpversion|cut -d. -f1,2) && \
     ln -s $(which g++) /home/linuxbrew/.linuxbrew/bin/g++-$(g++ -dumpversion|cut -d. -f1,2) && \
     chown -R linuxbrew:linuxbrew /home/linuxbrew/.linuxbrew
@@ -33,5 +32,5 @@ USER linuxbrew
 WORKDIR /home/linuxbrew
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/opt/rbenv/bin:$PATH \
     SHELL=/bin/bash \
-    HOMEBREW_BUILD_FROM_SOURCE=1 \
+    HOMEBREW_BUILD_BOTTLE=1 \
     HOMEBREW_NO_ANALYTICS=1
