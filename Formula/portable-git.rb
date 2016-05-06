@@ -10,6 +10,7 @@ class PortableGit < PortableFormula
 
   def install
     curl = Formula["portable-curl"]
+    ENV.append "CFLAGS", `#{curl.opt_prefix/"bin/curl-config"} --cflags`.chomp
     ENV.append "LDFLAGS", `#{curl.opt_prefix/"bin/curl-config"} --static-libs`.chomp
     ENV.append "LDFLAGS", "-Wl,-search_paths_first"
     ENV.universal_binary if build.with? "universal"
