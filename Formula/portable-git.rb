@@ -11,6 +11,7 @@ class PortableGit < PortableFormula
 
   def install
     curl = Formula["portable-curl"]
+    expat = Formula["portable-expat"]
     ENV.append "CFLAGS", `#{curl.opt_bin/"curl-config"} --cflags`.chomp
     ENV.append "LDFLAGS", `#{curl.opt_bin/"curl-config"} --static-libs`.chomp
     ENV.append "LDFLAGS", "-Wl,-search_paths_first"
@@ -27,6 +28,7 @@ class PortableGit < PortableFormula
     ENV["NO_GETTEXT"] = "1"
     ENV["NO_TCLTK"] = "1"
     ENV["NO_OPENSSL"] = "1"
+    ENV["EXPATDIR"] = expat.opt_prefix if OS.linux?
     args = %W[
       prefix=#{prefix}
       CC=#{ENV.cc}
