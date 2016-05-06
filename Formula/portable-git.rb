@@ -3,8 +3,8 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableGit < PortableFormula
   desc "Portable git"
   homepage "https://git-scm.com"
-  url "https://www.kernel.org/pub/software/scm/git/git-2.8.1.tar.xz"
-  sha256 "e6626b43ba4bc63ad4918df4c275f50bd7f8af2ab54bde60496ad75e91e927fc"
+  url "https://www.kernel.org/pub/software/scm/git/git-2.8.2.tar.xz"
+  sha256 "ec0283d78a0f1c8408c5fd43610697b953fbaafe4077bb1e41446a9ee3a2f83d"
 
   depends_on "portable-curl" => :build
 
