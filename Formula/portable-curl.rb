@@ -13,7 +13,7 @@ class PortableCurl < PortableFormula
   # Ref: https://curl.haxx.se/mail/archive-2003-03/0115.html
   #      https://curl.haxx.se/mail/lib-2011-12/0093.html
   def install
-    ENV.prepend_path "PKG_CONFIG_PATH", "#{Formula["portable-openssl"].opt_prefix}/lib/pkgconfig"
+    ENV.prepend_path "PKG_CONFIG_PATH", "#{Formula["portable-openssl"].opt_lib}/pkgconfig"
     ENV["LIBS"] = `pkg-config openssl --static --libs`.chomp
     args = %W[
       --disable-debug
@@ -80,7 +80,7 @@ class PortableCurl < PortableFormula
         CURL_CA_BUNDLE="$CURL_LIBEXEC/cert.pem" exec "$CURL_LIBEXEC/bin/#{file.basename}" "$@"
       EOS
     end
-    cp Formula["portable-openssl"].opt_prefix/"libexec/etc/openssl/cert.pem", libexec/"cert.pem"
+    cp Formula["portable-openssl"].opt_libexec/"etc/openssl/cert.pem", libexec/"cert.pem"
   end
 
   test do

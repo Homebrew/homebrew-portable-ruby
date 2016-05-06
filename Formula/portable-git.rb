@@ -10,8 +10,8 @@ class PortableGit < PortableFormula
 
   def install
     curl = Formula["portable-curl"]
-    ENV.append "CFLAGS", `#{curl.opt_prefix/"bin/curl-config"} --cflags`.chomp
-    ENV.append "LDFLAGS", `#{curl.opt_prefix/"bin/curl-config"} --static-libs`.chomp
+    ENV.append "CFLAGS", `#{curl.opt_bin/"curl-config"} --cflags`.chomp
+    ENV.append "LDFLAGS", `#{curl.opt_bin/"curl-config"} --static-libs`.chomp
     ENV.append "LDFLAGS", "-Wl,-search_paths_first"
     ENV.universal_binary if build.with? "universal"
 
@@ -41,7 +41,7 @@ class PortableGit < PortableFormula
       GIT_LIBEXEC="$(cd "${0%/*}/.." && pwd -P)/libexec"
       GIT_SSL_CAINFO="$GIT_LIBEXEC/cert.pem" exec "$GIT_LIBEXEC/bin/git" "$@"
     EOS
-    cp curl.opt_prefix/"libexec/cert.pem", libexec/"cert.pem"
+    cp curl.opt_libexec/"cert.pem", libexec/"cert.pem"
   end
 
   test do
