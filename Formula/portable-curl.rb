@@ -14,7 +14,7 @@ class PortableCurl < PortableFormula
   #      https://curl.haxx.se/mail/lib-2011-12/0093.html
   def install
     ENV.prepend_path "PKG_CONFIG_PATH", "#{Formula["portable-openssl"].opt_prefix}/lib/pkgconfig"
-    ENV["LIBS"] = `pkg-config openssl --static --libs`.chomp if OS.linux?
+    ENV["LIBS"] = `pkg-config openssl --static --libs`.chomp
     args = %W[
       --disable-debug
       --disable-dependency-tracking
