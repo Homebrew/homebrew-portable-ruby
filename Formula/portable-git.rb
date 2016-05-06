@@ -12,10 +12,12 @@ class PortableGit < PortableFormula
   def install
     curl = Formula["portable-curl"]
     expat = Formula["portable-expat"]
-    ENV.append "CFLAGS", `#{curl.opt_bin/"curl-config"} --cflags`.chomp
-    ENV.append "LDFLAGS", `#{curl.opt_bin/"curl-config"} --static-libs`.chomp
+
     ENV.append "LDFLAGS", "-Wl,-search_paths_first"
     ENV.universal_binary if build.with? "universal"
+
+    # Git Makefile doesn't support to link static libcurl.
+    inreplace "Makefile", "$(CURL_LIBCURL)", `#{curl.opt_bin/"curl-config"} --static-libs`.chomp
 
     # If these things are installed, tell Git build system to not use them
     ENV["NO_FINK"] = "1"
