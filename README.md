@@ -7,7 +7,11 @@ Portable edition tools.
 ### OS X
 
 * It is recommended to build formulae on Leopard VM.
-* Set `HOMEBREW_PREFER_64_BIT` for Tigerbrew.
+* `brew install ruby`
+* Set following environment variables for Tigerbrew:
+  * `export HOMEBREW_PREFER_64_BIT=1`
+  * `export HOMEBREW_DEVELOPER=1`
+  * `export HOMEBREW_RUBY_PATH="$(brew --prefix ruby)/bin/ruby"`
 * `brew tap xu-cheng/portable`
 * `brew install portable-<tool>`.
 * `brew test portable-<tool>`.
@@ -16,8 +20,12 @@ Portable edition tools.
 
 ### Linux
 
-* Build docker images from `docker/Dockerfile`.
+* Build docker image from `docker/Dockerfile`.
 * `brew install portable-<tool>`.
 * `brew test portable-<tool>`.
 * Check the linkage using `ldd`.
 * `brew portable-package portable-<tool>`.
+
+## License
+
+MIT License.
