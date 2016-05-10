@@ -25,6 +25,8 @@ class PortableOpenssl < PortableFormula
       {
         :x86_64 => %w[darwin64-x86_64-cc enable-ec_nistp_64_gcc_128],
         :i386   => %w[darwin-i386-cc],
+        :ppc    => %w[darwin-ppc-cc],
+        :ppc64  => %w[darwin64-ppc-cc]
       }
     else
       {
