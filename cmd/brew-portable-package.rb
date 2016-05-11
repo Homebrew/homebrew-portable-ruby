@@ -20,6 +20,7 @@ raise FormulaUnspecifiedError if ARGV.named.empty?
 f = ARGV.resolved_formulae.first
 keg = Keg.new f.prefix
 tab = Tab.for_keg(keg)
+f.build = tab
 filename = "#{f.name}-#{f.pkg_version}.#{tag(f)}.tar.gz"
 tar_filename = filename.to_s.sub(/.gz$/, "")
 tar_path = Pathname.pwd/tar_filename
