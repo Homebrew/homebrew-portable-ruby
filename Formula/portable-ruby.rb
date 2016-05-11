@@ -68,6 +68,16 @@ class PortableRuby < PortableFormula
       s.gsub! ENV.cxx, "c++"
       s.gsub! ENV.cc, "cc"
     end
+
+    libexec.mkpath
+    cp openssl.opt_libexec/"etc/openssl/cert.pem", libexec/"cert.pem"
+    openssl_rb = lib/"ruby/#{abi_version}/openssl.rb"
+    openssl_rb_content = openssl_rb.read
+    rm openssl_rb
+    openssl_rb.write <<-EOS.undent
+      ENV["SSL_CERT_FILE"] ||= File.expand_path("../../libexec/cert.pem", RbConfig.ruby)
+      #{openssl_rb_content}
+    EOS
   end
 
   test do
