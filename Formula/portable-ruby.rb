@@ -32,8 +32,12 @@ class PortableRuby < PortableFormula
       --disable-dtrace
     ]
 
-    if build.with? "universal"
-      ENV.universal_binary
+    if OS.mac?
+      if build.with? "universal"
+        ENV.universal_binary
+      else
+        ENV.permit_arch_flags
+      end
       args << "--with-arch=#{archs.join(",")}"
     end
 
