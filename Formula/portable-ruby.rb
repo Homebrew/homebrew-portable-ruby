@@ -84,18 +84,8 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -ryaml -e 'puts YAML.load(\"a: b\")'").strip
     assert_equal "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").strip
-    (testpath/"test_openssl_cert.rb").write <<-'EOS'.undent
-      require "socket"
-      require "openssl"
-
-      context = OpenSSL::SSL::SSLContext.new
-      tcp_client = TCPSocket.new "www.google.com", 443
-      ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
-      ssl_client.connect
-      ssl_client.write "GET / HTTP/1.1\r\n\r\n"
-      puts ssl_client.gets
-    EOS
-    assert_match "HTTP/1.1", shell_output("#{ruby} #{testpath}/test_openssl_cert.rb")
+    assert_match "200",
+      shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").strip
     system testpath/"bin/gem", "environment"
     system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
