@@ -14,6 +14,7 @@ Portable edition tools.
   * `export HOMEBREW_RUBY_PATH="$(brew --prefix ruby)/bin/ruby"`
 * `brew tap xu-cheng/portable`
 * `brew install portable-<tool>`.
+* `brew uninstall $(brew deps --include-build portable-<tool>)`
 * `brew test portable-<tool>`.
 * Check the linkage using `brew linkage portable-<tool>`.
 * `brew portable-package portable-<tool>`.
@@ -22,6 +23,7 @@ Portable edition tools.
 
 * Build docker image from `docker/Dockerfile`.
 * `brew install portable-<tool>`.
+* `brew uninstall $(brew deps --include-build portable-<tool>)`
 * `brew test portable-<tool>`.
 * Check the linkage using `ldd`.
 * `brew portable-package portable-<tool>`.
