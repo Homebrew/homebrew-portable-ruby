@@ -25,6 +25,8 @@ class PortableCurl < PortableFormula
       --with-ssl=#{Formula["portable-openssl"].opt_prefix}
       --disable-ldap
       --disable-ares
+      --without-librtmp
+      --without-libidn
     ]
 
     ENV.permit_arch_flags if build.with? "universal"
