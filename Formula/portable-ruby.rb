@@ -26,7 +26,7 @@ class PortableRuby < PortableFormula
       --enable-load-relative
       --with-static-linked-ext
       --disable-dln
-      --with-out-ext=tk,sdbm,gdbm,dbm,dl,coverage
+      --with-out-ext=tk,sdbm,gdbm,dbm,dl,coverage,fiddle
       --disable-install-doc
       --disable-install-rdoc
       --disable-dtrace
