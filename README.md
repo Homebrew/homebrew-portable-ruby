@@ -12,7 +12,7 @@ Portable edition tools.
   * `export HOMEBREW_PREFER_64_BIT=1`
   * `export HOMEBREW_DEVELOPER=1`
   * `export HOMEBREW_RUBY_PATH="$(brew --prefix ruby)/bin/ruby"`
-* `brew tap xu-cheng/portable`
+* `brew tap homebrew/portable`
 * `brew install portable-<tool>`.
 * `brew uninstall $(brew deps --include-build portable-<tool>)`
 * `brew test portable-<tool>`.
@@ -22,6 +22,7 @@ Portable edition tools.
 ### Linux
 
 * Build docker image from `docker/Dockerfile`.
+* `brew tap homebrew/portable`
 * `brew install portable-<tool>`.
 * `brew uninstall $(brew deps --include-build portable-<tool>)`
 * `brew test portable-<tool>`.
