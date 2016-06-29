@@ -27,13 +27,19 @@ class PortableFormula < Formula
     subclass.class_eval do
       keg_only "Portable formula is keg-only."
 
-      option "without-universal", "Don't build a universal binary" if OS.mac?
+      # TODO remove `subclass.name !~ /PortableRuby/` when updating portable-ruby to 2.1 or above.
+      option "without-universal", "Don't build a universal binary" if OS.mac? && subclass.name !~ /PortableRuby/
 
       prepend PortableFormulaInstall
     end
   end
 
   def archs
+    # TODO remove below block when updating portable-ruby to 2.1 or above.
+    if name == "portable-ruby"
+      return [Hardware::CPU.arch_32_bit]
+    end
+
     if build.with? "universal"
       Hardware::CPU.universal_archs
     elsif OS::Mac.prefer_64_bit?
