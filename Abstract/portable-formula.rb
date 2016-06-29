@@ -1,4 +1,4 @@
-module PortableFormulaInstall
+module PortableFormulaMixin
   def install
     tag = Hardware::CPU.ppc? ? :tiger : :leopard
     if OS.mac? && OS::Mac.version > tag
@@ -20,6 +20,15 @@ module PortableFormulaInstall
 
     super
   end
+
+  def test
+    if OS.mac?
+      assert_no_match /Homebrew libraries/,
+        shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}")
+    end
+
+    super
+  end
 end
 
 class PortableFormula < Formula
@@ -30,7 +39,7 @@ class PortableFormula < Formula
       # TODO remove `subclass.name !~ /PortableRuby/` when updating portable-ruby to 2.1 or above.
       option "without-universal", "Don't build a universal binary" if OS.mac? && subclass.name !~ /PortableRuby/
 
-      prepend PortableFormulaInstall
+      prepend PortableFormulaMixin
     end
   end
 
