@@ -22,6 +22,7 @@ keg = Keg.new f.prefix
 tab = Tab.for_keg(keg)
 f.build = tab
 filename = "#{f.name}-#{f.pkg_version}.#{tag(f)}.tar.gz"
+bottle_path = Pathname.pwd/filename
 tar_filename = filename.to_s.sub(/.gz$/, "")
 tar_path = Pathname.pwd/tar_filename
 
@@ -45,10 +46,13 @@ keg.lock do
       end
     end
 
-    cd f.rack do
-      safe_system "tar", "cf", tar_path, f.pkg_version
+    cd HOMEBREW_CELLAR do
+      safe_system "tar", "cf", tar_path, "#{f.name}/#{f.pkg_version}"
       tar_path.utime(tab.source_modified_time, tab.source_modified_time)
-      safe_system "gzip", "-f", tar_path
+      relocatable_tar_path = "#{f}-bottle.tar"
+      mv tar_path, relocatable_tar_path
+      safe_system "gzip", "-f", relocatable_tar_path
+      mv "#{relocatable_tar_path}.gz", bottle_path
     end
   ensure
     ignore_interrupts do
