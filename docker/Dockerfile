@@ -20,6 +20,7 @@ RUN source /etc/profile && \
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
     useradd -m -s /bin/bash linuxbrew && \
     echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+RUN echo 'insecure' >> /home/linuxbrew/.curlrc
 RUN source /etc/profile && \
     git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
     /home/linuxbrew/.linuxbrew/bin/brew analytics off && \
@@ -32,6 +33,7 @@ USER linuxbrew
 WORKDIR /home/linuxbrew
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/opt/rbenv/bin:$PATH \
     SHELL=/bin/bash \
+    CURL_HOME=/home/linuxbrew \
     HOMEBREW_BUILD_FROM_SOURCE=1 \
     HOMEBREW_BUILD_BOTTLE=1 \
     HOMEBREW_NO_ANALYTICS=1
