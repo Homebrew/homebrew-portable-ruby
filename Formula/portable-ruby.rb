@@ -6,6 +6,12 @@ class PortableRuby < PortableFormula
   url "https://cache.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p648.tar.bz2"
   sha256 "087ad4dec748cfe665c856dbfbabdee5520268e94bb81a1d8565d76c3cc62166"
 
+  bottle do
+    cellar :any_skip_relocation
+    sha256 "5c1240abe4be91c9774a0089c2a38a8ccfff87c009e8e5786730c659d5e633f7" => :leopard_64
+    sha256 "dbb5118a22a6a75cc77e62544a3d8786d383fab1bdaf8c154951268807357bf0" => :x86_64_linux
+  end
+
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
   depends_on "portable-readline" => :build
