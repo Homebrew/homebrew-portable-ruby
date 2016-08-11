@@ -1,6 +1,6 @@
-# We want sufficiently old glibc
+# We want a sufficiently old glibc to be backwards compatible.
 FROM centos:centos5
-MAINTAINER Xu Cheng <xucheng@me.com>
+MAINTAINER Homebrew Maintainers <homebrew-discuss@googlegroups.com>
 
 RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
 RUN yum groupinstall 'Development Tools' -y

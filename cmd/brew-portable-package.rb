@@ -1,50 +1,28 @@
-require "formula"
-require "keg"
-require "utils/bottles"
+# Build a portable Homebrew utility bottle.
+#
+# Usage: brew portable-package <formula> [formula...]
 
-include FileUtils
+odie "Need to specify at least one portable formula!" if ARGV.empty?
 
-raise FormulaUnspecifiedError if ARGV.named.empty?
-f = ARGV.resolved_formulae.first
-keg = Keg.new f.prefix
-tab = Tab.for_keg(keg)
-f.build = tab
-filename = Bottle::Filename.create(f, Utils::Bottles.tag, 0)
-bottle_path = Pathname.pwd/filename
-tar_filename = filename.to_s.sub(/.gz$/, "")
-tar_path = Pathname.pwd/tar_filename
+if RUBY_VERSION.split(".").first.to_i < 2
+  safe_system "brew", "install", "ruby"
+  ENV["HOMEBREW_RUBY_PATH"] = "#{HOMEBREW_PREFIX}/bin/ruby"
+end
 
-ohai "Packaging #{filename}..."
-keg.lock do
-  begin
-    original_tab = tab.dup
-    tab.poured_from_bottle = false
-    tab.HEAD = nil
-    tab.time = nil
-    tab.write
+ENV["HOMEBREW_PREFER_64_BIT"] = "1"
+ENV["HOMEBREW_DEVELOPER"] = "1"
 
-    keg.find do |file|
-      if file.symlink?
-        # Ruby does not support `File.lutime` yet.
-        # Shellout using `touch` to change modified time of symlink itself.
-        system "/usr/bin/touch", "-h",
-               "-t", tab.source_modified_time.strftime("%Y%m%d%H%M.%S"), file
-      else
-        file.utime(tab.source_modified_time, tab.source_modified_time)
-      end
-    end
-
-    cd HOMEBREW_CELLAR do
-      safe_system "tar", "cf", tar_path, "#{f.name}/#{f.pkg_version}"
-      tar_path.utime(tab.source_modified_time, tab.source_modified_time)
-      relocatable_tar_path = "#{f}-bottle.tar"
-      mv tar_path, relocatable_tar_path
-      safe_system "gzip", "-f", relocatable_tar_path
-      mv "#{relocatable_tar_path}.gz", bottle_path
-    end
-  ensure
-    ignore_interrupts do
-      original_tab.write
-    end
+ARGV.named.each do |name|
+  name = "portable-#{name}" unless name.start_with? "portable-"
+  f = Formula[name]
+  safe_system "brew", "install", "--build-bottle", name
+  safe_system "brew uninstall --force $(brew deps --include-build #{name})"
+  safe_system "brew", "test", name
+  puts "Library linkage:"
+  if OS.linux?
+    puts Utils.open_read "ldd", "#{f.bin}/#{arg.gsub(/^portable-/, "")}"
+  else
+    puts Utils.popen_read "brew", "linkage", name
   end
+  safe_system "brew", "bottle", "--skip-relocation", name
 end
