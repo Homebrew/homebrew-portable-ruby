@@ -1,34 +1,21 @@
 # Homebrew Portable
+Formulae and tools to build versions of Ruby, Git and Curl that can be installed and run from anywhere on the filesystem.
 
-Portable edition tools.
+## How do I install these formulae?
+Just `brew install homebrew/portable/<formula>`.
 
-## How to build?
-
+## How do I build packages for these formulae?
 ### OS X
-
-* It is recommended to build formulae on Leopard VM.
-* `brew install ruby`
-* Set following environment variables for Tigerbrew:
-  * `export HOMEBREW_PREFER_64_BIT=1`
-  * `export HOMEBREW_DEVELOPER=1`
-  * `export HOMEBREW_RUBY_PATH="$(brew --prefix ruby)/bin/ruby"`
-* `brew tap homebrew/portable`
-* `brew install portable-<tool>`.
-* `brew uninstall $(brew deps --include-build portable-<tool>)`
-* `brew test portable-<tool>`.
-* Check the linkage using `brew linkage portable-<tool>`.
-* `brew portable-package portable-<tool>`.
+Run `brew portable-package <formula>` (ideally inside a OS X 10.5 VM so it is compatible with old OS X versions.
 
 ### Linux
-
-* Build docker image from `docker/Dockerfile`.
-* `brew tap homebrew/portable`
-* `brew install portable-<tool>`.
-* `brew uninstall $(brew deps --include-build portable-<tool>)`
-* `brew test portable-<tool>`.
-* Check the linkage using `ldd`.
-* `brew portable-package portable-<tool>`.
+Run `brew portable-package <formula>`. Ideally this should be run inside the CentOS 5 Docker container with:
+```bash
+docker build -f docker/Dockerfile -t homebrew-portable:latest .
+docker run -t -i homebrew-portable /bin/bash
+brew portable-package <formula>
+```
 
 ## License
 
-MIT License.
+Code is under the [BSD 2 Clause (NetBSD) license](https://github.com/Homebrew/homebrew-portable/blob/master/LICENSE.txt).
