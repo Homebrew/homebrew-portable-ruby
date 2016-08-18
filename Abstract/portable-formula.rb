@@ -23,8 +23,14 @@ module PortableFormulaMixin
 
   def test
     if OS.mac?
-      assert_no_match /Homebrew libraries/,
+      assert_no_match %r{Homebrew libraries},
         shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}")
+    elsif OS.linux?
+      Keg.new(prefix).elf_files.each do |file|
+        ldd_output = shell_output("ldd #{file}")
+        assert_no_match %r{#{Regexp.escape(HOMEBREW_CELLAR)}}, ldd_output
+        assert_no_match %r{#{Regexp.escape(HOMEBREW_PREFIX/"opt")}}, ldd_output
+      end
     end
 
     super
