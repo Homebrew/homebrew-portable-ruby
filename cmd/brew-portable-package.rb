@@ -16,7 +16,7 @@ ARGV.named.each do |name|
   name = "portable-#{name}" unless name.start_with? "portable-"
   f = Formula[name]
   safe_system "brew", "install", "--build-bottle", name
-  safe_system "brew uninstall --force $(brew deps --include-build #{name})"
+  safe_system "brew deps --include-build #{name} | xargs brew uninstall --force"
   safe_system "brew", "test", name
   puts "Library linkage:"
   if OS.linux?
