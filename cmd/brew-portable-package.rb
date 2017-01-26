@@ -20,7 +20,7 @@ ARGV.named.each do |name|
   safe_system "brew", "test", name
   puts "Library linkage:"
   if OS.linux?
-    puts Utils.open_read "ldd", "#{f.bin}/#{name.gsub(/^portable-/, "")}"
+    puts Utils.popen_read "ldd", "#{f.bin}/#{name.gsub(/^portable-/, "")}"
   else
     puts Utils.popen_read "brew", "linkage", name
   end
