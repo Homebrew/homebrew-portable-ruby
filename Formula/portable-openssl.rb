@@ -9,6 +9,7 @@ class PortableOpenssl < PortableFormula
   sha256 "1d4007e53aad94a5b2002fe045ee7bb0b3d98f1a47f8b2bc851dcd1c74332919"
 
   depends_on "makedepend" => :build
+  depends_on "zlib" => :build unless OS.mac?
 
   resource "cacert" do
     # homepage "http://curl.haxx.se/docs/caextract.html", "https://github.com/bagder/ca-bundle"
@@ -41,7 +42,8 @@ class PortableOpenssl < PortableFormula
       --prefix=#{prefix}
       --openssldir=#{openssldir}
       no-ssl2
-      zlib-dynamic
+      #{"-L#{Formula["zlib"].opt_prefix/"lib"}" unless OS.mac?}
+      #{OS.mac? ? "zlib-dynamic" : "zlib"}
       no-shared
       enable-cms
     ]
@@ -105,5 +107,10 @@ class PortableOpenssl < PortableFormula
     end
 
     openssldir.install resource("cacert").files("ca-bundle.crt" => "cert.pem")
+  end
+
+  test do
+    input = "x\x9CK\xCB\xCF\a\x00\x02\x82\x01E"
+    assert_equal "foo", pipe_output("#{bin}/openssl zlib -d", input)
   end
 end
