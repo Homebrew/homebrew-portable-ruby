@@ -4,7 +4,7 @@ module PortableFormulaMixin
     if OS.mac? && OS::Mac.version > tag
       opoo <<-EOS.undent
         You are building portable formula on #{OS::Mac.version}.
-        As result, formula won't be able to work for OS X at lower version.
+        As result, formula won't be able to work for macOS at lower version.
         It's recommended to build this formula on OS X #{tag.capitalize}.
       EOS
     end
