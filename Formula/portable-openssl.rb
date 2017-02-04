@@ -9,7 +9,7 @@ class PortableOpenssl < PortableFormula
   sha256 "1d4007e53aad94a5b2002fe045ee7bb0b3d98f1a47f8b2bc851dcd1c74332919"
 
   depends_on "makedepend" => :build
-  depends_on "zlib" => :build unless OS.mac?
+  depends_on "portable-zlib" => :build unless OS.mac?
 
   resource "cacert" do
     # homepage "http://curl.haxx.se/docs/caextract.html", "https://github.com/bagder/ca-bundle"
@@ -42,7 +42,7 @@ class PortableOpenssl < PortableFormula
       --prefix=#{prefix}
       --openssldir=#{openssldir}
       no-ssl2
-      #{"-L#{Formula["zlib"].opt_prefix/"lib"}" unless OS.mac?}
+      #{"-L#{Formula["portable-zlib"].opt_prefix/"lib"}" unless OS.mac?}
       #{OS.mac? ? "zlib-dynamic" : "zlib"}
       no-shared
       enable-cms

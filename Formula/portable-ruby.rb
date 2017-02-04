@@ -14,23 +14,21 @@ class PortableRuby < PortableFormula
 
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
-  depends_on "zlib" => :build unless OS.mac?
+  depends_on "portable-zlib" => :build unless OS.mac?
   depends_on "portable-readline" => :build
   depends_on "portable-libyaml" => :build
   depends_on "portable-openssl" => :build
   depends_on "portable-ncurses" => :build if OS.linux?
 
   def install
-    ENV.append "LDFLAGS", "-Wl,-search_paths_first"
-
-    unless OS.mac?
-      ENV.append "LDFLAGS", "-lz -L#{Formula["zlib"].opt_prefix/"lib"}"
-    end
-
+    zlib = Formula["portable-zlib"]
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
     ncurses = Formula["portable-ncurses"]
+
+    ENV.append "LDFLAGS", "-Wl,-search_paths_first"
+    ENV.append "LDFLAGS", "-lz -L#{zlib.opt_prefix/"lib"}" unless OS.mac?
 
     args = %W[
       --prefix=#{prefix}
