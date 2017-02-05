@@ -110,7 +110,8 @@ class PortableOpenssl < PortableFormula
   end
 
   test do
+    cp_r Dir["#{prefix}/*"], testpath
     input = "x\x9CK\xCB\xCF\a\x00\x02\x82\x01E"
-    assert_equal "foo", pipe_output("#{bin}/openssl zlib -d", input)
+    assert_equal "foo", pipe_output("#{testpath}/bin/openssl zlib -d", input)
   end
 end
