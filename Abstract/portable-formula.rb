@@ -13,7 +13,7 @@ module PortableFormulaMixin
     # arches make it into the environment.
     # This is important because in some environments (e.g. 10.4/10.5)
     # our arches differ from the usual defaults.
-    if OS.mac? && build.with? "universal"
+    if OS.mac? && build.with?("universal")
       ENV.permit_arch_flags
       ENV.append_to_cflags archs.map {|a| "-arch #{a}"}.join(" ")
     end
