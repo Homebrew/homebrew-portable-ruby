@@ -6,6 +6,11 @@ class PortableGit < PortableFormula
   url "https://www.kernel.org/pub/software/scm/git/git-2.8.2.tar.xz"
   sha256 "ec0283d78a0f1c8408c5fd43610697b953fbaafe4077bb1e41446a9ee3a2f83d"
 
+  if MacOS.version < :leopard
+    # system tar has odd permissions errors
+    depends_on "gnu-tar" => :build
+  end
+
   depends_on "portable-curl" => :build
   if OS.linux? || OS::Mac.version < :leopard
     depends_on "portable-expat" => :build
@@ -20,6 +25,15 @@ class PortableGit < PortableFormula
   end
 
   def install
+    if MacOS.version < :leopard
+      tar = Formula["gnu-tar"]
+      tab = Tab.for_keg tar.installed_prefix
+      tar_name = tab.used_options.include?("--with-default-names") ? tar.bin/"tar" : tar.bin/"gtar"
+      inreplace "Makefile" do |s|
+        s.change_make_var! "TAR", tar_name.to_s
+      end
+    end
+
     curl = Formula["portable-curl"]
     expat = Formula["portable-expat"]
 
