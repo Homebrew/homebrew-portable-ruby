@@ -16,6 +16,12 @@ class PortableOpenssl < PortableFormula
     sha256 "0f119da204025da7808273fab42ed8e030cafb5c7ea4e1deda4e75f066f528fb"
   end
 
+  # Fixes ASM for i386 builds on older OS Xs
+  patch :p0 do
+    url "https://trac.macports.org/export/144472/trunk/dports/devel/openssl/files/x86_64-asm-on-i386.patch"
+    sha256 "98ffb308aa04c14db9c21769f1c5ff09d63eb85ce9afdf002598823c45edef6d"
+  end
+
   def openssldir
     libexec/"etc/openssl"
   end
@@ -37,7 +43,7 @@ class PortableOpenssl < PortableFormula
   end
 
   def configure_args
-    %W[
+    args = %W[
       --prefix=#{prefix}
       --openssldir=#{openssldir}
       no-ssl2
@@ -45,6 +51,10 @@ class PortableOpenssl < PortableFormula
       no-shared
       enable-cms
     ]
+
+    args << "no-asm" if OS.mac? && MacOS.version < :leopard
+
+    args
   end
 
   def install
