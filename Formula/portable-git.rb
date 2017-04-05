@@ -11,6 +11,14 @@ class PortableGit < PortableFormula
     depends_on "portable-expat" => :build
   end
 
+  # ld64 understands -rpath but rejects it on Tiger
+  if MacOS.version < :leopard
+    patch :p1 do
+      url "https://trac.macports.org/export/106975/trunk/dports/devel/git-core/files/patch-Makefile.diff"
+      sha1 "f033e5b78ecbfcc14b7994f98a74dfdbe607eea0"
+    end
+  end
+
   def install
     curl = Formula["portable-curl"]
     expat = Formula["portable-expat"]
