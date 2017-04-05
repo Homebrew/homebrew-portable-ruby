@@ -7,7 +7,9 @@ class PortableGit < PortableFormula
   sha256 "ec0283d78a0f1c8408c5fd43610697b953fbaafe4077bb1e41446a9ee3a2f83d"
 
   depends_on "portable-curl" => :build
-  depends_on "portable-expat" => :build if OS.linux?
+  if OS.linux? || OS::Mac.version < :leopard
+    depends_on "portable-expat" => :build
+  end
 
   def install
     curl = Formula["portable-curl"]
@@ -30,7 +32,9 @@ class PortableGit < PortableFormula
     ENV["NO_GETTEXT"] = "1"
     ENV["NO_TCLTK"] = "1"
     ENV["NO_OPENSSL"] = "1"
-    ENV["EXPATDIR"] = expat.opt_prefix if OS.linux?
+    if OS.linux? || OS::Mac.version < :leopard
+      ENV["EXPATDIR"] = expat.opt_prefix
+    end
     args = %W[
       prefix=#{prefix}
       CC=#{ENV.cc}
