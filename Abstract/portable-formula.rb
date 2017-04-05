@@ -9,6 +9,15 @@ module PortableFormulaMixin
       EOS
     end
 
+    # Overrideable per-formula, but try to make sure our universal
+    # arches make it into the environment.
+    # This is important because in some environments (e.g. 10.4/10.5)
+    # our arches differ from the usual defaults.
+    if OS.mac? && build.with? "universal"
+      ENV.permit_arch_flags
+      ENV.append_to_cflags archs.map {|a| "-arch #{a}"}.join(" ")
+    end
+
     if OS.linux?
       # reset Linuxbrew env, because we want to build formula against
       # libraries offered by system (CentOS docker) rather than Linuxbrew.
@@ -47,6 +56,21 @@ class PortableFormula < Formula
     # TODO remove below block when updating portable-ruby to 2.1 or above.
     if name == "portable-ruby"
       return [Hardware::CPU.arch_32_bit]
+    end
+
+    # On Tiger and Leopard, override the default behaviour.
+    # Normally we don't build 64-bit there, because the linker is
+    # temperamental, and so "universal" builds don't usually happen.
+    # However, for the purposes of distributing portable packages,
+    # it's very useful to be able to build i386/ppc binaries for use
+    # on both Intel and PowerPC Macs. The Apple-provided compilers
+    # are capable of this on both Intel and Mac hosts.
+    if OS.mac? && OS::Mac.version < :snow_leopard
+      if build.with? "universal"
+        return [:i386, :ppc]
+      else
+        return [Hardware::CPU.arch_32_bit]
+      end
     end
 
     if build.with? "universal"
