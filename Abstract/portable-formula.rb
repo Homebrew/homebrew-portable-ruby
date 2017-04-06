@@ -31,10 +31,8 @@ module PortableFormulaMixin
   end
 
   def test
-    if OS.mac?
-      assert_no_match /Homebrew libraries/,
-        shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}")
-    end
+    assert_no_match %r{Homebrew libraries},
+      shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}")
 
     super
   end
