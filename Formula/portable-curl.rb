@@ -28,7 +28,6 @@ class PortableCurl < PortableFormula
       --without-libidn
     ]
 
-    ENV.permit_arch_flags if build.with? "universal"
     dirs = []
 
     archs.each do |arch|
