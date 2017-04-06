@@ -20,7 +20,7 @@ class PortableGit < PortableFormula
   if OS.mac? && MacOS.version < :leopard
     patch :p1 do
       url "https://trac.macports.org/export/106975/trunk/dports/devel/git-core/files/patch-Makefile.diff"
-      sha1 "f033e5b78ecbfcc14b7994f98a74dfdbe607eea0"
+      sha256 "6d1484c7ed726525b0f01e2da1a22311c371d48965435d67bcee844a9995d956"
     end
   end
 
