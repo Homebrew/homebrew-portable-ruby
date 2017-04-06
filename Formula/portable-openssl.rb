@@ -56,8 +56,6 @@ class PortableOpenssl < PortableFormula
               'zlib_dso = DSO_load(NULL, "z", NULL, 0);',
               'zlib_dso = DSO_load(NULL, "/usr/lib/libz.dylib", NULL, DSO_FLAG_NO_NAME_TRANSLATION);' if OS.mac?
 
-    ENV.permit_arch_flags if build.with? "universal"
-
     dirs = []
 
     archs.each do |arch|
