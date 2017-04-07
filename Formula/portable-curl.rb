@@ -8,6 +8,7 @@ class PortableCurl < PortableFormula
 
   depends_on "portable-openssl" => :build
   depends_on "pkg-config" => :build
+  depends_on "portable-zlib" => :build if OS.linux?
 
   # Ref: https://curl.haxx.se/mail/archive-2003-03/0115.html
   #      https://curl.haxx.se/mail/lib-2011-12/0093.html
