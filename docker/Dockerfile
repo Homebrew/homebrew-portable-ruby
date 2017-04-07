@@ -2,6 +2,11 @@
 FROM centos:centos5
 MAINTAINER Homebrew Maintainers <homebrew-discuss@googlegroups.com>
 
+# CentOS 5 has reached end-of-life, as result all of mirrors have stopped working.
+# Switch to use http://vault.centos.org/ instead.
+RUN sed -i '/mirrorlist=.*/d' /etc/yum.repos.d/{CentOS-Base,libselinux}.repo && \
+    sed -i 's|#baseurl=http://mirror.centos.org/centos/$releasever|baseurl=http://vault.centos.org/5.11|g' /etc/yum.repos.d/{CentOS-Base,libselinux}.repo
+
 RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
 RUN yum groupinstall 'Development Tools' -y
 RUN yum install sudo vim-enhanced which curl git -y
