@@ -9,6 +9,7 @@ class PortableOpenssl < PortableFormula
   sha256 "1d4007e53aad94a5b2002fe045ee7bb0b3d98f1a47f8b2bc851dcd1c74332919"
 
   depends_on "makedepend" => :build
+  depends_on "portable-zlib" => :build if OS.linux?
 
   resource "cacert" do
     # http://curl.haxx.se/docs/caextract.html
@@ -47,12 +48,17 @@ class PortableOpenssl < PortableFormula
       --prefix=#{prefix}
       --openssldir=#{openssldir}
       no-ssl2
-      zlib-dynamic
       no-shared
       enable-cms
     ]
 
-    args << "no-asm" if OS.mac? && MacOS.version < :leopard
+    if OS.mac?
+      args << "no-asm" if MacOS.version < :leopard
+      args << "zlib-dynamic"
+    else
+      args << "-L#{Formula["portable-zlib"].opt_prefix/"lib"}"
+      args << "zlib"
+    end
 
     args
   end
@@ -112,9 +118,21 @@ class PortableOpenssl < PortableFormula
       (include/"openssl/opensslconf.h").atomic_write confs.join("\n")
     end
 
+    if OS.linux?
+      # Since we build openssl which statically links to zlib on Linux,
+      # any program links to the openssl will have to link to zlib as well.
+      inreplace Dir["#{lib}/pkgconfig/lib*.pc"],
+        /(Libs: .*)/, "\\1 -L#{Formula["portable-zlib"].opt_prefix/"lib"} -lz"
+    end
+
     cacert = resource("cacert")
     filename = Pathname.new(cacert.url).basename
     openssldir.install cacert.files(filename => "cert.pem")
   end
+
+  test do
+    cp_r Dir["#{prefix}/*"], testpath
+    input = "x\x9CK\xCB\xCF\a\x00\x02\x82\x01E"
+    assert_equal "foo", pipe_output("#{testpath}/bin/openssl zlib -d", input)
   end
 end
