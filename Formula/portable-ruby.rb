@@ -17,7 +17,10 @@ class PortableRuby < PortableFormula
   depends_on "portable-readline" => :build
   depends_on "portable-libyaml" => :build
   depends_on "portable-openssl" => :build
-  depends_on "portable-ncurses" => :build if OS.linux?
+  if OS.linux?
+    depends_on "portable-ncurses" => :build
+    depends_on "portable-zlib" => :build
+  end
 
   def install
     ENV.append "LDFLAGS", "-Wl,-search_paths_first"
@@ -26,6 +29,7 @@ class PortableRuby < PortableFormula
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
     ncurses = Formula["portable-ncurses"]
+    zlib = Formula["portable-zlib"]
 
     args = %W[
       --prefix=#{prefix}
@@ -64,6 +68,8 @@ class PortableRuby < PortableFormula
         s.gsub! "dir_config('termcap')", ""
         s.gsub! 'or have_library("termcap", "tgetent")', ""
       end
+
+      paths << zlib.opt_prefix
     end
 
     args << "--with-opt-dir=#{paths.join(":")}"
