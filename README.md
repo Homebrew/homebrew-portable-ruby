@@ -20,6 +20,7 @@ brew portable-package <formula>
 
 | Formula | macOS 10.12 | OS X 10.5 | OS X 10.4 | Linuxbrew[0] |
 | :-: | :-: | :-: | :-: | :-: |
+| zlib | N/A | N/A | N/A | :white_check_mark: |
 | ncurses | N/A | N/A | N/A | :white_check_mark: |
 | expat | N/A | N/A | :white_check_mark: | :white_check_mark: |
 | OpenSSL | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
