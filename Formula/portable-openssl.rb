@@ -11,9 +11,9 @@ class PortableOpenssl < PortableFormula
   depends_on "makedepend" => :build
 
   resource "cacert" do
-    # homepage "http://curl.haxx.se/docs/caextract.html", "https://github.com/bagder/ca-bundle"
-    url "https://raw.githubusercontent.com/bagder/ca-bundle/bff056d04b9e2c92ea8c83b2e39be9c8d0501039/ca-bundle.crt"
-    sha256 "0f119da204025da7808273fab42ed8e030cafb5c7ea4e1deda4e75f066f528fb"
+    # http://curl.haxx.se/docs/caextract.html
+    url "https://curl.haxx.se/ca/cacert-2017-01-18.pem"
+    sha256 "e62a07e61e5870effa81b430e1900778943c228bd7da1259dd6a955ee2262b47"
   end
 
   # Fixes ASM for i386 builds on older OS Xs
@@ -112,6 +112,9 @@ class PortableOpenssl < PortableFormula
       (include/"openssl/opensslconf.h").atomic_write confs.join("\n")
     end
 
-    openssldir.install resource("cacert").files("ca-bundle.crt" => "cert.pem")
+    cacert = resource("cacert")
+    filename = Pathname.new(cacert.url).basename
+    openssldir.install cacert.files(filename => "cert.pem")
+  end
   end
 end
