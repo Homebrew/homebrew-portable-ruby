@@ -12,10 +12,11 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
 USER linuxbrew
 RUN echo 'insecure' >> /home/linuxbrew/.curlrc
 RUN export HOMEBREW_FORCE_VENDOR_RUBY=1 && \
+    export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH && \
     git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
-    /home/linuxbrew/.linuxbrew/bin/brew analytics off && \
-    /home/linuxbrew/.linuxbrew/bin/brew tap homebrew/core && \
-    /home/linuxbrew/.linuxbrew/bin/brew tap homebrew/portable && \
+    brew analytics off && \
+    brew tap homebrew/core && \
+    brew tap homebrew/portable && \
     ln -s $(which gcc) /home/linuxbrew/.linuxbrew/bin/gcc-$(gcc -dumpversion|cut -d. -f1,2) && \
     ln -s $(which g++) /home/linuxbrew/.linuxbrew/bin/g++-$(g++ -dumpversion|cut -d. -f1,2) && \
     chown -R linuxbrew:linuxbrew /home/linuxbrew/.linuxbrew
