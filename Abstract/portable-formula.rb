@@ -62,7 +62,7 @@ class PortableFormula < Formula
     # However, for the purposes of distributing portable packages,
     # it's very useful to be able to build i386/ppc binaries for use
     # on both Intel and PowerPC Macs. The Apple-provided compilers
-    # are capable of this on both Intel and Mac hosts.
+    # are capable of this on both Intel and PowerPC hosts.
     if OS.mac? && OS::Mac.version < :snow_leopard
       if build.with? "universal"
         return [:i386, :ppc]
