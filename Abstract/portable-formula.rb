@@ -43,8 +43,8 @@ class PortableFormula < Formula
     subclass.class_eval do
       keg_only "Portable formula is keg-only."
 
-      # TODO remove `subclass.name !~ /PortableRuby/` when updating portable-ruby to 2.1 or above.
-      option "without-universal", "Don't build a universal binary" if OS.mac? && subclass.name !~ /PortableRuby/
+      # TODO remove `subclass.name !~ /PortableRuby$/` when updating portable-ruby to 2.1 or above.
+      option "without-universal", "Don't build a universal binary" if OS.mac? && subclass.name !~ /PortableRuby$/
 
       prepend PortableFormulaMixin
     end
