@@ -3,8 +3,8 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableCurl < PortableFormula
   desc "Portable curl"
   homepage "https://curl.haxx.se/"
-  url "https://curl.haxx.se/download/curl-7.48.0.tar.bz2"
-  sha256 "864e7819210b586d42c674a1fdd577ce75a78b3dda64c63565abe5aefd72c753"
+  url "https://curl.haxx.se/download/curl-7.53.1.tar.bz2"
+  sha256 "1c7207c06d75e9136a944a2e0528337ce76f15b9ec9ae4bb30d703b59bf530e8"
 
   depends_on "portable-openssl" => :build
   depends_on "pkg-config" => :build
