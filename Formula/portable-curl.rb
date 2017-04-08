@@ -8,7 +8,10 @@ class PortableCurl < PortableFormula
 
   depends_on "portable-openssl" => :build
   depends_on "pkg-config" => :build
-  depends_on "portable-zlib" => :build if OS.linux?
+  if OS.linux?
+    depends_on "portable-zlib" => :build
+    depends_on "portable-c-ares" => :build
+  end
 
   # Ref: https://curl.haxx.se/mail/archive-2003-03/0115.html
   #      https://curl.haxx.se/mail/lib-2011-12/0093.html
@@ -24,10 +27,17 @@ class PortableCurl < PortableFormula
       --prefix=#{prefix}
       --with-ssl=#{Formula["portable-openssl"].opt_prefix}
       --disable-ldap
-      --disable-ares
       --without-librtmp
       --without-libidn
     ]
+
+    if OS.mac?
+      args << "--disable-ares"
+    else
+      cares = Formula["portable-c-ares"]
+      args << "--enable-ares=#{cares.opt_prefix}"
+      ENV.append "LIBS", "-L#{cares.opt_prefix}/lib -lcares"
+    end
 
     dirs = []
 
