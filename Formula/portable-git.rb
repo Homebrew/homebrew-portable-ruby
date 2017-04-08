@@ -3,8 +3,8 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableGit < PortableFormula
   desc "Portable git"
   homepage "https://git-scm.com"
-  url "https://www.kernel.org/pub/software/scm/git/git-2.8.2.tar.xz"
-  sha256 "ec0283d78a0f1c8408c5fd43610697b953fbaafe4077bb1e41446a9ee3a2f83d"
+  url "https://www.kernel.org/pub/software/scm/git/git-2.12.2.tar.xz"
+  sha256 "d21a9e23506e618d561fb25a8a7bd6134f927b86147930103487117a7a678c4a"
 
   if OS.mac? && MacOS.version < :leopard
     # system tar has odd permissions errors
