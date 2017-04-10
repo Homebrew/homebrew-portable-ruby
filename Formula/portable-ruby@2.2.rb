@@ -80,10 +80,6 @@ class PortableRubyAT22 < PortableFormula
         s.gsub! "dir_config('termcap')", ""
         s.gsub! 'have_library("termcap", "tgetnum") ||', ""
       end
-      inreplace "ext/curses/extconf.rb" do |s|
-        s.gsub! "dir_config('termcap')", ""
-        s.gsub! 'or have_library("termcap", "tgetent")', ""
-      end
 
       paths << zlib.opt_prefix
     end
