@@ -37,6 +37,11 @@ class PortableRubyAT22 < PortableFormula
     ]
 
     if OS.mac? && build.with?("universal")
+      if MacOS.version < :snow_leopard
+        # This will break the 32-bit PPC slice otherwise
+        ENV.replace_in_cflags(/-march=\S*/, "-Xarch_i386 \\0")
+        ENV.replace_in_cflags(/-mcpu=\S*/, "-Xarch_ppc \\0")
+      end
       args << "--with-arch=#{archs.join(",")}"
     end
 
