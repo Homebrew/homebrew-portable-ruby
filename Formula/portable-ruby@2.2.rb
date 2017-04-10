@@ -6,6 +6,7 @@ class PortableRubyAT22 < PortableFormula
   url "https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.7.tar.gz"
   sha256 "374184c6c5bbc88fb7bad422368d4053a236fb6587f0eff76146dcba57f93da5"
 
+  depends_on "make" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
   depends_on "portable-readline" => :build
@@ -90,8 +91,8 @@ class PortableRubyAT22 < PortableFormula
     args << "--with-opt-dir=#{paths.join(":")}"
 
     system "./configure", *args
-    system "make"
-    system "make", "install"
+    make
+    make "install"
 
     abi_version = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["ruby_version"]'`
     abi_arch = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["arch"]'`
