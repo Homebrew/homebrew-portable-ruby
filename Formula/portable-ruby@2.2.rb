@@ -39,8 +39,6 @@ class PortableRubyAT22 < PortableFormula
       end
     end
 
-    ENV.append "LDFLAGS", "-Wl,-search_paths_first"
-
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]

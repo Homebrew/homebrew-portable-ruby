@@ -40,7 +40,6 @@ class PortableGit < PortableFormula
     expat = Formula["portable-expat"]
     zlib = Formula["portable-zlib"]
 
-    ENV.append "LDFLAGS", "-Wl,-search_paths_first"
     ENV.universal_binary if build.with? "universal"
 
     # Git Makefile doesn't support to link static libcurl.

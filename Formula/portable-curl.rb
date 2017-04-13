@@ -18,6 +18,7 @@ class PortableCurl < PortableFormula
   def install
     ENV.prepend_path "PKG_CONFIG_PATH", "#{Formula["portable-openssl"].opt_lib}/pkgconfig"
     ENV["LIBS"] = `pkg-config openssl --static --libs`.chomp
+
     args = %W[
       --disable-debug
       --disable-dependency-tracking
@@ -54,7 +55,9 @@ class PortableCurl < PortableFormula
 
       system "./configure", *args
       system "make", "clean"
-      system "make", "LDFLAGS=-all-static -Wl,-search_paths_first"
+      ENV.append "LDFLAGS", "-all-static"
+      system "make"
+      ENV.remove "LDFLAGS", "-all-static"
       system "make", "install"
 
       if build.with? "universal"
