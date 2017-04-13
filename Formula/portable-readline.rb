@@ -46,10 +46,10 @@ class PortableReadline < PortableFormula
         return 0;
       }
     EOS
-    args = %W[test.c -I#{include} -L#{lib} -lreadline -o test]
+    args = %W[test.c -I#{include} -L#{lib} -lreadline -lncurses -o test]
     if OS.linux?
       ncurses = Formula["portable-ncurses"]
-      args += %W[-I#{ncurses.include} -L#{ncurses.lib} -lncurses]
+      args += %W[-I#{ncurses.include} -L#{ncurses.lib}]
     end
     system ENV.cc, *args
     assert_equal "test> Hello, World!\nHello, World!",
