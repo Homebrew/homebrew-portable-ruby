@@ -27,8 +27,8 @@ brew portable-package <formula>
 | OpenSSL | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Readline | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | libYAML | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Ruby | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[2] |
-| Ruby 2.2 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :question: |
+| Ruby 2.0 | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[2] |
+| Ruby 2.2 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark::warning:[2] |
 | Curl | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Git | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
