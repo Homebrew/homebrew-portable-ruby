@@ -1,24 +1,27 @@
 module PortableFormulaMixin
   def install
-    tag = Hardware::CPU.ppc? ? :tiger : :leopard
-    if OS.mac? && OS::Mac.version > tag
-      opoo <<-EOS.undent
-        You are building portable formula on #{OS::Mac.version}.
-        As result, formula won't be able to work for macOS at lower version.
-        It's recommended to build this formula on OS X #{tag.capitalize}.
-      EOS
-    end
+    if OS.mac?
+      tag = Hardware::CPU.ppc? ? :tiger : :leopard
+      if OS::Mac.version > tag
+        opoo <<-EOS.undent
+          You are building portable formula on #{OS::Mac.version}.
+          As result, formula won't be able to work for macOS at lower version.
+          It's recommended to build this formula on OS X #{tag.capitalize}.
+        EOS
+      end
 
-    # Overrideable per-formula, but try to make sure our universal
-    # arches make it into the environment.
-    # This is important because in some environments (e.g. 10.4/10.5)
-    # our arches differ from the usual defaults.
-    if OS.mac? && build.with?("universal")
-      ENV.permit_arch_flags
-      ENV.append_to_cflags archs.map {|a| "-arch #{a}"}.join(" ")
-    end
+      # Overrideable per-formula, but try to make sure our universal
+      # arches make it into the environment.
+      # This is important because in some environments (e.g. 10.4/10.5)
+      # our arches differ from the usual defaults.
+      if build.with?("universal")
+        ENV.permit_arch_flags
+        ENV.append_to_cflags archs.map {|a| "-arch #{a}"}.join(" ")
+      end
 
-    if OS.linux?
+      # Always prefer to linking to portable libs.
+      ENV.append "LDFLAGS", "-Wl,-search_paths_first"
+    elsif OS.linux?
       # reset Linuxbrew env, because we want to build formula against
       # libraries offered by system (CentOS docker) rather than Linuxbrew.
       ENV.delete "LDFLAGS"
