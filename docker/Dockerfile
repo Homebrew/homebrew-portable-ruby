@@ -31,6 +31,7 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     HOMEBREW_BUILD_BOTTLE=1 \
     HOMEBREW_BUILD_FROM_SOURCE=1 \
     HOMEBREW_CC=cc \
+    HOMEBREW_DEVELOPER=1 \
     HOMEBREW_FORCE_VENDOR_RUBY=1 \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
