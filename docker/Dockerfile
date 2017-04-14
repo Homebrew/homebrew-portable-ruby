@@ -7,7 +7,7 @@ MAINTAINER Homebrew Maintainers <homebrew-discuss@googlegroups.com>
 RUN sed -i '/mirrorlist=.*/d' /etc/yum.repos.d/{CentOS-Base,libselinux}.repo && \
     sed -i 's|#baseurl=http://mirror.centos.org/centos/$releasever|baseurl=http://vault.centos.org/5.11|g' /etc/yum.repos.d/{CentOS-Base,libselinux}.repo
 
-RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
+RUN rpm -Uvh http://dl.fedoraproject.org/pub/archive/epel/5/x86_64/epel-release-5-4.noarch.rpm
 RUN yum groupinstall 'Development Tools' -y
 RUN yum install sudo vim-enhanced which curl git -y
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
