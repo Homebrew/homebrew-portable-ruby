@@ -22,8 +22,6 @@ RUN export HOMEBREW_FORCE_VENDOR_RUBY=1 && \
     brew analytics off && \
     brew tap homebrew/core && \
     brew tap homebrew/portable && \
-    ln -s $(which gcc) /home/linuxbrew/.linuxbrew/bin/gcc-$(gcc -dumpversion|cut -d. -f1,2) && \
-    ln -s $(which g++) /home/linuxbrew/.linuxbrew/bin/g++-$(g++ -dumpversion|cut -d. -f1,2) && \
     chown -R linuxbrew:linuxbrew /home/linuxbrew/.linuxbrew
 
 WORKDIR /home/linuxbrew
@@ -32,6 +30,7 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     CURL_HOME=/home/linuxbrew \
     HOMEBREW_BUILD_BOTTLE=1 \
     HOMEBREW_BUILD_FROM_SOURCE=1 \
+    HOMEBREW_CC=cc \
     HOMEBREW_FORCE_VENDOR_RUBY=1 \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
