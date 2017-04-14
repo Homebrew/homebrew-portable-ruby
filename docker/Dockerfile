@@ -15,15 +15,6 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
     echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
 
 USER linuxbrew
-RUN echo 'insecure' >> /home/linuxbrew/.curlrc
-RUN export HOMEBREW_FORCE_VENDOR_RUBY=1 && \
-    export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH && \
-    git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
-    brew analytics off && \
-    brew tap homebrew/core && \
-    brew tap homebrew/portable && \
-    chown -R linuxbrew:linuxbrew /home/linuxbrew/.linuxbrew
-
 WORKDIR /home/linuxbrew
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     SHELL=/bin/bash \
@@ -35,3 +26,11 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     HOMEBREW_FORCE_VENDOR_RUBY=1 \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
+
+RUN echo 'insecure' >> /home/linuxbrew/.curlrc
+RUN git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
+    brew analytics off && \
+    brew tap homebrew/core && \
+    brew tap homebrew/portable && \
+    brew install patchelf
+
