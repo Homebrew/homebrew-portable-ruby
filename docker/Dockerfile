@@ -30,8 +30,8 @@ WORKDIR /home/linuxbrew
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     SHELL=/bin/bash \
     CURL_HOME=/home/linuxbrew \
-    HOMEBREW_FORCE_VENDOR_RUBY=1 \
-    HOMEBREW_BUILD_FROM_SOURCE=1 \
     HOMEBREW_BUILD_BOTTLE=1 \
-    HOMEBREW_NO_AUTO_UPDATE=1 \
-    HOMEBREW_NO_ANALYTICS=1
+    HOMEBREW_BUILD_FROM_SOURCE=1 \
+    HOMEBREW_FORCE_VENDOR_RUBY=1 \
+    HOMEBREW_NO_ANALYTICS=1 \
+    HOMEBREW_NO_AUTO_UPDATE=1
