@@ -43,7 +43,10 @@ class PortableCurl < PortableFormula
 
     archs.each do |arch|
       if build.with? "universal"
-        ENV["CFLAGS"] = "-arch #{arch}"
+        # Can't use ENV.remove_from_cflags because we want to
+        # remove *all* occurrences, not just one.
+        ENV["CFLAGS"] = ENV["CFLAGS"].gsub(/(-arch \S*|-Xarch_\S*|-march=\S*)/, "")
+        ENV.append_to_cflags "-arch #{arch}"
         dir = "build-#{arch}"
         dirs << dir
         mkdir dir
