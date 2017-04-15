@@ -86,7 +86,7 @@ class PortableOpenssl < PortableFormula
       system "perl", "./Configure", *(configure_args + arch_args[arch])
       system "make", "depend"
       system "make"
-      system "make", "test"
+      system "make", "test" if Hardware::CPU.can_run? arch
 
       if build.with? "universal"
         cp "include/openssl/opensslconf.h", dir
