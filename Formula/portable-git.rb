@@ -16,6 +16,7 @@ class PortableGit < PortableFormula
     depends_on "portable-expat" => :build
   end
 
+  depends_on "portable-openssl" => :build
   depends_on "portable-zlib" => :build if OS.linux?
 
   # ld64 understands -rpath but rejects it on Tiger
@@ -56,7 +57,6 @@ class PortableGit < PortableFormula
     ENV["NO_PERL_MAKEMAKER"] = "1"
     ENV["NO_GETTEXT"] = "1"
     ENV["NO_TCLTK"] = "1"
-    ENV["NO_OPENSSL"] = "1"
     if OS.linux? || OS::Mac.version < :leopard
       ENV["EXPATDIR"] = expat.opt_prefix
     end
