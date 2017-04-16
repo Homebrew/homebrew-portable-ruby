@@ -39,6 +39,7 @@ class PortableOpenssl < PortableFormula
       {
         :x86_64 => %w[linux-x86_64],
         :i386  => %w[linux-generic32],
+        :arm => %w[linux-armv4],
       }
     end
   end
