@@ -1,0 +1,55 @@
+# vim: set ft=dockerfile:
+
+FROM resin/rpi-raspbian:wheezy
+MAINTAINER Homebrew Maintainers <homebrew-discuss@googlegroups.com>
+
+RUN apt-get update -y
+RUN apt-get install build-essential file -y
+RUN apt-get install vim curl git -y
+
+RUN apt-get install libyaml-dev libssl-dev libreadline-dev -y
+RUN git clone --depth=1 https://github.com/rbenv/rbenv.git /opt/rbenv && \
+    echo 'export PATH=/opt/rbenv/bin:$PATH; \
+          export RBENV_ROOT=/opt/rbenv/var/rbenv; \
+          eval "$(rbenv init -)"' >>/etc/rbenv && \
+    echo '. /etc/rbenv' >>/etc/bash.bashrc
+RUN . /etc/rbenv && \
+    git clone --depth=1 https://github.com/rbenv/ruby-build.git \
+        /opt/rbenv/plugins/ruby-build && \
+    (cd /opt/rbenv/plugins/ruby-build; ./install.sh) && \
+    rbenv install 2.0.0-p648 && \
+    rbenv global 2.0.0-p648
+
+# the native /usr/bin/ldd will have trouble when running inside QEMU VM.
+# use ldd from crosstool-ng instead.
+RUN curl https://raw.githubusercontent.com/crosstool-ng/crosstool-ng/master/scripts/xldd.in \
+         -L -o /usr/local/bin/ldd && \
+    chmod +x /usr/local/bin/ldd && \
+    sed -i 's|@@CT_bash@@|/bin/bash|g' /usr/local/bin/ldd && \
+    sed -i 's|@@CT_BITS@@|32|g' /usr/local/bin/ldd && \
+    sed -i 's|@@CT_sed@@|sed|g' /usr/local/bin/ldd && \
+    sed -i 's|@@CT_grep@@|grep|g' /usr/local/bin/ldd && \
+    sed -i 's|prefix=.*|prefix=arm-linux-gnueabihf|g' /usr/local/bin/ldd && \
+    sed -i 's|${CT_XLDD_ROOT}|/|g' /usr/local/bin/ldd
+
+RUN useradd -m -s /bin/bash linuxbrew && \
+    echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+
+USER linuxbrew
+WORKDIR /home/linuxbrew
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
+    SHELL=/bin/bash \
+    HOMEBREW_BUILD_BOTTLE=1 \
+    HOMEBREW_BUILD_FROM_SOURCE=1 \
+    HOMEBREW_CC=cc \
+    HOMEBREW_DEVELOPER=1 \
+    HOMEBREW_NO_ANALYTICS=1 \
+    HOMEBREW_NO_AUTO_UPDATE=1
+
+RUN . /etc/rbenv && \
+    git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
+    brew analytics off && \
+    brew tap homebrew/core && \
+    brew tap homebrew/portable && \
+    brew install patchelf
+
