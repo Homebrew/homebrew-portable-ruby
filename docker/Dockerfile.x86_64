@@ -1,3 +1,5 @@
+# vim: set ft=dockerfile:
+
 # We want a sufficiently old glibc to be backwards compatible.
 FROM centos:centos5
 MAINTAINER Homebrew Maintainers <homebrew-discuss@googlegroups.com>
