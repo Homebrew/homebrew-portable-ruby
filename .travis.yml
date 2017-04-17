@@ -1,7 +1,7 @@
 language: ruby
 os: osx
-env: OSX=10.12
-osx_image: xcode8.1
+env: OSX=10.10
+osx_image: xcode6.4
 rvm: system
 before_install:
   - export TRAVIS_COMMIT="$(git rev-parse --verify -q HEAD)"
@@ -19,7 +19,7 @@ before_install:
   - export HOMEBREW_DEVELOPER="1"
   - ulimit -n 1024
 script:
-  - brew test-bot
+  - brew test-bot --skip-relocation
 notifications:
   email:
     on_success: never
