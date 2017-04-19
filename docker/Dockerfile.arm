@@ -30,7 +30,8 @@ RUN curl https://raw.githubusercontent.com/crosstool-ng/crosstool-ng/master/scri
     sed -i 's|@@CT_sed@@|sed|g' /usr/local/bin/ldd && \
     sed -i 's|@@CT_grep@@|grep|g' /usr/local/bin/ldd && \
     sed -i 's|prefix=.*|prefix=arm-linux-gnueabihf|g' /usr/local/bin/ldd && \
-    sed -i 's|${CT_XLDD_ROOT}|/|g' /usr/local/bin/ldd
+    sed -i 's|${CT_XLDD_ROOT}|/|g' /usr/local/bin/ldd && \
+    sed -i 's|%8s|\t%s|g' /usr/local/bin/ldd
 
 RUN useradd -m -s /bin/bash linuxbrew && \
     echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
