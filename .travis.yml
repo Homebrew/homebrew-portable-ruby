@@ -20,6 +20,7 @@ before_install:
   - ulimit -n 1024
 script:
   - brew test-bot --skip-relocation
+  - brew portable-package portable-ruby
 notifications:
   email:
     on_success: never
