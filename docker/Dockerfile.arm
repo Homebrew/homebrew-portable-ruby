@@ -43,7 +43,6 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     HOMEBREW_BUILD_BOTTLE=1 \
     HOMEBREW_BUILD_FROM_SOURCE=1 \
     HOMEBREW_CC=cc \
-    HOMEBREW_DEVELOPER=1 \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
 
@@ -51,6 +50,10 @@ RUN . /etc/rbenv && \
     git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
     brew analytics off && \
     brew tap homebrew/core && \
-    brew tap homebrew/portable && \
+    brew tap homebrew/portable
+
+ENV HOMEBREW_DEVELOPER=1
+
+RUN . /etc/rbenv && \
     brew install patchelf
 
