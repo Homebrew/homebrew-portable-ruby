@@ -1,5 +1,5 @@
 # Homebrew Portable
-Formulae and tools to build versions of Ruby, Git and Curl that can be installed and run from anywhere on the filesystem.
+Formulae and tools to build versions of Ruby that can be installed and run from anywhere on the filesystem.
 
 ## How do I install these formulae?
 Just `brew install homebrew/portable/<formula>`.
@@ -28,17 +28,13 @@ brew portable-package <formula>
 
 | Formula | macOS 10.12 | OS X 10.5 | OS X 10.4 | Linux (x86_64) | Linux (32-bit ARM) |
 | :-: | :-: | :-: | :-: | :-: | :-: |
-| c-ares | N/A | N/A | N/A | :white_check_mark: | |
 | zlib | N/A | N/A | N/A | :white_check_mark: | |
 | ncurses | N/A | N/A | N/A | :white_check_mark: | |
-| expat | N/A | N/A | :white_check_mark: | :white_check_mark: | |
 | OpenSSL | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
 | Readline | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
 | libYAML | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
 | Ruby 2.0 | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[2] | |
-| Ruby 2.2 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark::warning:[2] | |
-| Curl | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
-| Git | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
+| Ruby 2.3 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark::warning:[2] | |
 
 macOS/OS X builds on 10.6 and newer target 32-bit/64-bit Intel Macs. OS X builds on 10.4 and 10.5 target 32-bit PowerPC and Intel Macs.
 
