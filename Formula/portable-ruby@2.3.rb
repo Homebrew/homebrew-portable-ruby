@@ -27,6 +27,15 @@ class PortableRubyAT23 < PortableFormula
     sha256 "17a6a37e500f3455bb85e6bd4b077228d7a32f63bf07ecf67248acbd3a5ea724"
   end
 
+  # Fixes the build of dir.c on 10.5 due to missing fgetattrlist:
+  # https://bugs.ruby-lang.org/issues/13573
+  # This has been backported into the 2.3 branch, but isn't in the
+  # release we're building.
+  patch do
+    url "https://github.com/ruby/ruby/commit/1c80c388d5bd48018c419a2ea3ed9f7b7514dfa3.patch?full_index=1"
+    sha256 "8ba0a24a36702d2cbc94aa73cb6f0b11793348b0158c11c8608e073c71601bb5"
+  end
+
   def install
     # mcontext types had a member named `ss` instead of `__ss`
     # prior to Leopard; see
