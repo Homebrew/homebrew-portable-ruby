@@ -3,8 +3,7 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableRuby < PortableFormula
   desc "Portable ruby"
   homepage "https://www.ruby-lang.org/"
-  # This isn't the latest 2.3.3, but it matches the version shipped
-  # in current betas of macOS 10.13.
+  # This isn't the latest 2.3.3 but is the version shipped in macOS 10.13.
   url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
   mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
   sha256 "882e6146ed26c6e78c02342835f5d46b86de95f0dc4e16543294bc656594cc5b"
