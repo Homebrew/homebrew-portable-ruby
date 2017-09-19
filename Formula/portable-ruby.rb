@@ -68,7 +68,6 @@ class PortableRuby < PortableFormula
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
-      --disable-dln
       --with-out-ext=tk,sdbm,gdbm,dbm,dl,coverage,fiddle
       --disable-install-doc
       --disable-install-rdoc
@@ -145,5 +144,9 @@ class PortableRuby < PortableFormula
     system testpath/"bin/gem", "environment"
     system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
+    # install gem with native components
+    system testpath/"bin/gem", "install", "byebug"
+    assert_match "byebug",
+      shell_output("#{testpath}/bin/byebug --version")
   end
 end
