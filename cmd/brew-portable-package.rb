@@ -12,6 +12,7 @@
 #:    A new commit will then be generated unless `--no-commit` is passed.
 
 ENV["HOMEBREW_DEVELOPER"] = "1"
+ENV["HOMEBREW_PREFER_64_BIT"] = "1"
 
 include FileUtils
 
