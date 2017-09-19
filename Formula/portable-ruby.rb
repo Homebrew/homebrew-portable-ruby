@@ -74,10 +74,10 @@ class PortableRuby < PortableFormula
       --disable-dtrace
     ]
 
-    if OS.mac? && build.with?("universal")
-      # This is only necessary on stdenv
-      if MacOS.version < :snow_leopard && !superenv?
-        # This will break the 32-bit PPC slice otherwise
+    if OS.mac?
+      if build.with?("universal") && MacOS.version < :snow_leopard && !superenv?
+        # This will break the 32-bit PPC slice otherwise (this is only
+        # necessary on stdenv)
         ENV.replace_in_cflags(/-march=\S*/, "-Xarch_i386 \\0")
         ENV.replace_in_cflags(/-mcpu=\S*/, "-Xarch_ppc \\0")
       end
