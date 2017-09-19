@@ -33,15 +33,13 @@ brew portable-package <formula>
 | OpenSSL | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
 | Readline | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
 | libYAML | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
-| Ruby 2.0 | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[1] | :white_check_mark::warning:[2] | |
-| Ruby 2.3 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark::warning:[2] | |
+| Ruby 2.3 | :white_check_mark::warning: | :white_check_mark::warning: | :white_check_mark::warning: | :white_check_mark::warning:[1] | |
 
 macOS/OS X builds on 10.6 and newer target 32-bit/64-bit Intel Macs. OS X builds on 10.4 and 10.5 target 32-bit PowerPC and Intel Macs.
 
 Linux builds target x86_64 and 32-bit ARM (Raspberry Pi) platforms.
 
-1. Single architecture only for macOS builds, as universal build is broken. It appears to be Ruby's bug, as it's fixed for Ruby 2.1.
-2. `irb` on Linux builds seems to fail to link to ncurses statically. If `portable-ncurses` is removed, `irb` will fail to handle left, right or backspace keystroke.
+1. `irb` on Linux builds seems to fail to link to ncurses statically. If `portable-ncurses` is removed, `irb` will fail to handle left, right or backspace keystroke.
 
 
 ## License
