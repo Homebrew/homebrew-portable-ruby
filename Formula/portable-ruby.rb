@@ -58,6 +58,14 @@ class PortableRuby < PortableFormula
       end
     end
 
+    # Fixes includedir inappropriately prefixed with SDKROOT:
+    # https://bugs.ruby-lang.org/issues/13572
+    # This has been backported into the 2.3 branch, but isn't in the
+    # release we're building and can't be cherry-picked cleanly.
+    inreplace "tool/mkconfig.rb",
+              "when /^includedir$/",
+              "when /^oldincludedir$/"
+
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
