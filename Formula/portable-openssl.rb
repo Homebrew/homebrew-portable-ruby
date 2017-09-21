@@ -3,10 +3,9 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableOpenssl < PortableFormula
   desc "Portable OpenSSL"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.0.2k.tar.gz"
-  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.0.2k.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.0.2k.tar.gz"
-  sha256 "6b3977c61f2aedf0f96367dcfb5c6e578cf37e7b8d913b4ecb6643c3cb88d8c0"
+  url "https://www.openssl.org/source/openssl-1.0.2l.tar.gz"
+  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.0.2l.tar.gz"
+  sha256 "ce07195b659e75f4e1db43552860070061f156a98bb37b672b101ba6e3ddf30c"
 
   depends_on "makedepend" => :build
   depends_on "portable-zlib" => :build if OS.linux?
@@ -33,7 +32,7 @@ class PortableOpenssl < PortableFormula
         :x86_64 => %w[darwin64-x86_64-cc enable-ec_nistp_64_gcc_128],
         :i386   => %w[darwin-i386-cc],
         :ppc    => %w[darwin-ppc-cc],
-        :ppc64  => %w[darwin64-ppc-cc]
+        :ppc64  => %w[darwin64-ppc-cc],
       }
     else
       {
@@ -69,9 +68,11 @@ class PortableOpenssl < PortableFormula
     # path, which is empty in a SIP context. This patch will be unnecessary
     # when we begin building openssl with no-comp to disable TLS compression.
     # https://langui.sh/2015/11/27/sip-and-dlopen
-    inreplace "crypto/comp/c_zlib.c",
-              'zlib_dso = DSO_load(NULL, "z", NULL, 0);',
-              'zlib_dso = DSO_load(NULL, "/usr/lib/libz.dylib", NULL, DSO_FLAG_NO_NAME_TRANSLATION);' if OS.mac?
+    if OS.mac?
+      inreplace "crypto/comp/c_zlib.c",
+                'zlib_dso = DSO_load(NULL, "z", NULL, 0);',
+                'zlib_dso = DSO_load(NULL, "/usr/lib/libz.dylib", NULL, DSO_FLAG_NO_NAME_TRANSLATION);'
+    end
 
     dirs = []
 

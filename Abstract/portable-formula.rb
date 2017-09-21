@@ -16,7 +16,7 @@ module PortableFormulaMixin
       # our arches differ from the usual defaults.
       if build.with?("universal")
         ENV.permit_arch_flags
-        ENV.append_to_cflags archs.map {|a| "-arch #{a}"}.join(" ")
+        ENV.append_to_cflags archs.map { |a| "-arch #{a}" }.join(" ")
       end
 
       # Always prefer to linking to portable libs.
@@ -36,7 +36,7 @@ module PortableFormulaMixin
   end
 
   def test
-    assert_no_match %r{Homebrew libraries},
+    assert_no_match /Homebrew libraries/,
       shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}")
 
     super
@@ -48,27 +48,21 @@ class PortableFormula < Formula
     subclass.class_eval do
       keg_only "portable formulae are keg-only"
 
-      # TODO remove `subclass.name !~ /PortableRuby$/` when updating portable-ruby to 2.1 or above.
-      option "without-universal", "Don't build a universal binary" if OS.mac? && subclass.name !~ /PortableRuby$/
+      option "without-universal", "Don't build a universal binary" if OS.mac?
 
       prepend PortableFormulaMixin
     end
   end
 
   def archs
-    # TODO remove below block when updating portable-ruby to 2.1 or above.
-    if name == "portable-ruby"
-      return [Hardware::CPU.arch_32_bit]
-    end
-
-    # On Tiger and Leopard, override the default behaviour.
+    # On Tiger override the default behaviour.
     # Normally we don't build 64-bit there, because the linker is
     # temperamental, and so "universal" builds don't usually happen.
     # However, for the purposes of distributing portable packages,
     # it's very useful to be able to build i386/ppc binaries for use
     # on both Intel and PowerPC Macs. The Apple-provided compilers
     # are capable of this on both Intel and PowerPC hosts.
-    if OS.mac? && OS::Mac.version < :snow_leopard
+    if OS.mac? && OS::Mac.version < :leopard
       if build.with? "universal"
         return [:i386, :ppc]
       else

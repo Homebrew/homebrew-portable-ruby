@@ -3,16 +3,12 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableRuby < PortableFormula
   desc "Portable ruby"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p648.tar.bz2"
-  mirror "http://cache.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p648.tar.bz2"
-  sha256 "087ad4dec748cfe665c856dbfbabdee5520268e94bb81a1d8565d76c3cc62166"
+  # This isn't the latest 2.3.3 but is the version shipped in macOS 10.13.
+  url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
+  mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
+  sha256 "882e6146ed26c6e78c02342835f5d46b86de95f0dc4e16543294bc656594cc5b"
 
-  bottle do
-    cellar :any_skip_relocation
-    sha256 "5c1240abe4be91c9774a0089c2a38a8ccfff87c009e8e5786730c659d5e633f7" => :leopard_64
-    sha256 "dbb5118a22a6a75cc77e62544a3d8786d383fab1bdaf8c154951268807357bf0" => :x86_64_linux
-  end
-
+  depends_on "make" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
   depends_on "portable-readline" => :build
@@ -23,7 +19,53 @@ class PortableRuby < PortableFormula
     depends_on "portable-zlib" => :build
   end
 
+  # Fixes the static build: https://bugs.ruby-lang.org/issues/13413
+  # This has been backported into the 2.3 branch, but isn't in the
+  # release we're building.
+  patch do
+    url "https://github.com/ruby/ruby/commit/b3dbeb6e90f316584f70e33f6bfb9d83fa5f30d3.patch?full_index=1"
+    sha256 "17a6a37e500f3455bb85e6bd4b077228d7a32f63bf07ecf67248acbd3a5ea724"
+  end
+
+  # Fixes the build of dir.c on 10.5 due to missing fgetattrlist:
+  # https://bugs.ruby-lang.org/issues/13573
+  # This has been backported into the 2.3 branch, but isn't in the
+  # release we're building.
+  patch do
+    url "https://github.com/ruby/ruby/commit/1c80c388d5bd48018c419a2ea3ed9f7b7514dfa3.patch?full_index=1"
+    sha256 "8ba0a24a36702d2cbc94aa73cb6f0b11793348b0158c11c8608e073c71601bb5"
+  end
+
   def install
+    # mcontext types had a member named `ss` instead of `__ss`
+    # prior to Leopard; see
+    # https://github.com/mistydemeo/tigerbrew/issues/473
+    if OS.mac? && Hardware::CPU.intel? && MacOS.version < :leopard
+      inreplace "signal.c" do |s|
+        s.gsub! "->__ss.", "->ss."
+        s.gsub! "__rsp", "rsp"
+        s.gsub! "__esp", "esp"
+      end
+
+      inreplace "vm_dump.c" do |s|
+        s.gsub! /uc_mcontext->__(ss)\.__(r\w\w)/,
+                "uc_mcontext->\1.\2"
+        s.gsub! "mctx->__ss.__##reg",
+                "mctx->ss.reg"
+        # missing include in vm_dump; this is an ugly solution
+        s.gsub! '#include "iseq.h"',
+                %Q(#include "iseq.h"\n#include <ucontext.h>)
+      end
+    end
+
+    # Fixes includedir inappropriately prefixed with SDKROOT:
+    # https://bugs.ruby-lang.org/issues/13572
+    # This has been backported into the 2.3 branch, but isn't in the
+    # release we're building and can't be cherry-picked cleanly.
+    inreplace "tool/mkconfig.rb",
+              "when /^includedir$/",
+              "when /^oldincludedir$/"
+
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
@@ -34,7 +76,6 @@ class PortableRuby < PortableFormula
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
-      --disable-dln
       --with-out-ext=tk,sdbm,gdbm,dbm,dl,coverage,fiddle
       --disable-install-doc
       --disable-install-rdoc
@@ -42,10 +83,11 @@ class PortableRuby < PortableFormula
     ]
 
     if OS.mac?
-      if build.with? "universal"
-        ENV.universal_binary
-      else
-        ENV.permit_arch_flags
+      if build.with?("universal") && MacOS.version < :snow_leopard && !superenv?
+        # This will break the 32-bit PPC slice otherwise (this is only
+        # necessary on stdenv)
+        ENV.replace_in_cflags(/-march=\S*/, "-Xarch_i386 \\0")
+        ENV.replace_in_cflags(/-mcpu=\S*/, "-Xarch_ppc \\0")
       end
       args << "--with-arch=#{archs.join(",")}"
     end
@@ -63,10 +105,6 @@ class PortableRuby < PortableFormula
         s.gsub! "dir_config('termcap')", ""
         s.gsub! 'have_library("termcap", "tgetnum") ||', ""
       end
-      inreplace "ext/curses/extconf.rb" do |s|
-        s.gsub! "dir_config('termcap')", ""
-        s.gsub! 'or have_library("termcap", "tgetent")', ""
-      end
 
       paths << zlib.opt_prefix
     end
@@ -74,8 +112,12 @@ class PortableRuby < PortableFormula
     args << "--with-opt-dir=#{paths.join(":")}"
 
     system "./configure", *args
-    system "make"
-    system "make", "install"
+    make
+    make "install"
+
+    # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
+    # We don't need the binstub so remove it.
+    rm bin/"rake"
 
     abi_version = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["ruby_version"]'`
     abi_arch = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["arch"]'`
@@ -114,5 +156,9 @@ class PortableRuby < PortableFormula
     system testpath/"bin/gem", "environment"
     system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
+    # install gem with native components
+    system testpath/"bin/gem", "install", "byebug"
+    assert_match "byebug",
+      shell_output("#{testpath}/bin/byebug --version")
   end
 end
