@@ -115,6 +115,10 @@ class PortableRuby < PortableFormula
     make
     make "install"
 
+    # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
+    # We don't need the binstub so remove it.
+    rm bin/"rake"
+
     abi_version = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["ruby_version"]'`
     abi_arch = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["arch"]'`
     inreplace lib/"ruby/#{abi_version}/#{abi_arch}/rbconfig.rb" do |s|
