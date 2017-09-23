@@ -1,17 +1,36 @@
 language: ruby
-os: osx
-osx_image: xcode8.3
-rvm: system
+matrix:
+  fast_finish: true
+  include:
+    - os: osx
+      osx_image: xcode8.3
+      rvm: system
+    - os: linux
+      sudo: required
+      dist: trusty
+      rvm: 2.3.3
 
 before_install:
   - export HOMEBREW_DEVELOPER=1
+  - export HOMEBREW_NO_AUTO_UPDATE=1
   - if [ -f ".git/shallow" ]; then
       travis_retry git fetch --unshallow;
     fi
-  - HOMEBREW_REPOSITORY="$(brew --repo)"
-  - sudo chown -R "$USER" "$HOMEBREW_REPOSITORY"
-  - git -C "$HOMEBREW_REPOSITORY" fetch;
-  - git -C "$HOMEBREW_REPOSITORY" reset --hard origin/master;
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      HOMEBREW_REPOSITORY="$(brew --repo)";
+      sudo chown -R "$USER" "$HOMEBREW_REPOSITORY";
+      git -C "$HOMEBREW_REPOSITORY" fetch;
+      git -C "$HOMEBREW_REPOSITORY" reset --hard origin/master;
+    else
+      HOME=/home/linuxbrew;
+      sudo mkdir $HOME;
+      sudo chown "$USER:" $HOME;
+      git clone --depth=1 https://github.com/Linuxbrew/brew $HOME/.linuxbrew/Homebrew;
+      mkdir $HOME/.linuxbrew/bin;
+      ln -s ../Homebrew/bin/brew $HOME/.linuxbrew/bin/;
+      PATH=$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH;
+      export HOMEBREW_BUILD_FROM_SOURCE=1;
+    fi
   - HOMEBREW_TAP_DIR="$(brew --repo "$TRAVIS_REPO_SLUG")"
   - mkdir -p "$HOMEBREW_TAP_DIR"
   - rm -rf "$HOMEBREW_TAP_DIR"
