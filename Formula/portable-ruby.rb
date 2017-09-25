@@ -8,6 +8,12 @@ class PortableRuby < PortableFormula
   mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
   sha256 "882e6146ed26c6e78c02342835f5d46b86de95f0dc4e16543294bc656594cc5b"
 
+  bottle do
+    cellar :any_skip_relocation
+    rebuild 1
+    sha256 "34ce9e4c9c1be28db564d744165aa29291426f8a3d2ef806ba4f0b9175aedb2b" => :leopard_64_or_later
+  end
+
   depends_on "make" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
@@ -76,7 +82,7 @@ class PortableRuby < PortableFormula
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
-      --with-out-ext=tk,sdbm,gdbm,dbm,dl,coverage,fiddle
+      --with-out-ext=tk,sdbm,gdbm,dbm,dl,fiddle
       --disable-install-doc
       --disable-install-rdoc
       --disable-dtrace

@@ -17,7 +17,6 @@ ENV["HOMEBREW_PREFER_64_BIT"] = "1"
 include FileUtils
 
 BOTTLE_ARGS = %w[
-  --no-rebuild
   --keep-old
   --write
   --no-commit
