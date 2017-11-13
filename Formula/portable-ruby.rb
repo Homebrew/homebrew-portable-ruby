@@ -17,6 +17,7 @@ class PortableRuby < PortableFormula
   end
 
   depends_on "autoconf" => :build
+  depends_on "bison" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "make" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
