@@ -3,10 +3,12 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableRuby < PortableFormula
   desc "Portable ruby"
   homepage "https://www.ruby-lang.org/"
-  # This isn't the latest 2.3.3 but is the version shipped in macOS 10.13.
-  url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
-  mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
-  sha256 "882e6146ed26c6e78c02342835f5d46b86de95f0dc4e16543294bc656594cc5b"
+  # Tracks the 2.3 maintenance branch.
+  # We don't need to update for every new commit in this branch;
+  # we should update when something important comes up though.
+  url "https://github.com/ruby/ruby.git",
+    :revision => "463a56d14b9241c8631d71d286760ea092d70c36"
+  version "2.3-2017-09-15"
 
   bottle do
     cellar :any_skip_relocation
@@ -14,6 +16,8 @@ class PortableRuby < PortableFormula
     sha256 "34ce9e4c9c1be28db564d744165aa29291426f8a3d2ef806ba4f0b9175aedb2b" => :leopard_64_or_later
   end
 
+  depends_on "autoconf" => :build
+  depends_on "bison" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "make" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
@@ -23,23 +27,6 @@ class PortableRuby < PortableFormula
   if OS.linux?
     depends_on "portable-ncurses" => :build
     depends_on "portable-zlib" => :build
-  end
-
-  # Fixes the static build: https://bugs.ruby-lang.org/issues/13413
-  # This has been backported into the 2.3 branch, but isn't in the
-  # release we're building.
-  patch do
-    url "https://github.com/ruby/ruby/commit/b3dbeb6e90f316584f70e33f6bfb9d83fa5f30d3.patch?full_index=1"
-    sha256 "17a6a37e500f3455bb85e6bd4b077228d7a32f63bf07ecf67248acbd3a5ea724"
-  end
-
-  # Fixes the build of dir.c on 10.5 due to missing fgetattrlist:
-  # https://bugs.ruby-lang.org/issues/13573
-  # This has been backported into the 2.3 branch, but isn't in the
-  # release we're building.
-  patch do
-    url "https://github.com/ruby/ruby/commit/1c80c388d5bd48018c419a2ea3ed9f7b7514dfa3.patch?full_index=1"
-    sha256 "8ba0a24a36702d2cbc94aa73cb6f0b11793348b0158c11c8608e073c71601bb5"
   end
 
   def install
@@ -63,14 +50,6 @@ class PortableRuby < PortableFormula
                 %Q(#include "iseq.h"\n#include <ucontext.h>)
       end
     end
-
-    # Fixes includedir inappropriately prefixed with SDKROOT:
-    # https://bugs.ruby-lang.org/issues/13572
-    # This has been backported into the 2.3 branch, but isn't in the
-    # release we're building and can't be cherry-picked cleanly.
-    inreplace "tool/mkconfig.rb",
-              "when /^includedir$/",
-              "when /^oldincludedir$/"
 
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
@@ -117,13 +96,11 @@ class PortableRuby < PortableFormula
 
     args << "--with-opt-dir=#{paths.join(":")}"
 
+    system "autoconf"
+
     system "./configure", *args
     make
     make "install"
-
-    # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
-    # We don't need the binstub so remove it.
-    rm bin/"rake"
 
     abi_version = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["ruby_version"]'`
     abi_arch = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["arch"]'`
@@ -147,7 +124,7 @@ class PortableRuby < PortableFormula
     cp_r Dir["#{prefix}/*"], testpath
     ENV["PATH"] = "/usr/bin:/bin"
     ruby = (testpath/"bin/ruby").realpath
-    assert_equal version.to_s.split("-").first, shell_output("#{ruby} -e 'puts RUBY_VERSION'").strip
+    assert_equal version.to_s.split("-").first, shell_output("#{ruby} -e 'puts RUBY_VERSION'").strip.rpartition(".")[0]
     assert_equal ruby.to_s, shell_output("#{ruby} -e 'puts RbConfig.ruby'").strip
     assert_equal "3632233996",
       shell_output("#{ruby} -rzlib -e 'puts Zlib.crc32(\"test\")'").strip
