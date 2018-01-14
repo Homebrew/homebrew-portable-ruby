@@ -1,4 +1,4 @@
-# Homebrew Portable
+# Homebrew Portable Ruby
 Formulae and tools to build versions of Ruby that can be installed and run from anywhere on the filesystem.
 
 ## How do I install these formulae?
