@@ -2,7 +2,7 @@
 Formulae and tools to build versions of Ruby that can be installed and run from anywhere on the filesystem.
 
 ## How do I install these formulae?
-Just `brew install homebrew/portable/<formula>`.
+Just `brew install homebrew/portable-ruby/<formula>`.
 
 ## How do I build packages for these formulae?
 ### macOS
@@ -44,4 +44,4 @@ Linux builds target x86_64 and 32-bit ARM (Raspberry Pi) platforms.
 
 ## License
 
-Code is under the [BSD 2 Clause (NetBSD) license](https://github.com/Homebrew/homebrew-portable/blob/master/LICENSE.txt).
+Code is under the [BSD 2 Clause (NetBSD) license](https://github.com/Homebrew/homebrew-portable-ruby/blob/master/LICENSE.txt).
