@@ -27,7 +27,16 @@ class PortableGit < PortableFormula
     end
   end
 
+  resource "curl-ca-bundle" do
+    url "https://curl.haxx.se/ca/cacert-2018-01-17.pem"
+    sha256 "defe310a0184a12e4b1b3d147f1d77395dd7a09e3428373d019bef5d542ceba3"
+  end
+
   def install
+    resource("curl-ca-bundle").stage do
+      libexec.install "cacert-2018-01-17.pem" => "cert.pem"
+    end
+
     if OS.mac? && MacOS.version < :leopard
       tar = Formula["gnu-tar"]
       tab = Tab.for_keg tar.installed_prefix
