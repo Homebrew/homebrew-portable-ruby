@@ -44,7 +44,7 @@ class PortableGit < PortableFormula
     ENV.universal_binary if build.with? "universal"
 
     # Git Makefile doesn't support to link static libcurl.
-    inreplace "Makefile", "$(CURL_LIBCURL)", `#{curl.opt_bin/"curl-config"} --static-libs`.chomp
+    inreplace "Makefile", "$(CURL_LIBCURL)", `#{curl.opt_libexec/"curl-config"} --static-libs`.chomp
     ENV.append "LDFLAGS", "-L#{zlib.opt_prefix}/lib" if OS.linux?
 
     # If these things are installed, tell Git build system to not use them
