@@ -3,9 +3,8 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableExpat < PortableFormula
   desc "Portable expat"
   homepage "http://www.libexpat.org"
-  url "https://downloads.sourceforge.net/project/expat/expat/2.2.0/expat-2.2.0.tar.bz2"
-  mirror "https://fossies.org/linux/www/expat-2.2.0.tar.bz2"
-  sha256 "d9e50ff2d19b3538bd2127902a89987474e1a4db8e43a66a4d1a712ab9a504ff"
+  url "https://downloads.sourceforge.net/project/expat/expat/2.2.5/expat-2.2.5.tar.bz2"
+  sha256 "d9dc32efba7e74f788fcc4f212a43216fc37cf5f23f4c2339664d473353aedf6"
 
   def install
     ENV.universal_binary if build.with? "universal"
