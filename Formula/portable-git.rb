@@ -84,7 +84,6 @@ class PortableGit < PortableFormula
       GIT_LIBEXEC="$(cd "${0%/*}/.." && pwd -P)/libexec"
       GIT_SSL_CAINFO="$GIT_LIBEXEC/cert.pem" exec "$GIT_LIBEXEC/bin/git" "$@"
     EOS
-    cp curl.opt_libexec/"cert.pem", libexec/"cert.pem"
   end
 
   test do
