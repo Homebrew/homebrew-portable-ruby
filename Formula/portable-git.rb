@@ -75,6 +75,11 @@ class PortableGit < PortableFormula
       CFLAGS=#{ENV.cflags}
       LDFLAGS=#{ENV.ldflags}
     ]
+    # git no longer builds with openssl's SHA1 implementation by default; however,
+    # git's builtin DC_SHA1 implementation seems to have issues on PPC and/or on
+    # gcc-4.2 on PPC, leading it to calculate wrong SHA1s.
+    # We're using openssl anyway; let's use its SHA1.
+    args << "OPENSSL_SHA1=1"
     system "make", "install", *args
 
     (libexec/"bin").mkpath
