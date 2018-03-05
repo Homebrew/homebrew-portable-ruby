@@ -86,7 +86,10 @@ class PortableGit < PortableFormula
     (libexec/"bin").install bin/"git"
     (bin/"git").write <<~EOS
       #!/bin/bash
-      GIT_LIBEXEC="$(cd "${0%/*}/.." && pwd -P)/libexec"
+      GIT_DIR="$(cd "${0%/*}/.." && pwd -P)"
+      GIT_LIBEXEC="$GIT_DIR/libexec"
+      export GIT_TEMPLATE_DIR="$GIT_DIR/share/git-core/templates"
+      export GIT_EXEC_PATH="$GIT_LIBEXEC/git-core"
       GIT_SSL_CAINFO="$GIT_LIBEXEC/cert.pem" exec "$GIT_LIBEXEC/bin/git" "$@"
     EOS
   end
