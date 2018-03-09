@@ -3,7 +3,7 @@ module PortableFormulaMixin
     if OS.mac?
       tag = Hardware::CPU.ppc? ? :tiger : :leopard
       if OS::Mac.version > tag
-        opoo <<-EOS.undent
+        opoo <<~EOS
           You are building portable formula on #{OS::Mac.version}.
           As result, formula won't be able to work for macOS at lower version.
           It's recommended to build this formula on OS X #{tag.capitalize}.
