@@ -112,7 +112,7 @@ class PortableOpenssl < PortableFormula
                      "-output", "#{bin}/openssl"
 
       confs = archs.map do |arch|
-        <<-EOS.undent
+        <<~EOS
           #ifdef __#{arch}__
           #{(buildpath/"build-#{arch}/opensslconf.h").read}
           #endif

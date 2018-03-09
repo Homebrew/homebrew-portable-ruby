@@ -137,7 +137,7 @@ class PortableRuby < PortableFormula
     openssl_rb = lib/"ruby/#{abi_version}/openssl.rb"
     openssl_rb_content = openssl_rb.read
     rm openssl_rb
-    openssl_rb.write <<-EOS.undent
+    openssl_rb.write <<~EOS
       ENV["SSL_CERT_FILE"] ||= File.expand_path("../../libexec/cert.pem", RbConfig.ruby)
       #{openssl_rb_content}
     EOS

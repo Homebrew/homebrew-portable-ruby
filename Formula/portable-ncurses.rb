@@ -76,7 +76,7 @@ class PortableNcurses < PortableFormula
     cp_r Dir["#{prefix}/*"], testpath
     system testpath/"bin/tput", "cols"
 
-    (testpath/"test.c").write <<-EOS.undent
+    (testpath/"test.c").write <<~EOS
       #include <ncursesw/curses.h>
       int main()
       {
