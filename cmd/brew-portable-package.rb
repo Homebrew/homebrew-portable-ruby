@@ -1,7 +1,7 @@
 #: `brew` `portable-package` [`--no-uninstall-deps`] [`--no-rebuild`|`--keep-old`] [`--write` [`--no-commit`]] <formulae>:
 #:    Build and package portable formulae.
 #:
-#:    Unless `--uninstall-deps` is passed, all dependencies of portable
+#:    Unless `--no-uninstall-deps` is passed, all dependencies of portable
 #:    formulae will be uninstalled before test. Useful for developing purpose.
 #:
 #:    If the formula specifies a rebuild version, it will be incremented in the
