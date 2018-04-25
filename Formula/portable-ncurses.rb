@@ -3,20 +3,11 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableNcurses < PortableFormula
   desc "Portable ncurses"
   homepage "https://www.gnu.org/s/ncurses/"
-  url "https://ftpmirror.gnu.org/ncurses/ncurses-6.0.tar.gz"
-  mirror "https://ftp.gnu.org/gnu/ncurses/ncurses-6.0.tar.gz"
-  sha256 "f551c24b30ce8bfb6e96d9f59b42fbea30fa3a6123384172f9e7284bcf647260"
-  revision 1
+  url "https://ftp.gnu.org/gnu/ncurses/ncurses-6.1.tar.gz"
+  mirror "https://ftpmirror.gnu.org/ncurses/ncurses-6.1.tar.gz"
+  sha256 "aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17"
 
   depends_on "pkg-config" => :build
-
-  # stable rollup patch created by upstream see
-  # http://invisible-mirror.net/archives/ncurses/6.0/README
-  resource "ncurses-6.0-20160910-patch.sh" do
-    url "http://invisible-mirror.net/archives/ncurses/6.0/ncurses-6.0-20160910-patch.sh.bz2"
-    mirror "https://www.mirrorservice.org/sites/lynx.invisible-island.net/ncurses/6.0/ncurses-6.0-20160910-patch.sh.bz2"
-    sha256 "f570bcfe3852567f877ee6f16a616ffc7faa56d21549ad37f6649022f8662538"
-  end
 
   def install
     ENV.universal_binary if build.with? "universal"
@@ -29,10 +20,6 @@ class PortableNcurses < PortableFormula
     ENV.append "CPPFLAGS", "-P"
 
     (lib/"pkgconfig").mkpath
-
-    # stage and apply patch
-    buildpath.install resource("ncurses-6.0-20160910-patch.sh")
-    system "sh", "ncurses-6.0-20160910-patch.sh"
 
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",

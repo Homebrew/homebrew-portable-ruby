@@ -7,6 +7,7 @@ class PortableRuby < PortableFormula
   url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
   mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
   sha256 "882e6146ed26c6e78c02342835f5d46b86de95f0dc4e16543294bc656594cc5b"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
@@ -82,10 +83,10 @@ class PortableRuby < PortableFormula
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
-      --with-out-ext=tk,sdbm,gdbm,dbm,dl,fiddle
+      --with-out-ext=tk
       --disable-install-doc
       --disable-install-rdoc
-      --disable-dtrace
+      --disable-dependency-tracking
     ]
 
     if OS.mac?
@@ -95,7 +96,11 @@ class PortableRuby < PortableFormula
         ENV.replace_in_cflags(/-march=\S*/, "-Xarch_i386 \\0")
         ENV.replace_in_cflags(/-mcpu=\S*/, "-Xarch_ppc \\0")
       end
+
       args << "--with-arch=#{archs.join(",")}"
+
+      # DTrace support doesn't build on 10.5 :(
+      args << "--disable-dtrace"
     end
 
     paths = [
