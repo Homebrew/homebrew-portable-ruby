@@ -30,6 +30,7 @@ class PortableRuby < PortableFormula
   # release we're building.
   patch do
     url "https://github.com/ruby/ruby/commit/b3dbeb6e90f316584f70e33f6bfb9d83fa5f30d3.patch?full_index=1"
+    mirror "https://cdn.rawgit.com/sjackman/1b1a420c39f33512d4ed8129277ba1d2/raw/1cfd510dad86f835092e6ab18528e8cee5e801a2/b3dbeb6e90f316584f70e33f6bfb9d83fa5f30d3.patch"
     sha256 "17a6a37e500f3455bb85e6bd4b077228d7a32f63bf07ecf67248acbd3a5ea724"
   end
 
@@ -39,6 +40,7 @@ class PortableRuby < PortableFormula
   # release we're building.
   patch do
     url "https://github.com/ruby/ruby/commit/1c80c388d5bd48018c419a2ea3ed9f7b7514dfa3.patch?full_index=1"
+    mirror "https://cdn.rawgit.com/sjackman/1b1a420c39f33512d4ed8129277ba1d2/raw/1cfd510dad86f835092e6ab18528e8cee5e801a2/1c80c388d5bd48018c419a2ea3ed9f7b7514dfa3.patch"
     sha256 "8ba0a24a36702d2cbc94aa73cb6f0b11793348b0158c11c8608e073c71601bb5"
   end
 
