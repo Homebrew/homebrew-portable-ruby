@@ -83,6 +83,7 @@ class PortableRuby < PortableFormula
       --enable-load-relative
       --with-static-linked-ext
       --with-out-ext=tk
+      --without-gmp
       --disable-install-doc
       --disable-install-rdoc
       --disable-dependency-tracking
