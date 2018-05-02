@@ -163,6 +163,7 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").strip
     assert_match "200",
       shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").strip
+    system "#{ruby}", "-rdbm", "-e", "DBM.new('test')"
     system testpath/"bin/gem", "environment"
     system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
