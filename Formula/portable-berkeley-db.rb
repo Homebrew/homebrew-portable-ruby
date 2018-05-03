@@ -1,3 +1,5 @@
+require File.expand_path("../../Abstract/portable-formula", __FILE__)
+
 class PortableBerkeleyDb < PortableFormula
   desc "High performance key/value database"
   homepage "https://www.oracle.com/technology/products/berkeley-db/index.html"
