@@ -11,8 +11,9 @@ class PortableRuby < PortableFormula
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "b5c320c1bc2c4d42d4674643855c582ba2772fc951689d298ee079b74bac29a7" => :x86_64_linux
     sha256 "f1db8863543d256e6a8e704bf618025030b3d22a7a6b19749d19f599b5554212" => :leopard_64_or_later
+    sha256 "b5c320c1bc2c4d42d4674643855c582ba2772fc951689d298ee079b74bac29a7" => :x86_64_linux
+    sha256 "6ac992c4620912b50b3c74f2d4447d541bac4f1839e557c3edcfdebb141c9802" => :armv6_linux
   end
 
   depends_on "make" => :build if OS.mac? && MacOS.version < :leopard
