@@ -1,7 +1,7 @@
 require File.expand_path("../../Abstract/portable-formula", __FILE__)
 
 class PortableNcurses < PortableFormula
-  desc "Portable ncurses"
+  desc "Text-based UI library"
   homepage "https://www.gnu.org/s/ncurses/"
   url "https://ftp.gnu.org/gnu/ncurses/ncurses-6.1.tar.gz"
   mirror "https://ftpmirror.gnu.org/ncurses/ncurses-6.1.tar.gz"
