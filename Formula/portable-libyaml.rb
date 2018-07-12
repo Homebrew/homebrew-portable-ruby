@@ -1,14 +1,19 @@
 require File.expand_path("../../Abstract/portable-formula", __FILE__)
 
 class PortableLibyaml < PortableFormula
-  desc "Portable libyaml"
-  homepage "http://pyyaml.org/wiki/LibYAML"
-  url "http://pyyaml.org/download/libyaml/yaml-0.1.7.tar.gz"
-  mirror "https://mirrors.kernel.org/debian/pool/main/liby/libyaml/libyaml_0.1.7.orig.tar.gz"
-  sha256 "8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729"
+  desc "YAML Parser"
+  homepage "https://github.com/yaml/libyaml"
+  url "https://github.com/yaml/libyaml/archive/0.2.1.tar.gz"
+  mirror "https://mirrors.kernel.org/debian/pool/main/liby/libyaml/libyaml_0.2.1.orig.tar.gz"
+  sha256 "1d2aeb87f7d317f1496e4c39410d913840714874a354970300f375eec9303dc4"
+
+  depends_on "autoconf" => :build
+  depends_on "automake" => :build
+  depends_on "libtool" => :build
 
   def install
     ENV.universal_binary if build.with? "universal"
+    system "./bootstrap"
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--enable-static",
