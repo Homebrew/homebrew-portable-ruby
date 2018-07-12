@@ -1,7 +1,7 @@
 require File.expand_path("../../Abstract/portable-formula", __FILE__)
 
 class PortableOpenssl < PortableFormula
-  desc "Portable OpenSSL"
+  desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
   url "https://www.openssl.org/source/openssl-1.0.2o.tar.gz"
   mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.0.2o.tar.gz"
