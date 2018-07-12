@@ -3,12 +3,12 @@ matrix:
   fast_finish: true
   include:
     - os: osx
-      osx_image: xcode8.3
+      osx_image: xcode9.4
       rvm: system
     - os: linux
       sudo: required
       dist: trusty
-      rvm: 2.3.3
+      rvm: 2.3.7
 
 before_install:
   - export HOMEBREW_DEVELOPER=1
@@ -31,6 +31,7 @@ before_install:
       PATH=$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH;
       export HOMEBREW_BUILD_FROM_SOURCE=1;
     fi
+  - brew update
   - HOMEBREW_TAP_DIR="$(brew --repo "$TRAVIS_REPO_SLUG")"
   - mkdir -p "$HOMEBREW_TAP_DIR"
   - rm -rf "$HOMEBREW_TAP_DIR"
