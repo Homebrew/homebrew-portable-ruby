@@ -1,13 +1,12 @@
 require File.expand_path("../../Abstract/portable-formula", __FILE__)
 
 class PortableRuby < PortableFormula
-  desc "Portable ruby"
+  desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  # This isn't the latest 2.3.3 but is the version shipped in macOS 10.13.
-  url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
-  mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.bz2"
-  sha256 "882e6146ed26c6e78c02342835f5d46b86de95f0dc4e16543294bc656594cc5b"
-  revision 2
+  # This is the version shipped in macOS 10.13.6.
+  url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.7.tar.bz2"
+  mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.7.tar.bz2"
+  sha256 "18b12fafaf37d5f6c7139c1b445355aec76baa625a40300598a6c8597fc04d8e"
 
   bottle do
     cellar :any_skip_relocation
@@ -28,23 +27,6 @@ class PortableRuby < PortableFormula
     depends_on "portable-zlib" => :build
   end
 
-  # Fixes the static build: https://bugs.ruby-lang.org/issues/13413
-  # This has been backported into the 2.3 branch, but isn't in the
-  # release we're building.
-  patch do
-    url "https://github.com/ruby/ruby/commit/b3dbeb6e90f316584f70e33f6bfb9d83fa5f30d3.patch?full_index=1"
-    sha256 "17a6a37e500f3455bb85e6bd4b077228d7a32f63bf07ecf67248acbd3a5ea724"
-  end
-
-  # Fixes the build of dir.c on 10.5 due to missing fgetattrlist:
-  # https://bugs.ruby-lang.org/issues/13573
-  # This has been backported into the 2.3 branch, but isn't in the
-  # release we're building.
-  patch do
-    url "https://github.com/ruby/ruby/commit/1c80c388d5bd48018c419a2ea3ed9f7b7514dfa3.patch?full_index=1"
-    sha256 "8ba0a24a36702d2cbc94aa73cb6f0b11793348b0158c11c8608e073c71601bb5"
-  end
-
   def install
     # mcontext types had a member named `ss` instead of `__ss`
     # prior to Leopard; see
@@ -57,8 +39,8 @@ class PortableRuby < PortableFormula
       end
 
       inreplace "vm_dump.c" do |s|
-        s.gsub! /uc_mcontext->__(ss)\.__(r\w\w)/,
-                "uc_mcontext->\1.\2"
+        s.gsub!(/uc_mcontext->__(ss)\.__(r\w\w)/,
+                "uc_mcontext->\1.\2")
         s.gsub! "mctx->__ss.__##reg",
                 "mctx->ss.reg"
         # missing include in vm_dump; this is an ugly solution
@@ -66,14 +48,6 @@ class PortableRuby < PortableFormula
                 %Q(#include "iseq.h"\n#include <ucontext.h>)
       end
     end
-
-    # Fixes includedir inappropriately prefixed with SDKROOT:
-    # https://bugs.ruby-lang.org/issues/13572
-    # This has been backported into the 2.3 branch, but isn't in the
-    # release we're building and can't be cherry-picked cleanly.
-    inreplace "tool/mkconfig.rb",
-              "when /^includedir$/",
-              "when /^oldincludedir$/"
 
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
@@ -167,7 +141,7 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").strip
     assert_match "200",
       shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").strip
-    system "#{ruby}", "-rdbm", "-e", "DBM.new('test')"
+    system ruby, "-rdbm", "-e", "DBM.new('test')"
     system testpath/"bin/gem", "environment"
     system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
