@@ -9,19 +9,25 @@ Just `brew install homebrew/portable-ruby/<formula>`.
 Run `brew portable-package <formula>`. Ideally inside an OS X 10.5 VM so it is compatible with old macOS versions.
 
 ### Linux (x86_64)
-Run `brew portable-package <formula>`. Ideally this should be run inside the CentOS 5 Docker container with:
+Run `brew portable-package <formula>`. Ideally this should be run inside the Debian Wheezy Docker container with:
 ```bash
 docker build -f docker/Dockerfile.x86_64 -t homebrew-portable:x86_64 .
-docker run -t -i homebrew-portable:x86_64 /bin/bash
+docker run -t -i homebrew-portable:x86_64
 brew portable-package <formula>
+docker ps -n=5
+CONTAINER_ID=...
+docker cp $CONTAINER_ID:/home/linuxbrew/... .
 ```
 
 ### Linux (32-bit ARM)
-Run `brew portable-package <formula>`. Ideally this should be run inside the Raspbian Docker container with:
+Run `brew portable-package <formula>`. Ideally this should be run inside the Raspbian Wheezy Docker container with:
 ```bash
 docker build -f docker/Dockerfile.arm -t homebrew-portable:arm .
-docker run -t -i homebrew-portable:arm /bin/bash
+docker run -t -i homebrew-portable:arm
 brew portable-package <formula>
+docker ps -n=5
+CONTAINER_ID=...
+docker cp $CONTAINER_ID:/home/linuxbrew/... .
 ```
 
 ## Current Status
