@@ -1,7 +1,7 @@
 require File.expand_path("../../Abstract/portable-formula", __FILE__)
 
 class PortableZlib < PortableFormula
-  desc "Portable zlib"
+  desc "General-purpose lossless data-compression library"
   homepage "http://www.zlib.net/"
   url "http://zlib.net/zlib-1.2.11.tar.gz"
   mirror "https://downloads.sourceforge.net/project/libpng/zlib/1.2.11/zlib-1.2.11.tar.gz"

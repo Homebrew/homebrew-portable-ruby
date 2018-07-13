@@ -1,7 +1,7 @@
 require File.expand_path("../../Abstract/portable-formula", __FILE__)
 
 class PortableReadline < PortableFormula
-  desc "Portable readline"
+  desc "Library for command-line editing"
   homepage "https://tiswww.case.edu/php/chet/readline/rltop.html"
   url "https://ftpmirror.gnu.org/readline/readline-7.0.tar.gz"
   mirror "https://ftp.gnu.org/gnu/readline/readline-7.0.tar.gz"
