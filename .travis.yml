@@ -9,6 +9,7 @@ matrix:
       sudo: required
       dist: trusty
       rvm: 2.3.7
+      services: docker
 
 before_install:
   - export HOMEBREW_DEVELOPER=1
@@ -39,8 +40,6 @@ before_install:
 
 script:
   - brew portable-package --write portable-ruby
-
-notifications:
-  email:
-    on_success: never
-    on_failure: always
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      docker build -f docker/Dockerfile.x86_64 -t homebrew-portable:x86_64 .;
+    fi

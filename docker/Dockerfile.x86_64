@@ -1,40 +1,33 @@
 # vim: set ft=dockerfile:
 
 # We want a sufficiently old glibc to be backwards compatible.
-FROM centos:centos5
-MAINTAINER Homebrew Maintainers <homebrew-discuss@googlegroups.com>
+FROM debian:wheezy
 
-# CentOS 5 has reached end-of-life, as result all of mirrors have stopped working.
-# Switch to use http://vault.centos.org/ instead.
-RUN sed -i '/mirrorlist=.*/d' /etc/yum.repos.d/{CentOS-Base,libselinux}.repo && \
-    sed -i 's|#baseurl=http://mirror.centos.org/centos/$releasever|baseurl=http://vault.centos.org/5.11|g' /etc/yum.repos.d/{CentOS-Base,libselinux}.repo
-
-RUN rpm -Uvh http://dl.fedoraproject.org/pub/archive/epel/5/x86_64/epel-release-5-4.noarch.rpm
-RUN yum groupinstall 'Development Tools' -y
-RUN yum install sudo vim-enhanced which curl git -y
-RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
-    useradd -m -s /bin/bash linuxbrew && \
-    echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+RUN echo 'LANG="en_US.UTF-8"' > /etc/default/locale
+RUN apt-get update
+RUN apt-get install -y git-core locales curl build-essential file vim
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+RUN dpkg-reconfigure --frontend=noninteractive locales
+RUN adduser --disabled-password --gecos "" linuxbrew
 
 USER linuxbrew
 WORKDIR /home/linuxbrew
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
-    SHELL=/bin/bash \
-    CURL_HOME=/home/linuxbrew \
     HOMEBREW_BUILD_BOTTLE=1 \
     HOMEBREW_BUILD_FROM_SOURCE=1 \
-    HOMEBREW_CC=cc \
     HOMEBREW_FORCE_VENDOR_RUBY=1 \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
 
-RUN echo 'insecure' >> /home/linuxbrew/.curlrc
 RUN git clone --depth=1 https://github.com/Linuxbrew/brew /home/linuxbrew/.linuxbrew && \
     brew analytics off && \
-    brew tap homebrew/core && \
-    brew tap homebrew/portable
+    brew tap Homebrew/core && \
+    brew tap Homebrew/portable-ruby
 
 ENV HOMEBREW_DEVELOPER=1
 
 RUN brew install patchelf
 
+# For easy use of `brew pull`
+RUN git config --global user.name "Linuxbrew"
+RUN git config --global user.email "linux@brew.sh"
