@@ -39,7 +39,9 @@ before_install:
   - ln -s "$PWD" "$HOMEBREW_TAP_DIR"
 
 script:
-  - brew portable-package --write portable-ruby
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      docker build -f docker/Dockerfile.x86_64 -t homebrew-portable:x86_64 .;
+      docker build -f docker/Dockerfile.x86_64 -t homebrew-portable-x86_64 .;
+      docker run homebrew-portable-x86_64 brew portable-package --write portable-ruby;
+    else
+      brew portable-package --write portable-ruby;
     fi
