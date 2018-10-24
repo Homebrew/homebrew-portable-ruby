@@ -1,15 +1,21 @@
 # Homebrew Portable Ruby
+
 Formulae and tools to build versions of Ruby that can be installed and run from anywhere on the filesystem.
 
-## How do I install these formulae?
+## How do I install these formulae
+
 Just `brew install homebrew/portable-ruby/<formula>`.
 
-## How do I build packages for these formulae?
+## How do I build packages for these formulae
+
 ### macOS
+
 Run `brew portable-package <formula>`. Ideally inside an OS X 10.5 VM so it is compatible with old macOS versions.
 
 ### Linux (x86_64)
+
 Run `brew portable-package <formula>`. Ideally this should be run inside the Debian Wheezy Docker container with:
+
 ```bash
 docker build -f docker/Dockerfile.x86_64 -t homebrew-portable:x86_64 .
 docker run -t -i homebrew-portable:x86_64
@@ -20,7 +26,9 @@ docker cp $CONTAINER_ID:/home/linuxbrew/... .
 ```
 
 ### Linux (32-bit ARM)
+
 Run `brew portable-package <formula>`. Ideally this should be run inside the Raspbian Wheezy Docker container with:
+
 ```bash
 docker build -f docker/Dockerfile.arm -t homebrew-portable:arm .
 docker run -t -i homebrew-portable:arm
@@ -46,7 +54,6 @@ macOS/OS X builds on 10.6 and newer target 32-bit/64-bit Intel Macs. OS X builds
 Linux builds target x86_64 and 32-bit ARM (Raspberry Pi) platforms.
 
 1. `irb` on Linux builds seems to fail to link to ncurses statically. If `portable-ncurses` is removed, `irb` will fail to handle left, right or backspace keystroke.
-
 
 ## License
 

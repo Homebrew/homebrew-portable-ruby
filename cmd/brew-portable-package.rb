@@ -19,6 +19,7 @@ include FileUtils
 BOTTLE_ARGS = %w[
   --keep-old
   --write
+  --merge
   --no-commit
 ].freeze
 
