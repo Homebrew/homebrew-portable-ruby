@@ -21,7 +21,6 @@ class PortableRuby < PortableFormula
   depends_on "portable-libyaml" => :build
   depends_on "portable-openssl" => :build
   if OS.linux?
-    depends_on "portable-berkeley-db" => :build
     depends_on "portable-ncurses" => :build
     depends_on "portable-zlib" => :build
   end
@@ -58,7 +57,7 @@ class PortableRuby < PortableFormula
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
-      --with-out-ext=tk
+      --with-out-ext=tk,sdbm,gdbm,dbm
       --without-gmp
       --disable-install-doc
       --disable-install-rdoc
@@ -140,7 +139,6 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").strip
     assert_match "200",
       shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").strip
-    system ruby, "-rdbm", "-e", "DBM.new('test')"
     system testpath/"bin/gem", "environment"
     system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
