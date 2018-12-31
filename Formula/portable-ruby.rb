@@ -10,7 +10,7 @@ class PortableRuby < PortableFormula
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "033ac518bb14abdb1bb47d968dc9e967c3ae2035499383a21a79b49d523065d1" => :leopard_64_or_later
+    sha256 "033ac518bb14abdb1bb47d968dc9e967c3ae2035499383a21a79b49d523065d1" => :leopard_64
     sha256 "9df214085a0e566a580eea3dd9eab14a2a94930ff74fbf97fb1284e905c8921d" => :x86_64_linux
   end
 
