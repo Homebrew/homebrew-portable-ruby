@@ -98,8 +98,8 @@ class PortableRuby < PortableFormula
     args << "--with-opt-dir=#{paths.join(":")}"
 
     system "./configure", *args
-    make
-    make "install"
+    system "make"
+    system "make", "install"
 
     # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
     # We don't need the binstub so remove it.
