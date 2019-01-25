@@ -10,11 +10,9 @@ class PortableRuby < PortableFormula
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "033ac518bb14abdb1bb47d968dc9e967c3ae2035499383a21a79b49d523065d1" => :leopard_64
     sha256 "9df214085a0e566a580eea3dd9eab14a2a94930ff74fbf97fb1284e905c8921d" => :x86_64_linux
   end
 
-  depends_on "make" => :build if OS.mac? && MacOS.version < :leopard
   depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
   depends_on "portable-readline" => :build
@@ -26,27 +24,6 @@ class PortableRuby < PortableFormula
   end
 
   def install
-    # mcontext types had a member named `ss` instead of `__ss`
-    # prior to Leopard; see
-    # https://github.com/mistydemeo/tigerbrew/issues/473
-    if OS.mac? && Hardware::CPU.intel? && MacOS.version < :leopard
-      inreplace "signal.c" do |s|
-        s.gsub! "->__ss.", "->ss."
-        s.gsub! "__rsp", "rsp"
-        s.gsub! "__esp", "esp"
-      end
-
-      inreplace "vm_dump.c" do |s|
-        s.gsub!(/uc_mcontext->__(ss)\.__(r\w\w)/,
-                "uc_mcontext->\1.\2")
-        s.gsub! "mctx->__ss.__##reg",
-                "mctx->ss.reg"
-        # missing include in vm_dump; this is an ugly solution
-        s.gsub! '#include "iseq.h"',
-                %Q(#include "iseq.h"\n#include <ucontext.h>)
-      end
-    end
-
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
@@ -63,20 +40,6 @@ class PortableRuby < PortableFormula
       --disable-install-rdoc
       --disable-dependency-tracking
     ]
-
-    if OS.mac?
-      if build.with?("universal") && MacOS.version < :snow_leopard && !superenv?
-        # This will break the 32-bit PPC slice otherwise (this is only
-        # necessary on stdenv)
-        ENV.replace_in_cflags(/-march=\S*/, "-Xarch_i386 \\0")
-        ENV.replace_in_cflags(/-mcpu=\S*/, "-Xarch_ppc \\0")
-      end
-
-      args << "--with-arch=#{archs.join(",")}"
-
-      # DTrace support doesn't build on 10.5 :(
-      args << "--disable-dtrace"
-    end
 
     paths = [
       readline.opt_prefix,

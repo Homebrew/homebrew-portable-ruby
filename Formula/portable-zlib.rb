@@ -15,7 +15,6 @@ class PortableZlib < PortableFormula
   end
 
   def install
-    ENV.universal_binary if build.with? "universal"
     system "./configure", "--static", "--prefix=#{prefix}"
     system "make", "install"
   end

@@ -12,7 +12,6 @@ class PortableLibyaml < PortableFormula
   depends_on "libtool" => :build
 
   def install
-    ENV.universal_binary if build.with? "universal"
     system "./bootstrap"
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
