@@ -1,9 +1,11 @@
 jobs:
 - job: macOS
   pool:
-    vmImage: xcode9-macos10.13
+    vmImage: macOS-10.13
   steps:
     - bash: |
+        set -e
+        sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
         export HOMEBREW_DEVELOPER=1
         export HOMEBREW_NO_AUTO_UPDATE=1
         brew update-reset
@@ -16,17 +18,10 @@ jobs:
     vmImage: ubuntu-16.04
   steps:
     - bash: |
-        export HOMEBREW_DEVELOPER=1
-        export HOMEBREW_NO_AUTO_UPDATE=1
-        export HOMEBREW_BUILD_FROM_SOURCE=1
-        HOME="/home/linuxbrew"
-        sudo mkdir "$HOME"
-        sudo chown "$USER:" "$HOME"
-        git clone --depth=1 https://github.com/Linuxbrew/brew "$HOME/.linuxbrew/Homebrew"
-        mkdir "$HOME/.linuxbrew/bin"
-        ln -s ../Homebrew/bin/brew "$HOME/.linuxbrew/bin/"
-        PATH="$HOME/.linuxbrew/bin:$HOME/.linuxbrew/sbin:$PATH"
-        ln -s "$PWD" "$HOME/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby"
+        set -e
         docker build -f docker/Dockerfile.x86_64 -t homebrew-portable-x86_64 .
-        docker run homebrew-portable-x86_64 brew portable-package portable-ruby
+        # TODO: need to do something like:
+        # docker cp "$PWD" $(docker container ls -lq):"$HOME/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby"
+        # to actually test the correct Git version in this repo
+        # docker run homebrew-portable-x86_64 brew portable-package portable-ruby
       displayName: Tests
