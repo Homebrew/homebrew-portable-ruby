@@ -10,32 +10,23 @@ Just `brew install homebrew/portable-ruby/<formula>`.
 
 ### macOS
 
-Run `brew portable-package <formula>`. Ideally inside an OS X 10.5 VM so it is compatible with old macOS versions.
+Run `brew portable-package ruby`. Ideally inside an OS X 10.5 VM so it is compatible with old macOS versions.
 
-### Linux (x86_64)
+### Linux
 
-Run `brew portable-package <formula>`. Ideally this should be run inside the Debian Wheezy Docker container with:
+Build a Docker image for your architecture.
 
-```bash
-docker build -f docker/Dockerfile.x86_64 -t homebrew-portable:x86_64 .
-docker run -t -i homebrew-portable:x86_64
-brew portable-package <formula>
-docker ps -n=5
-CONTAINER_ID=...
-docker cp $CONTAINER_ID:/home/linuxbrew/... .
+```sh
+docker build -f docker/Dockerfile.x86_64 -t homebrew-portable .
+docker build -f docker/Dockerfile.arm -t homebrew-portable .
+docker build -f docker/Dockerfile.arm64 -t homebrew-portable .
 ```
 
-### Linux (32-bit ARM)
+Build the `portable-ruby` package using that Docker image.
 
-Run `brew portable-package <formula>`. Ideally this should be run inside the Raspbian Wheezy Docker container with:
-
-```bash
-docker build -f docker/Dockerfile.arm -t homebrew-portable:arm .
-docker run -t -i homebrew-portable:arm
-brew portable-package <formula>
-docker ps -n=5
-CONTAINER_ID=...
-docker cp $CONTAINER_ID:/home/linuxbrew/... .
+```sh
+docker run --name=homebrew-portable-ruby -w /bottle homebrew-portable brew portable-package ruby
+docker cp homebrew-portable-ruby:/bottle .
 ```
 
 ## Current Status
