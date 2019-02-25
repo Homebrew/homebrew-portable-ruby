@@ -14,13 +14,11 @@ Run `brew portable-package ruby` inside an OS X 10.9 VM (so it is compatible wit
 
 ### Linux
 
-Build a Docker image for your architecture.
+Build a Docker image for your architecture by running one of the following commands.
 
-```sh
-docker build -f docker/Dockerfile.x86_64 -t homebrew-portable .
-docker build -f docker/Dockerfile.arm -t homebrew-portable .
-docker build -f docker/Dockerfile.arm64 -t homebrew-portable .
-```
+- `docker build -f docker/Dockerfile.x86_64 -t homebrew-portable .`
+- `docker build -f docker/Dockerfile.arm -t homebrew-portable .`
+- `docker build -f docker/Dockerfile.arm64 -t homebrew-portable .`
 
 Build the `portable-ruby` package using that Docker image.
 
