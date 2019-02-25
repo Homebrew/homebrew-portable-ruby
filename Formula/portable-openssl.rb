@@ -29,9 +29,17 @@ class PortableOpenssl < PortableFormula
     else
       args = ["enable-md2"]
       if Hardware::CPU.intel?
-        args << (Hardware::CPU.is_64_bit? ? "linux-x86_64" : "linux-elf")
+        if Hardware::CPU.is_64_bit?
+          args << "linux-x86_64"
+        else
+          args << "linux-elf"
+        end
       elsif Hardware::CPU.arm?
-        args << (Hardware::CPU.is_64_bit? ? "linux-aarch64" : "linux-armv4")
+        if Hardware::CPU.is_64_bit?
+          args << "linux-aarch64"
+        else
+          args << "linux-armv4"
+        end
       end
       args
     end
