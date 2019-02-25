@@ -10,7 +10,7 @@ Just `brew install homebrew/portable-ruby/<formula>`.
 
 ### macOS
 
-Run `brew portable-package ruby`. Ideally inside an OS X 10.5 VM so it is compatible with old macOS versions.
+Run `brew portable-package ruby` inside an OS X 10.9 VM (so it is compatible with all working Homebrew macOS versions).
 
 ### Linux
 
@@ -31,18 +31,9 @@ docker cp homebrew-portable-ruby:/bottle .
 
 ## Current Status
 
-| Formula | macOS 10.12 | OS X 10.5 | OS X 10.4 | Linux (x86_64) | Linux (32-bit ARM) |
-| :-: | :-: | :-: | :-: | :-: | :-: |
-| zlib | N/A | N/A | N/A | :white_check_mark: | |
-| ncurses | N/A | N/A | N/A | :white_check_mark: | |
-| OpenSSL | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
-| Readline | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
-| libYAML | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
-| Ruby 2.3 | :white_check_mark::warning: | :white_check_mark::warning: | :white_check_mark::warning: | :white_check_mark::warning:[1] | |
+Used in production for Homebrew/brew.
 
-macOS/OS X builds on 10.6 and newer target 32-bit/64-bit Intel Macs. OS X builds on 10.4 and 10.5 target 32-bit PowerPC and Intel Macs.
-
-Linux builds target x86_64 and 32-bit ARM (Raspberry Pi) platforms.
+### Linux
 
 1. `irb` on Linux builds seems to fail to link to ncurses statically. If `portable-ncurses` is removed, `irb` will fail to handle left, right or backspace keystroke.
 
