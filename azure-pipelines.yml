@@ -19,6 +19,11 @@ jobs:
   steps:
     - bash: |
         set -e
+        sudo npm install -g dockerfilelint
+        dockerfilelint docker/Dockerfile.*
+      displayName: Lint
+    - bash: |
+        set -e
         docker build -f docker/Dockerfile.x86_64 -t homebrew-portable-x86_64 .
         # TODO: need to do something like:
         # docker cp "$PWD" $(docker container ls -lq):"$HOME/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby"
