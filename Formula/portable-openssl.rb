@@ -25,11 +25,15 @@ class PortableOpenssl < PortableFormula
 
   def arch_args
     if OS.mac?
-      %w[darwin64-x86_64-cc enable-ec_nistp_64_gcc_128]
-    elsif Hardware::CPU.arm?
-      %w[linux-armv4]
+      ["darwin64-x86_64-cc", "enable-ec_nistp_64_gcc_128"]
     else
-      %w[linux-x86_64]
+      args = ["enable-md2"]
+      if Hardware::CPU.intel?
+        args << (Hardware::CPU.is_64_bit? ? "linux-x86_64" : "linux-elf")
+      elsif Hardware::CPU.arm?
+        args << (Hardware::CPU.is_64_bit? ? "linux-aarch64" : "linux-armv4")
+      end
+      args
     end
   end
 
