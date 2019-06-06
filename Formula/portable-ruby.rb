@@ -3,10 +3,10 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  # This is the version shipped in macOS 10.13.6.
-  url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.7.tar.bz2"
-  mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.7.tar.bz2"
-  sha256 "18b12fafaf37d5f6c7139c1b445355aec76baa625a40300598a6c8597fc04d8e"
+  # This is the version shipped in macOS 10.15.
+  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
+  mirror "http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
+  sha256 "dd638bf42059182c1d04af0d5577131d4ce70b79105231c4cc0a60de77b14f2e"
 
   bottle do
     cellar :any_skip_relocation
@@ -104,7 +104,6 @@ class PortableRuby < PortableFormula
     assert_match "200",
       shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").strip
     system testpath/"bin/gem", "environment"
-    system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
     # install gem with native components
     system testpath/"bin/gem", "install", "byebug"
