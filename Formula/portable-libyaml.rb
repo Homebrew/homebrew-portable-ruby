@@ -3,9 +3,8 @@ require File.expand_path("../../Abstract/portable-formula", __FILE__)
 class PortableLibyaml < PortableFormula
   desc "YAML Parser"
   homepage "https://github.com/yaml/libyaml"
-  url "https://github.com/yaml/libyaml/archive/0.2.1.tar.gz"
-  mirror "https://mirrors.kernel.org/debian/pool/main/liby/libyaml/libyaml_0.2.1.orig.tar.gz"
-  sha256 "1d2aeb87f7d317f1496e4c39410d913840714874a354970300f375eec9303dc4"
+  url "https://github.com/yaml/libyaml/archive/0.2.2.tar.gz"
+  sha256 "46bca77dc8be954686cff21888d6ce10ca4016b360ae1f56962e6882a17aa1fe"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
