@@ -1,4 +1,4 @@
-require File.expand_path("../../Abstract/portable-formula", __FILE__)
+require File.expand_path("../Abstract/portable-formula", __dir__)
 
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"

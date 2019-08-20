@@ -1,0 +1,47 @@
+name: GitHub Actions CI
+on:
+  push:
+    branches: master
+  pull_request: []
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+    steps:
+    - name: Set up Git repository
+      uses: actions/checkout@master
+
+    - name: Set up Homebrew
+      run: |
+        brew update-reset /usr/local/Homebrew
+        ln -s "$PWD" "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby"
+      if: matrix.os == 'macOS-latest'
+
+    - name: Check Dockerfile
+      run: |
+        sudo npm install -g dockerfilelint
+        dockerfilelint docker/Dockerfile.*
+      if: matrix.os == 'ubuntu-latest'
+
+    - name: Run brew style
+      run: |
+        brew style homebrew/portable-ruby
+      if: matrix.os == 'macOS-latest'
+
+    - name: Build Docker image
+      run: docker build -f docker/Dockerfile.x86_64 -t homebrew-portable-x86_64 .
+      if: matrix.os == 'ubuntu-latest'
+
+    - name: Build Portable Ruby
+      run: |
+        if [ "$RUNNER_OS" = "Linux" ]; then
+          # TODO: need to do something like:
+          # docker cp "$PWD" $(docker container ls -lq):"$HOME/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby"
+          # to actually test the correct Git version in this repo
+          # docker run homebrew-portable-x86_64 brew portable-package portable-ruby
+          echo TODO docker run homebrew-portable-x86_64 brew portable-package portable-ruby
+        else
+          brew portable-package portable-ruby
+        fi
