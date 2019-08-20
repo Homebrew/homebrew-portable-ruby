@@ -1,4 +1,4 @@
-require File.expand_path("../../Abstract/portable-formula", __FILE__)
+require File.expand_path("../Abstract/portable-formula", __dir__)
 
 class PortableLibyaml < PortableFormula
   desc "YAML Parser"

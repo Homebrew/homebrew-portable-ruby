@@ -1,4 +1,4 @@
-require File.expand_path("../../Abstract/portable-formula", __FILE__)
+require File.expand_path("../Abstract/portable-formula", __dir__)
 
 class PortableReadline < PortableFormula
   desc "Library for command-line editing"

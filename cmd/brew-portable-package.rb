@@ -13,7 +13,7 @@
 
 ENV["HOMEBREW_DEVELOPER"] = "1"
 
-include FileUtils
+include FileUtils # rubocop:disable Style/MixinUsage
 
 BOTTLE_ARGS = %w[
   --keep-old
