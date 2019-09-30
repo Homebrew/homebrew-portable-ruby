@@ -3,15 +3,10 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableLibyaml < PortableFormula
   desc "YAML Parser"
   homepage "https://github.com/yaml/libyaml"
-  url "https://github.com/yaml/libyaml/archive/0.2.2.tar.gz"
-  sha256 "46bca77dc8be954686cff21888d6ce10ca4016b360ae1f56962e6882a17aa1fe"
-
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "libtool" => :build
+  url "https://github.com/yaml/libyaml/archive/dist-0.2.2.tar.gz"
+  sha256 "689ef3ebdecfa81f3789ccd2481acc81fc0f22f3f5c947eed95c4c0802e356b8"
 
   def install
-    system "./bootstrap"
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--enable-static",

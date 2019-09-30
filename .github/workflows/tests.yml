@@ -37,11 +37,7 @@ jobs:
     - name: Build Portable Ruby
       run: |
         if [ "$RUNNER_OS" = "Linux" ]; then
-          # TODO: need to do something like:
-          # docker cp "$PWD" $(docker container ls -lq):"$HOME/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby"
-          # to actually test the correct Git version in this repo
-          # docker run homebrew-portable-x86_64 brew portable-package portable-ruby
-          echo TODO docker run homebrew-portable-x86_64 brew portable-package portable-ruby
+          docker run -v"$PWD":/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby homebrew-portable-x86_64 brew portable-package portable-ruby
         else
           brew portable-package portable-ruby
         fi
