@@ -3,15 +3,15 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  # This is the version shipped in macOS 10.13.6.
-  url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.7.tar.bz2"
-  mirror "http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.7.tar.bz2"
-  sha256 "18b12fafaf37d5f6c7139c1b445355aec76baa625a40300598a6c8597fc04d8e"
+  # This is the version shipped in macOS 10.15.
+  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
+  mirror "http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
+  sha256 "dd638bf42059182c1d04af0d5577131d4ce70b79105231c4cc0a60de77b14f2e"
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "539ae571968fc74d4ec3a839cb33edc5786c219a5e6ae7fb6a09ec5fc1b04e4e" => :mavericks
-    sha256 "9df214085a0e566a580eea3dd9eab14a2a94930ff74fbf97fb1284e905c8921d" => :x86_64_linux
+    sha256 "ab81211a2052ccaa6d050741c433b728d0641523d8742eef23a5b450811e5104" => :mavericks
+    sha256 "43395f680846bd2c5bf540bd5f0b8b7cf154a3b6d2802373eaabf7044baf91d2" => :x86_64_linux
   end
 
   depends_on "makedepend" => :build
@@ -104,7 +104,6 @@ class PortableRuby < PortableFormula
     assert_match "200",
       shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").strip
     system testpath/"bin/gem", "environment"
-    system testpath/"bin/gem", "install", "bundler"
     system testpath/"bin/bundle", "init"
     # install gem with native components
     system testpath/"bin/gem", "install", "byebug"
