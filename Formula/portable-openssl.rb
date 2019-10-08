@@ -3,11 +3,10 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.0.2q.tar.gz"
-  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.0.2q.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.0.2q.tar.gz"
-  mirror "http://artfiles.org/openssl.org/source/openssl-1.0.2q.tar.gz"
-  sha256 "5744cfcbcec2b1b48629f7354203bc1e5e9b5466998bbccc5b5fcde3b18eb684"
+  url "https://www.openssl.org/source/openssl-1.0.2t.tar.gz"
+  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.0.2t.tar.gz"
+  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.0.2t.tar.gz"
+  sha256 "14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc"
 
   depends_on "makedepend" => :build
   depends_on "portable-zlib" => :build if OS.linux?
