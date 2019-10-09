@@ -37,7 +37,28 @@ jobs:
     - name: Build Portable Ruby
       run: |
         if [ "$RUNNER_OS" = "Linux" ]; then
-          docker run -v"$PWD":/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby homebrew-portable-x86_64 brew portable-package portable-ruby
+          docker run --name=homebrew-portable-ruby -w /bottle -v"$PWD":/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby homebrew-portable-x86_64 brew portable-package portable-ruby
+          docker cp homebrew-portable-ruby:/bottle .
+          mv bottle/* .
+          rmdir bottle
         else
           brew portable-package portable-ruby
         fi
+
+    - name: Install Portable Ruby
+      run: |
+        version=2.6.3
+        if [ "$RUNNER_OS" = "Linux" ]; then
+          prefix=/home/linuxbrew/.linuxbrew/Homebrew/Library/Homebrew/vendor
+        else
+          prefix=/usr/local/Homebrew/Library/Homebrew/vendor
+        fi
+        mkdir -p $prefix
+        tar -C $prefix -xf portable-ruby--*.tar.gz
+        ln -sf $version $prefix/portable-ruby/current
+        echo $version >$prefix/portable-ruby-version
+
+    - name: Test Portable Ruby
+      run: |
+        brew config
+        brew tests
