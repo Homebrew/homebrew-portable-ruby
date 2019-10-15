@@ -13,9 +13,8 @@ class PortableOpenssl < PortableFormula
 
   resource "cacert" do
     # http://curl.haxx.se/docs/caextract.html
-    url "https://curl.haxx.se/ca/cacert-2017-01-18.pem"
-    mirror "http://cdn.rawgit.com/sjackman/e4066d2cb6b45fbb6d213e676cb109d0/raw/58964378cb5eefe96cba245ef863c57fb2b480e0/cacert-2017-01-18.pem"
-    sha256 "e62a07e61e5870effa81b430e1900778943c228bd7da1259dd6a955ee2262b47"
+    url "https://curl.haxx.se/ca/cacert-2019-08-28.pem"
+    sha256 "38b6230aa4bee062cd34ee0ff6da173250899642b1937fc130896290b6bd91e3"
   end
 
   def openssldir
