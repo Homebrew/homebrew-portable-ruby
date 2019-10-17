@@ -4,7 +4,6 @@ FROM ${img}
 RUN uname -a
 
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
-    HOMEBREW_BUILD_BOTTLE=1 \
     HOMEBREW_DEVELOPER=1 \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
