@@ -1,6 +1,7 @@
 ARG img=debian/eol:wheezy
 # hadolint ignore=DL3006
 FROM ${img}
+ARG img
 
 RUN uname -a
 
@@ -8,6 +9,10 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     HOMEBREW_DEVELOPER=1 \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
+
+RUN if [ ${img} = "resin/rpi-raspbian:wheezy" ]; then \
+      sed -i 's/archive.raspbian.org/legacy.raspbian.org/g' /etc/apt/sources.list; \
+    fi
 
 # hadolint ignore=DL3008
 RUN apt-get update \
