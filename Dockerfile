@@ -1,4 +1,5 @@
 ARG img=debian/eol:wheezy
+# hadolint ignore=DL3006
 FROM ${img}
 
 RUN uname -a
@@ -8,6 +9,7 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH \
     HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_AUTO_UPDATE=1
 
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
       bzip2 \

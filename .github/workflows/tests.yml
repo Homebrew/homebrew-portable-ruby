@@ -12,8 +12,7 @@ jobs:
       uses: actions/checkout@master
     - name: Check Dockerfile
       run: |
-        sudo npm install -g dockerfilelint
-        dockerfilelint Dockerfile
+        docker run --rm -i hadolint/hadolint < Dockerfile
 
   test-mac:
     name: Build [macOS]
