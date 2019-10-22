@@ -16,9 +16,9 @@ Run `brew portable-package ruby` inside an OS X 10.9 VM (so it is compatible wit
 
 Build a Docker image for your architecture by running one of the following commands.
 
-- `docker build -f docker/Dockerfile.x86_64 -t homebrew-portable .`
-- `docker build -f docker/Dockerfile.arm -t homebrew-portable .`
-- `docker build -f docker/Dockerfile.arm64 -t homebrew-portable .`
+- `docker build -f Dockerfile --platform linux/amd64 --build-arg img=debian/eol:wheezy -t homebrew-portable .`
+- `docker build -f Dockerfile --platform linux/arm/v6 --build-arg img=resin/rpi-raspbian:wheezy -t homebrew-portable .`
+- `docker build -f Dockerfile --platform linux/arm64/v8 --build-arg img=debian/eol:jessie -t homebrew-portable .`
 
 Build the `portable-ruby` package using that Docker image.
 

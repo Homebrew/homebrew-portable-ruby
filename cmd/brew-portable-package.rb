@@ -12,6 +12,7 @@
 #:    A new commit will then be generated unless `--no-commit` is passed.
 
 ENV["HOMEBREW_DEVELOPER"] = "1"
+ENV["HOMEBREW_BUILD_BOTTLE"] = "1" if OS.linux?
 
 include FileUtils # rubocop:disable Style/MixinUsage
 
