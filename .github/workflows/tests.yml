@@ -51,9 +51,9 @@ jobs:
       fail-fast: false
       matrix:
         arch:
-          - { name: x86_64, platform: linux/amd64, build_img: 'debian/eol:wheezy', test_img: 'ubuntu:xenial' }
-          - { name: arm32v6, platform: linux/arm/v6, build_img: 'resin/rpi-raspbian:wheezy', test_img: 'ubuntu:xenial' }
-          - { name: arm64v8, platform: linux/arm64/v8, build_img: 'debian/eol:jessie', test_img: 'ubuntu:xenial' }
+          - { name: x86_64, platform: linux/amd64, build_img: 'debian/eol:wheezy' }
+          - { name: arm32v6, platform: linux/arm/v6, build_img: 'resin/rpi-raspbian:wheezy' }
+          - { name: arm64v8, platform: linux/arm64/v8, build_img: 'debian/eol:jessie' }
     steps:
     - name: Set up Git repository
       uses: actions/checkout@master
@@ -70,7 +70,7 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -f Dockerfile --platform ${{ matrix.arch.platform }} --build-arg img=${{ matrix.arch.build_img }} -t homebrew-portable .
-        docker build -f Dockerfile --platform ${{ matrix.arch.platform }} --build-arg img=${{ matrix.arch.test_img }} -t homebrew-portable-test .
+        docker build -f Dockerfile --platform ${{ matrix.arch.platform }} --build-arg img=ubuntu:xenial -t homebrew-portable-test .
     - name: Build Portable Ruby
       run: |
         docker run --name=homebrew-portable -w /bottle \
