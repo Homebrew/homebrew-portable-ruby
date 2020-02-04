@@ -54,6 +54,7 @@ jobs:
           - { name: x86_64, platform: linux/amd64, build_img: 'debian/eol:wheezy' }
           - { name: arm32v6, platform: linux/arm/v6, build_img: 'resin/rpi-raspbian:wheezy' }
           - { name: arm64v8, platform: linux/arm64/v8, build_img: 'debian/eol:jessie' }
+          - { name: ppc64le, platform: linux/ppc64le, build_img: 'debian/eol:jessie' }
     steps:
     - name: Set up Git repository
       uses: actions/checkout@master
