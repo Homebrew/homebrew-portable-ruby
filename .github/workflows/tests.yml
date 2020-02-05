@@ -42,7 +42,6 @@ jobs:
         export HOMEBREW_RUBY_PATH=$PWD/portable-ruby/bin/ruby
         export HOMEBREW_LANGUAGES=en-US
         brew config
-        brew tests
 
   test-linux:
     name: Build [Linux ${{ matrix.arch.name }}]
@@ -87,4 +86,4 @@ jobs:
         mkdir -p portable-ruby/
         tar --strip-components 2 -C portable-ruby -xf bottle/portable-ruby--*.tar.gz
         docker run --rm -v $(pwd):/data -e HOMEBREW_RUBY_PATH=/data/portable-ruby/bin/ruby \
-          homebrew-portable-test /bin/bash -c "brew config && brew tests"
+          homebrew-portable-test /bin/bash -c "brew config"
