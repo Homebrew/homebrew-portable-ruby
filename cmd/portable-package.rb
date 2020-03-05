@@ -23,6 +23,7 @@ module Homebrew
       switch "--no-commit",
              description: "Don't commit changes to the formula file."
       conflicts "--no-rebuild", "--keep-old"
+      min_named :formula
     end
   end
 
@@ -35,8 +36,6 @@ module Homebrew
 
     ENV["HOMEBREW_DEVELOPER"] = "1"
     ENV["HOMEBREW_BUILD_BOTTLE"] = "1" if OS.linux?
-
-    raise UsageError, "no formulae specified!" if Homebrew.args.named.empty?
 
     Homebrew.args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
