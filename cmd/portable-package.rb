@@ -30,9 +30,7 @@ module Homebrew
   def portable_package
     portable_package_args.parse
 
-    if !Homebrew.args.write? && Homebrew.args.no_commit?
-      raise UsageError, "--no-commit requires --write!"
-    end
+    raise UsageError, "--no-commit requires --write!" if !Homebrew.args.write? && Homebrew.args.no_commit?
 
     ENV["HOMEBREW_DEVELOPER"] = "1"
     ENV["HOMEBREW_BUILD_BOTTLE"] = "1" if OS.linux?
