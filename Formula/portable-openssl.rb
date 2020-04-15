@@ -3,18 +3,18 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.0.2t.tar.gz"
-  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.0.2t.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.0.2t.tar.gz"
-  sha256 "14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc"
+  url "https://www.openssl.org/source/openssl-1.1.1f.tar.gz"
+  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.1.1f.tar.gz"
+  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1f.tar.gz"
+  sha256 "186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35"
 
   depends_on "makedepend" => :build
   depends_on "portable-zlib" => :build if OS.linux?
 
   resource "cacert" do
     # http://curl.haxx.se/docs/caextract.html
-    url "https://curl.haxx.se/ca/cacert-2019-08-28.pem"
-    sha256 "38b6230aa4bee062cd34ee0ff6da173250899642b1937fc130896290b6bd91e3"
+    url "https://curl.haxx.se/ca/cacert-2020-01-01.pem"
+    sha256 "adf770dfd574a0d6026bfaa270cb6879b063957177a991d453ff1d302c02081f"
   end
 
   def openssldir
@@ -57,6 +57,7 @@ class PortableOpenssl < PortableFormula
       args << "zlib-dynamic"
     else
       args << "-L#{Formula["portable-zlib"].opt_prefix/"lib"}"
+      args << "-I#{Formula["portable-zlib"].opt_prefix/"include"}"
       args << "zlib"
     end
 
@@ -70,7 +71,7 @@ class PortableOpenssl < PortableFormula
     # https://langui.sh/2015/11/27/sip-and-dlopen
     if OS.mac?
       inreplace "crypto/comp/c_zlib.c",
-                'zlib_dso = DSO_load(NULL, "z", NULL, 0);',
+                'zlib_dso = DSO_load(NULL, LIBZ, NULL, 0);',
                 'zlib_dso = DSO_load(NULL, "/usr/lib/libz.dylib", NULL, DSO_FLAG_NO_NAME_TRANSLATION);'
     end
 
