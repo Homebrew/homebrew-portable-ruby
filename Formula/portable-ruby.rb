@@ -7,11 +7,12 @@ class PortableRuby < PortableFormula
   url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
   mirror "http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
   sha256 "dd638bf42059182c1d04af0d5577131d4ce70b79105231c4cc0a60de77b14f2e"
+  revision 1
 
   bottle do
     cellar :any_skip_relocation
-    sha256 "ab81211a2052ccaa6d050741c433b728d0641523d8742eef23a5b450811e5104" => :mavericks
-    sha256 "e8c9b6d3dc5f40844e07b4b694897b8b7cb5a7dab1013b3b8712a22868f98c98" => :x86_64_linux
+    sha256 "be48eade040e13e0e572300ba59cf43d5750f53a4f35d2051966a0194e3c0ab2" => :yosemite
+    sha256 "f5731ca80497c31ab1171ece4102e2104d9b6cd31aa7b35926e80829d4b0ce29" => :x86_64_linux
   end
 
   depends_on "pkg-config" => :build

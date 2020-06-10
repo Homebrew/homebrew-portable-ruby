@@ -1,11 +1,11 @@
 module PortableFormulaMixin
   def install
     if OS.mac?
-      if OS::Mac.version > :mavericks
+      if OS::Mac.version > :yosemite
         opoo <<~EOS
           You are building portable formula on #{OS::Mac.version}.
           As result, formula won't be able to work on older macOS versions.
-          It's recommended to build this formula on OS X Mavericks (the oldest version
+          It's recommended to build this formula on OS X Yosemite (the oldest version
           that can run Homebrew).
         EOS
       end
