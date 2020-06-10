@@ -14,7 +14,6 @@ class PortableRuby < PortableFormula
     sha256 "e8c9b6d3dc5f40844e07b4b694897b8b7cb5a7dab1013b3b8712a22868f98c98" => :x86_64_linux
   end
 
-  depends_on "makedepend" => :build
   depends_on "pkg-config" => :build
   depends_on "portable-readline" => :build
   depends_on "portable-libyaml" => :build
