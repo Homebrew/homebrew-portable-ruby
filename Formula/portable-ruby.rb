@@ -76,7 +76,7 @@ class PortableRuby < PortableFormula
     end
 
     libexec.mkpath
-    cp openssl.opt_libexec/"etc/openssl/cert.pem", libexec/"cert.pem"
+    cp openssl.libexec/"etc/openssl/cert.pem", libexec/"cert.pem"
     openssl_rb = lib/"ruby/#{abi_version}/openssl.rb"
     openssl_rb_content = openssl_rb.read
     rm openssl_rb
@@ -84,6 +84,8 @@ class PortableRuby < PortableFormula
       ENV["SSL_CERT_FILE"] ||= File.expand_path("../../libexec/cert.pem", RbConfig.ruby)
       #{openssl_rb_content}
     EOS
+
+    cp_r ncurses.share/"terminfo", share/"terminfo" if OS.linux?
   end
 
   test do
