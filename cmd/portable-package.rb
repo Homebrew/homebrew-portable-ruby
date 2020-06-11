@@ -33,7 +33,6 @@ module Homebrew
     raise UsageError, "--no-commit requires --write!" if !Homebrew.args.write? && Homebrew.args.no_commit?
 
     ENV["HOMEBREW_DEVELOPER"] = "1"
-    ENV["HOMEBREW_BUILD_BOTTLE"] = "1" if OS.linux?
 
     Homebrew.args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
@@ -41,7 +40,7 @@ module Homebrew
         deps = Utils.popen_read("brew", "deps", "--include-build", name).split("\n")
 
         # Avoid installing glibc. Bottles depend on glibc.
-        safe_system "brew", "install", "-s", *deps if OS.linux?
+        safe_system "brew", "install", "--build-bottle", *deps if OS.linux?
 
         safe_system "brew", "install", "--build-bottle", name
         unless Homebrew.args.no_uninstall_deps?
