@@ -37,7 +37,7 @@ module Homebrew
     Homebrew.args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
       begin
-        deps = Utils.popen_read("brew", "deps", "--include-build", name).split("\n")
+        deps = Utils.popen_read("brew", "deps", "-n", "--include-build", name).split("\n")
 
         # Avoid installing glibc. Bottles depend on glibc.
         safe_system "brew", "install", "--build-bottle", *deps if OS.linux?
