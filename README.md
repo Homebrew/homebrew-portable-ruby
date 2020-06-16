@@ -10,7 +10,7 @@ Just `brew install homebrew/portable-ruby/<formula>`.
 
 ### macOS
 
-Run `brew portable-package ruby` inside an OS X 10.9 VM (so it is compatible with all working Homebrew macOS versions).
+Run `brew portable-package ruby` inside an OS X 10.10 VM (so it is compatible with all working Homebrew macOS versions).
 
 ### Linux
 
