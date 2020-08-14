@@ -2,7 +2,7 @@ name: GitHub Actions CI
 on:
   push:
     branches: master
-  pull_request: []
+  pull_request:
 jobs:
   lint:
     name: Lint Dockerfile
@@ -11,29 +11,28 @@ jobs:
     - name: Set up Git repository
       uses: actions/checkout@master
     - name: Check Dockerfile
-      run: |
-        docker run --rm -i hadolint/hadolint < Dockerfile
+      run: docker run --rm -i hadolint/hadolint < Dockerfile
 
   test-mac:
     name: Build [macOS]
     runs-on: macOS-latest
     steps:
-    - name: Set up Git repository
-      uses: actions/checkout@master
     - name: Set up Homebrew
-      run: |
-        brew update-reset /usr/local/Homebrew
-        ln -s "$PWD" "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby"
+      id: set-up-homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+
     - name: Build Portable Ruby
       run: |
         mkdir -p bottle/
         cd bottle
         brew portable-package portable-ruby
+
     - name: Upload Portable Ruby
       uses: actions/upload-artifact@master
       with:
         name: portable-ruby-mac
         path: bottle
+
     - name: Test Portable Ruby
       run: |
         mkdir -p portable-ruby/
@@ -52,33 +51,40 @@ jobs:
         arch:
           - { name: x86_64, platform: linux/amd64, build_img: 'debian/eol:wheezy' }
     steps:
-    - name: Set up Git repository
-      uses: actions/checkout@master
+    - name: Set up Homebrew
+      id: set-up-homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+
     - name: Enable Docker experimental features
       run: |
         jq '.experimental=true' /etc/docker/daemon.json > daemon.json
         sudo mv daemon.json /etc/docker/daemon.json
         sudo systemctl restart docker
         docker version -f '{{.Server.Experimental}}'
+
     - name: Set up Docker multiarch
       run: |
         sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
       if: matrix.arch.platform != 'linux/amd64'
+
     - name: Build Docker image
       run: |
         docker build -f Dockerfile --platform ${{ matrix.arch.platform }} --build-arg img=${{ matrix.arch.build_img }} -t homebrew-portable .
         docker build -f Dockerfile --platform ${{ matrix.arch.platform }} --build-arg img=ubuntu:xenial -t homebrew-portable-test .
+
     - name: Build Portable Ruby
       run: |
         docker run --name=homebrew-portable -w /bottle \
           -v $(pwd):/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby \
           homebrew-portable brew portable-package portable-ruby
         docker cp homebrew-portable:/bottle .
+
     - name: Upload Portable Ruby
       uses: actions/upload-artifact@master
       with:
         name: portable-ruby-${{ matrix.arch.name }}
         path: bottle
+
     - name: Test Portable Ruby
       run: |
         mkdir -p portable-ruby/
