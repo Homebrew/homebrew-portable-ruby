@@ -26,6 +26,7 @@ RUN apt-get update \
       locales \
       make \
       patch \
+      procps \
       zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
