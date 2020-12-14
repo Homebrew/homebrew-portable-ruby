@@ -40,7 +40,7 @@ module Homebrew
         deps = Utils.safe_popen_read("brew", "deps", "-n", "--include-build", name).split("\n")
 
         # Avoid installing glibc. Bottles depend on glibc.
-        safe_system "brew", "install", "--build-bottle", *deps if OS.linux?
+        safe_system "brew", "install", "--build-bottle", *deps
 
         safe_system "brew", "install", "--build-bottle", name
         unless args.no_uninstall_deps?
