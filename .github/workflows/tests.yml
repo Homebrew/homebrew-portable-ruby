@@ -1,8 +1,12 @@
 name: GitHub Actions CI
 on:
   push:
-    branches: master
+    branches:
+      - master
   pull_request:
+env:
+  HOMEBREW_DEVELOPER: 1
+  HOMEBREW_NO_AUTO_UPDATE: 1
 jobs:
   lint:
     name: Lint Dockerfile
@@ -15,7 +19,7 @@ jobs:
 
   test-mac:
     name: Build [macOS]
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -25,7 +29,7 @@ jobs:
         run: |
           mkdir -p bottle/
           cd bottle
-          brew portable-package portable-ruby
+          brew portable-package --verbose portable-ruby
 
       - name: Upload Portable Ruby
         uses: actions/upload-artifact@master
@@ -37,10 +41,11 @@ jobs:
         run: |
           mkdir -p portable-ruby/
           tar --strip-components 2 -C portable-ruby -xf bottle/portable-ruby--*.tar.gz
-          export HOMEBREW_DEVELOPER=1
           export HOMEBREW_RUBY_PATH=$PWD/portable-ruby/bin/ruby
-          export HOMEBREW_LANGUAGES=en-US
           brew config
+        env:
+          # These cannot be queried at the macOS level on GitHub Actions.
+          HOMEBREW_LANGUAGES: en-GB
 
   test-linux:
     name: Build [Linux ${{ matrix.arch.name }}]
@@ -80,7 +85,7 @@ jobs:
         run: |
           docker run --name=homebrew-portable -w /bottle \
             -v $(pwd):/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby \
-            homebrew-portable brew portable-package portable-ruby
+            homebrew-portable brew portable-package --verbose portable-ruby
           docker cp homebrew-portable:/bottle .
 
       - name: Upload Portable Ruby
