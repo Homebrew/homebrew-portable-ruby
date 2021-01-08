@@ -22,6 +22,8 @@ module Homebrew
              description: "Write the changes to the formula file."
       switch "--no-commit",
              description: "Don't commit changes to the formula file."
+      switch "-v", "--verbose",
+             description: "Pass `--verbose` to `brew` commands."
       conflicts "--no-rebuild", "--keep-old"
       min_named :formula
     end
@@ -34,27 +36,30 @@ module Homebrew
 
     ENV["HOMEBREW_DEVELOPER"] = "1"
 
+    verbose = []
+    verbose << "--verbose" if args.verbose?
+
     args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
       begin
         deps = Utils.safe_popen_read("brew", "deps", "-n", "--include-build", name).split("\n")
 
         # Avoid installing glibc. Bottles depend on glibc.
-        safe_system "brew", "install", "--build-bottle", *deps
+        safe_system "brew", "install", "--build-bottle", *verbose, *deps
 
-        safe_system "brew", "install", "--build-bottle", name
+        safe_system "brew", "install", "--build-bottle", *verbose, name
         unless args.no_uninstall_deps?
-          safe_system "brew", "uninstall", "--force", "--ignore-dependencies", *deps
+          safe_system "brew", "uninstall", "--force", "--ignore-dependencies", *verbose, *deps
         end
-        safe_system "brew", "test", name
+        safe_system "brew", "test", *verbose, name
         puts "Linkage information:"
-        safe_system "brew", "linkage", name
+        safe_system "brew", "linkage", *verbose, name
         bottle_args = %w[--skip-relocation]
         bottle_args << "--no-rebuild" if args.no_rebuild?
         bottle_args << "--keep-old" if args.keep_old?
         bottle_args << "--write" if args.write?
         bottle_args << "--no-commit" if args.no_commit?
-        safe_system "brew", "bottle", *bottle_args, name
+        safe_system "brew", "bottle", *verbose, *bottle_args, name
         Pathname.glob("*.bottle*.tar.gz") do |bottle_filename|
           bottle_file = bottle_filename.realpath
           bottle_cache = HOMEBREW_CACHE/bottle_filename

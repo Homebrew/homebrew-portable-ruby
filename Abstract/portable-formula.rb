@@ -19,6 +19,7 @@ module PortableFormulaMixin
       ENV.delete "LIBRARY_PATH"
       ENV.delete "LD_RUN_PATH"
       ENV.delete "LD_LIBRARY_PATH"
+      ENV.delete "TERMINFO_DIRS"
       ENV.delete "HOMEBREW_RPATH_PATHS"
       ENV.delete "HOMEBREW_DYNAMIC_LINKER"
     end

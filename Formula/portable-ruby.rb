@@ -42,6 +42,9 @@ class PortableRuby < PortableFormula
       --disable-dependency-tracking
     ]
 
+    # Correct MJIT_CC to not use superenv shim
+    args << "MJIT_CC=/usr/bin/#{DevelopmentTools.default_compiler}"
+
     paths = [
       readline.opt_prefix,
       libyaml.opt_prefix,
@@ -71,9 +74,15 @@ class PortableRuby < PortableFormula
 
     abi_version = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["ruby_version"]'`
     abi_arch = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["arch"]'`
-    inreplace lib/"ruby/#{abi_version}/#{abi_arch}/rbconfig.rb" do |s|
-      s.gsub! ENV.cxx, "c++"
-      s.gsub! ENV.cc, "cc"
+
+    # Fix more shim and HOMEBREW_REPOSITORY references
+    if OS.linux?
+      inreplace lib/"ruby/#{abi_version}/#{abi_arch}/rbconfig.rb" do |s|
+        s.gsub! ENV.cxx, "c++"
+        s.gsub! ENV.cc, "cc"
+      end
+      
+      cp_r ncurses.share/"terminfo", share/"terminfo"
     end
 
     libexec.mkpath
@@ -85,8 +94,6 @@ class PortableRuby < PortableFormula
       ENV["SSL_CERT_FILE"] ||= File.expand_path("../../libexec/cert.pem", RbConfig.ruby)
       #{openssl_rb_content}
     EOS
-
-    cp_r ncurses.share/"terminfo", share/"terminfo" if OS.linux?
   end
 
   test do
