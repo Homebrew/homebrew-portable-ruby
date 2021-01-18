@@ -64,6 +64,10 @@ class PortableRuby < PortableFormula
 
     args << "--with-opt-dir=#{paths.join(":")}"
 
+    # see: https://github.com/ruby/ruby/pull/3272
+    # needed to set correct arch on Apple Silicon as part of RUBY_PLATFORM
+    inreplace "configure", "\"processor-name=powerpc64\"\n#endif",
+        "\"processor-name=powerpc64\"\n#endif\n#ifdef __arm64__\n\"processor-name=arm64\"\n#endif"
     system "./configure", *args
     system "make"
     system "make", "install"
