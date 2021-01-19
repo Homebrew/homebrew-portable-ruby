@@ -3,10 +3,10 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.1.1g.tar.gz"
-  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.1.1g.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1g.tar.gz"
-  sha256 "ddb04774f1e32f0c49751e21b67216ac87852ceb056b75209af2443400636d46"
+  url "https://www.openssl.org/source/openssl-1.1.1i.tar.gz"
+  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.1.1i.tar.gz"
+  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1i.tar.gz"
+  sha256 "e8be6a35fe41d10603c3cc635e93289ed00bf34b79671a3a4de64fcee00d5242"
 
   resource "cacert" do
     # http://curl.haxx.se/docs/caextract.html
@@ -20,7 +20,7 @@ class PortableOpenssl < PortableFormula
 
   def arch_args
     if OS.mac?
-      ["darwin64-x86_64-cc", "enable-ec_nistp_64_gcc_128"]
+      %W[darwin64-#{Hardware::CPU.arch}-cc enable-ec_nistp_64_gcc_128]
     else
       args = ["enable-md2"]
       if Hardware::CPU.intel?
