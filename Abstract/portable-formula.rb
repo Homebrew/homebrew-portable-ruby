@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PortableFormulaMixin
   def install
     if OS.mac?
@@ -29,7 +31,7 @@ module PortableFormulaMixin
 
   def test
     assert_no_match(/Homebrew libraries/,
-      shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}"))
+                    shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}"))
 
     super
   end
