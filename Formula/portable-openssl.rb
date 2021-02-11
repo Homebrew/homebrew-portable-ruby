@@ -24,16 +24,16 @@ class PortableOpenssl < PortableFormula
     else
       args = ["enable-md2"]
       if Hardware::CPU.intel?
-        if Hardware::CPU.is_64_bit?
-          args << "linux-x86_64"
+        args << if Hardware::CPU.is_64_bit?
+          "linux-x86_64"
         else
-          args << "linux-elf"
+          "linux-elf"
         end
       elsif Hardware::CPU.arm?
-        if Hardware::CPU.is_64_bit?
-          args << "linux-aarch64"
+        args << if Hardware::CPU.is_64_bit?
+          "linux-aarch64"
         else
-          args << "linux-armv4"
+          "linux-armv4"
         end
       end
       args
@@ -41,13 +41,11 @@ class PortableOpenssl < PortableFormula
   end
 
   def configure_args
-    args = %W[
+    %W[
       --prefix=#{prefix}
       --openssldir=#{openssldir}
       no-shared
     ]
-
-    args
   end
 
   def install

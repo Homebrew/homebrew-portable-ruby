@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "cli/parser"
 
 module Homebrew
@@ -25,7 +27,7 @@ module Homebrew
       switch "-v", "--verbose",
              description: "Pass `--verbose` to `brew` commands."
       conflicts "--no-rebuild", "--keep-old"
-      min_named :formula
+      named_args :formula, min: 1
     end
   end
 

@@ -85,7 +85,7 @@ class PortableRuby < PortableFormula
         s.gsub! ENV.cxx, "c++"
         s.gsub! ENV.cc, "cc"
       end
-      
+
       cp_r ncurses.share/"terminfo", share/"terminfo"
     end
 
