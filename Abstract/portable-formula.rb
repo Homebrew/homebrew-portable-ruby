@@ -38,8 +38,13 @@ module PortableFormulaMixin
 end
 
 class PortableFormula < Formula
+  desc "Abstract portable formula"
+  homepage "https://github.com/Homebrew/homebrew-portable-ruby"
+
   def self.inherited(subclass)
     subclass.class_eval do
+      super
+
       keg_only "portable formulae are keg-only"
 
       prepend PortableFormulaMixin
