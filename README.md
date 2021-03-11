@@ -29,10 +29,6 @@ docker cp homebrew-portable-ruby:/bottle .
 
 Used in production for Homebrew/brew.
 
-### Linux
-
-1. `irb` on Linux builds seems to fail to link to ncurses statically. If `portable-ncurses` is removed, `irb` will fail to handle left, right or backspace keystroke.
-
 ## License
 
 Code is under the [BSD 2 Clause (NetBSD) license](https://github.com/Homebrew/homebrew-portable-ruby/blob/master/LICENSE.txt).
