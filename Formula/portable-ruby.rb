@@ -10,9 +10,8 @@ class PortableRuby < PortableFormula
   revision 2
 
   bottle do
-    cellar :any_skip_relocation
-    sha256 "b065e5e3783954f3e65d8d3a6377ca51649bfcfa21b356b0dd70490f74c6bd86" => :yosemite
-    sha256 "97e639a64dcec285392b53ad804b5334c324f1d2a8bdc2b5087b8bf8051e332f" => :x86_64_linux
+    sha256 cellar: :any_skip_relocation, yosemite: "b065e5e3783954f3e65d8d3a6377ca51649bfcfa21b356b0dd70490f74c6bd86"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "97e639a64dcec285392b53ad804b5334c324f1d2a8bdc2b5087b8bf8051e332f"
   end
 
   depends_on "pkg-config" => :build
