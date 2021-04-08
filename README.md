@@ -25,6 +25,22 @@ docker run --name=homebrew-portable-ruby -w /bottle homebrew-portable brew porta
 docker cp homebrew-portable-ruby:/bottle .
 ```
 
+### Upload
+
+Copy the bottle `bottle*.tar.gz` files into a directory on your local machine.
+
+If you have the `bottle*.json` files: copy them too. If not, generate them with:
+
+```sh
+brew bottle *.tar.gz --json --root-url=https://ghcr.io/v2/homebrew/portable-ruby
+```
+
+Upload these files to GitHub Packages with:
+
+```sh
+brew pr-upload --root-url=https://ghcr.io/v2/homebrew/portable-ruby
+```
+
 ## Current Status
 
 Used in production for Homebrew/brew.
