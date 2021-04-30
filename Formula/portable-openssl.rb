@@ -4,8 +4,8 @@ class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
   url "https://www.openssl.org/source/openssl-1.1.1i.tar.gz"
-  mirror "https://dl.bintray.com/homebrew/mirror/openssl-1.1.1i.tar.gz"
   mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1i.tar.gz"
+  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1i.tar.gz"
   sha256 "e8be6a35fe41d10603c3cc635e93289ed00bf34b79671a3a4de64fcee00d5242"
 
   resource "cacert" do
