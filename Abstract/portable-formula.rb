@@ -30,8 +30,8 @@ module PortableFormulaMixin
   end
 
   def test
-    assert_no_match(/Homebrew libraries/,
-                    shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}"))
+    refute_match(/Homebrew libraries/,
+                 shell_output("#{HOMEBREW_BREW_FILE} linkage #{full_name}"))
 
     super
   end

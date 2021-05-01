@@ -30,9 +30,11 @@ RUN apt-get update \
       zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# hadolint ignore=DL3059
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8 \
     && useradd -m -s /bin/bash linuxbrew
 
+# hadolint ignore=DL3059
 RUN git clone --depth=1 https://github.com/Homebrew/brew /home/linuxbrew/.linuxbrew/Homebrew \
     && git clone --depth=1 https://github.com/Homebrew/linuxbrew-core /home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-core \
     && mkdir /home/linuxbrew/.linuxbrew/bin \
