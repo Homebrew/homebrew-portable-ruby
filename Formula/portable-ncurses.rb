@@ -6,6 +6,7 @@ class PortableNcurses < PortableFormula
   url "https://ftp.gnu.org/gnu/ncurses/ncurses-6.2.tar.gz"
   mirror "https://ftpmirror.gnu.org/ncurses/ncurses-6.2.tar.gz"
   sha256 "30306e0c76e0f9f1f0de987cf1c82a5c21e1ce6568b9227f7da5b71cbea86c9d"
+  license "MIT"
 
   depends_on "pkg-config" => :build
 
@@ -19,7 +20,8 @@ class PortableNcurses < PortableFormula
                           "--enable-sigwinch",
                           "--enable-symlinks",
                           "--enable-widec",
-                          "--with-gpm=no"
+                          "--with-gpm=no",
+                          "--without-ada"
     system "make", "install"
     make_libncurses_symlinks
   end

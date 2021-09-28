@@ -3,15 +3,30 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.1.1i.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1i.tar.gz"
-  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1i.tar.gz"
-  sha256 "e8be6a35fe41d10603c3cc635e93289ed00bf34b79671a3a4de64fcee00d5242"
+  url "https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
+  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1l.tar.gz"
+  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1l.tar.gz"
+  sha256 "0b7a3e5e59c34827fe0c3a74b7ec8baef302b98fa80088d7f9153aa16fa76bd1"
+  license "OpenSSL"
 
   resource "cacert" do
-    # http://curl.haxx.se/docs/caextract.html
-    url "https://curl.haxx.se/ca/cacert-2020-01-01.pem"
-    sha256 "adf770dfd574a0d6026bfaa270cb6879b063957177a991d453ff1d302c02081f"
+    # http://curl.se/docs/caextract.html
+    url "https://curl.se/ca/cacert-2021-07-05.pem"
+    sha256 "a3b534269c6974631db35f952e8d7c7dbf3d81ab329a232df575c2661de1214a"
+  end
+
+  # Fix build on older macOS versions.
+  # Remove with the next version.
+  patch do
+    url "https://github.com/openssl/openssl/commit/96ac8f13f4d0ee96baf5724d9f96c44c34b8606c.patch?full_index=1"
+    sha256 "dd5498c0910c0ae91738fe8e796f4deb4767b08217c1a859fe390147f24809c6"
+  end
+
+  # Fix build on older macOS versions.
+  # Remove with the next version.
+  patch do
+    url "https://github.com/openssl/openssl/commit/2f3b120401533db82e99ed28de5fc8aab1b76b33.patch?full_index=1"
+    sha256 "a66dcd4a3a291858deefaf260ffd8f2f55da953724e7a14db9c4523d8b7ef383"
   end
 
   def openssldir
@@ -21,22 +36,18 @@ class PortableOpenssl < PortableFormula
   def arch_args
     if OS.mac?
       %W[darwin64-#{Hardware::CPU.arch}-cc enable-ec_nistp_64_gcc_128]
-    else
-      args = ["enable-md2"]
-      if Hardware::CPU.intel?
-        args << if Hardware::CPU.is_64_bit?
-          "linux-x86_64"
-        else
-          "linux-elf"
-        end
-      elsif Hardware::CPU.arm?
-        args << if Hardware::CPU.is_64_bit?
-          "linux-aarch64"
-        else
-          "linux-armv4"
-        end
+    elsif Hardware::CPU.intel?
+      if Hardware::CPU.is_64_bit?
+        ["linux-x86_64"]
+      else
+        ["linux-elf"]
       end
-      args
+    elsif Hardware::CPU.arm?
+      if Hardware::CPU.is_64_bit?
+        ["linux-aarch64"]
+      else
+        ["linux-armv4"]
+      end
     end
   end
 
@@ -49,7 +60,6 @@ class PortableOpenssl < PortableFormula
   end
 
   def install
-    ENV.deparallelize
     system "perl", "./Configure", *(configure_args + arch_args)
     system "make"
     system "make", "test"
