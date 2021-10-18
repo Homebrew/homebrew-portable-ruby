@@ -3,11 +3,10 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  # This is the version shipped in macOS 10.15.
-  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
-  mirror "http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.bz2"
-  sha256 "dd638bf42059182c1d04af0d5577131d4ce70b79105231c4cc0a60de77b14f2e"
-  revision 2
+  # This is the version shipped in macOS 12.
+  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.8.tar.xz"
+  sha256 "8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fcaa18e593eb"
+  license "Ruby"
 
   bottle do
     root_url "https://ghcr.io/v2/homebrew/portable-ruby"
@@ -64,10 +63,6 @@ class PortableRuby < PortableFormula
 
     args << "--with-opt-dir=#{paths.join(":")}"
 
-    # see: https://github.com/ruby/ruby/pull/3272
-    # needed to set correct arch on Apple Silicon as part of RUBY_PLATFORM
-    inreplace "configure", "\"processor-name=powerpc64\"\n#endif",
-        "\"processor-name=powerpc64\"\n#endif\n#ifdef __arm64__\n\"processor-name=arm64\"\n#endif"
     system "./configure", *args
     system "make"
     system "make", "install"
@@ -79,8 +74,8 @@ class PortableRuby < PortableFormula
     abi_version = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["ruby_version"]'`
     abi_arch = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["arch"]'`
 
-    # Fix more shim and HOMEBREW_REPOSITORY references
     if OS.linux?
+      # Don't restrict to a specific GCC compiler binary we used (e.g. gcc-5).
       inreplace lib/"ruby/#{abi_version}/#{abi_arch}/rbconfig.rb" do |s|
         s.gsub! ENV.cxx, "c++"
         s.gsub! ENV.cc, "cc"
