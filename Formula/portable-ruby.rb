@@ -63,6 +63,11 @@ class PortableRuby < PortableFormula
 
     args << "--with-opt-dir=#{paths.join(":")}"
 
+    # Append flags rather than override
+    ENV["cflags"] = ENV.delete("CFLAGS")
+    ENV["cppflags"] = ENV.delete("CPPFLAGS")
+    ENV["cxxflags"] = ENV.delete("CXXFLAGS")
+
     system "./configure", *args
     system "make"
     system "make", "install"
