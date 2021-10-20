@@ -24,6 +24,9 @@ module PortableFormulaMixin
       ENV.delete "TERMINFO_DIRS"
       ENV.delete "HOMEBREW_RPATH_PATHS"
       ENV.delete "HOMEBREW_DYNAMIC_LINKER"
+
+      # https://github.com/Homebrew/homebrew-portable-ruby/issues/118
+      ENV.append_to_cflags "-fPIC"
     end
 
     super
