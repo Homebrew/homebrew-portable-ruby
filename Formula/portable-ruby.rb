@@ -10,8 +10,8 @@ class PortableRuby < PortableFormula
 
   bottle do
     root_url "https://ghcr.io/v2/homebrew/portable-ruby"
-    sha256 cellar: :any_skip_relocation, yosemite:     "b065e5e3783954f3e65d8d3a6377ca51649bfcfa21b356b0dd70490f74c6bd86"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "97e639a64dcec285392b53ad804b5334c324f1d2a8bdc2b5087b8bf8051e332f"
+    sha256 cellar: :any_skip_relocation, yosemite:     "0cb1cc7af109437fe0e020c9f3b7b95c3c709b140bde9f991ad2c1433496dd42"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "cd7fffb18ef9338baa670fc5e8fce99b0e3cc0f0fd7627bcbb56f3c8d54161d4"
   end
 
   depends_on "pkg-config" => :build
