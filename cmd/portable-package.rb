@@ -20,10 +20,6 @@ module Homebrew
              description: "Remove `rebuild`."
       switch "--keep-old",
              description: "Attempt to keep `rebuild` at its original value."
-      switch "--write",
-             description: "Write the changes to the formula file."
-      switch "--no-commit",
-             description: "Don't commit changes to the formula file."
       switch "-v", "--verbose",
              description: "Pass `--verbose` to `brew` commands."
       conflicts "--no-rebuild", "--keep-old"
@@ -34,12 +30,11 @@ module Homebrew
   def portable_package
     args = portable_package_args.parse
 
-    raise UsageError, "--no-commit requires --write!" if !args.write? && args.no_commit?
-
     ENV["HOMEBREW_DEVELOPER"] = "1"
 
     verbose = []
     verbose << "--verbose" if args.verbose?
+    verbose << "--debug" if args.debug?
 
     args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
@@ -56,11 +51,13 @@ module Homebrew
         safe_system "brew", "test", *verbose, name
         puts "Linkage information:"
         safe_system "brew", "linkage", *verbose, name
-        bottle_args = %w[--skip-relocation]
+        bottle_args = %w[
+          --skip-relocation
+          --root-url=https://ghcr.io/v2/homebrew/portable-ruby
+          --json
+        ]
         bottle_args << "--no-rebuild" if args.no_rebuild?
         bottle_args << "--keep-old" if args.keep_old?
-        bottle_args << "--write" if args.write?
-        bottle_args << "--no-commit" if args.no_commit?
         safe_system "brew", "bottle", *verbose, *bottle_args, name
         Pathname.glob("*.bottle*.tar.gz") do |bottle_filename|
           bottle_file = bottle_filename.realpath
