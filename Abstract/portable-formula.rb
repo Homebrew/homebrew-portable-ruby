@@ -3,12 +3,17 @@
 module PortableFormulaMixin
   def install
     if OS.mac?
-      if OS::Mac.version > :yosemite
+      oldest_macos = if Hardware::CPU.arm?
+        :big_sur
+      else
+        :yosemite
+      end
+      if OS::Mac.version > oldest_macos
         opoo <<~EOS
           You are building portable formula on #{OS::Mac.version}.
           As result, formula won't be able to work on older macOS versions.
-          It's recommended to build this formula on OS X Yosemite (the oldest version
-          that can run Homebrew).
+          It's recommended to build this formula on macOS #{oldest_macos.to_s.humanize.titleize}
+          (the oldest version that can run Homebrew).
         EOS
       end
 
