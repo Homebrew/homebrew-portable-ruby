@@ -19,7 +19,9 @@ class PortableRuby < PortableFormula
   depends_on "portable-readline" => :build
   depends_on "portable-libyaml" => :build
   depends_on "portable-openssl" => :build
-  if OS.linux?
+
+  on_linux do
+    depends_on "portable-libxcrypt" => :build
     depends_on "portable-ncurses" => :build
     depends_on "portable-zlib" => :build
   end
@@ -28,6 +30,7 @@ class PortableRuby < PortableFormula
     readline = Formula["portable-readline"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
+    libxcrypt = Formula["portable-libxcrypt"]
     ncurses = Formula["portable-ncurses"]
     zlib = Formula["portable-zlib"]
 
@@ -52,6 +55,8 @@ class PortableRuby < PortableFormula
     ]
 
     if OS.linux?
+      paths << libxcrypt.opt_prefix
+
       # We want Ruby to link to our ncurses, instead of libtermcap in CentOS 5
       paths << ncurses.opt_prefix
       inreplace "ext/readline/extconf.rb" do |s|
