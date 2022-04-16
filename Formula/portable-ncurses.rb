@@ -2,19 +2,26 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 
 class PortableNcurses < PortableFormula
   desc "Text-based UI library"
-  homepage "https://www.gnu.org/s/ncurses/"
-  url "https://ftp.gnu.org/gnu/ncurses/ncurses-6.2.tar.gz"
-  mirror "https://ftpmirror.gnu.org/ncurses/ncurses-6.2.tar.gz"
-  sha256 "30306e0c76e0f9f1f0de987cf1c82a5c21e1ce6568b9227f7da5b71cbea86c9d"
+  homepage "https://invisible-island.net/ncurses/announce.html"
+  url "https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz"
+  mirror "https://invisible-mirror.net/archives/ncurses/ncurses-6.3.tar.gz"
+  mirror "https://ftpmirror.gnu.org/ncurses/ncurses-6.3.tar.gz"
+  sha256 "97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059"
   license "MIT"
 
   depends_on "pkg-config" => :build
 
   def install
+    # Workaround for
+    # macOS: mkdir: /usr/lib/pkgconfig:/opt/homebrew/Library/Homebrew/os/mac/pkgconfig/12: Operation not permitted
+    # Linux: configure: error: expected a pathname, not ""
+    (lib/"pkgconfig").mkpath
+
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--enable-static",
                           "--disable-shared",
+                          "--without-cxx-binding",
                           "--enable-pc-files",
                           "--with-pkg-config-libdir=#{lib}/pkgconfig",
                           "--enable-sigwinch",
@@ -27,20 +34,20 @@ class PortableNcurses < PortableFormula
   end
 
   def make_libncurses_symlinks
-    major = version.to_s.split(".")[0]
+    major = version.major.to_s
 
     %w[form menu ncurses panel].each do |name|
       lib.install_symlink "lib#{name}w.a" => "lib#{name}.a"
       lib.install_symlink "lib#{name}w_g.a" => "lib#{name}_g.a"
     end
 
-    lib.install_symlink "libncurses++w.a" => "libncurses++.a"
     lib.install_symlink "libncurses.a" => "libcurses.a"
 
     (lib/"pkgconfig").install_symlink "ncursesw.pc" => "ncurses.pc"
 
     bin.install_symlink "ncursesw#{major}-config" => "ncurses#{major}-config"
 
+    include.install_symlink "ncursesw" => "ncurses"
     include.install_symlink [
       "ncursesw/curses.h", "ncursesw/form.h", "ncursesw/ncurses.h",
       "ncursesw/panel.h", "ncursesw/term.h", "ncursesw/termcap.h"
