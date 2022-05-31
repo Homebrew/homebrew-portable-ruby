@@ -34,7 +34,7 @@ class PortableRuby < PortableFormula
     ncurses = Formula["portable-ncurses"]
     zlib = Formula["portable-zlib"]
 
-    args = %W[
+    args = portable_configure_args + %W[
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
@@ -74,9 +74,16 @@ class PortableRuby < PortableFormula
     ENV["cppflags"] = ENV.delete("CPPFLAGS")
     ENV["cxxflags"] = ENV.delete("CXXFLAGS")
 
+    # Usually cross-compiling requires a host Ruby of the same version.
+    # In our scenario though, we can get away with using miniruby as it should run on newer macOS.
+    if OS.mac? && CROSS_COMPILING
+      ENV["MINIRUBY"] = "./miniruby -I$(srcdir)/lib -I. -I$(EXTOUT)/common"
+      run_opts = "#{Dir.pwd}/tool/runruby.rb --extout=.ext"
+    end
+
     system "./configure", *args
-    system "make"
-    system "make", "install"
+    system "make", "RUN_OPTS=#{run_opts}"
+    system "make", "install", "RUN_OPTS=#{run_opts}"
 
     # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
     # We don't need the binstub so remove it.

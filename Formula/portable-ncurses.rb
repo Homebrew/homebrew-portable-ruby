@@ -17,7 +17,8 @@ class PortableNcurses < PortableFormula
     # Linux: configure: error: expected a pathname, not ""
     (lib/"pkgconfig").mkpath
 
-    system "./configure", "--disable-dependency-tracking",
+    system "./configure", *portable_configure_args,
+                          "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--enable-static",
                           "--disable-shared",

@@ -1,18 +1,42 @@
 # frozen_string_literal: true
 
 module PortableFormulaMixin
+  if OS.mac?
+    if Hardware::CPU.arm?
+      TARGET_MACOS = :big_sur
+      TARGET_DARWIN_VERSION = Version.new("20.1.0").freeze
+    else
+      TARGET_MACOS = :el_capitan
+      TARGET_DARWIN_VERSION = Version.new("15.0.0").freeze
+    end
+
+    CROSS_COMPILING = OS.kernel_version.major != TARGET_DARWIN_VERSION.major
+  end
+
+  def portable_configure_args
+    # Allow cross-compile between Darwin versions (used by our fake El Capitan on High Sierra setup)
+    if OS.mac? && CROSS_COMPILING
+      cpu = if Hardware::CPU.arm?
+        "aarch64"
+      else
+        "x86_64"
+      end
+      %W[
+        --build=#{cpu}-apple-darwin#{OS.kernel_version}
+        --host=#{cpu}-apple-darwin#{TARGET_DARWIN_VERSION}
+      ]
+    else
+      []
+    end
+  end
+
   def install
     if OS.mac?
-      oldest_macos = if Hardware::CPU.arm?
-        :big_sur
-      else
-        :el_capitan
-      end
-      if OS::Mac.version > oldest_macos
+      if OS::Mac.version > TARGET_MACOS
         opoo <<~EOS
           You are building portable formula on #{OS::Mac.version}.
           As result, formula won't be able to work on older macOS versions.
-          It's recommended to build this formula on macOS #{oldest_macos.to_s.humanize.titleize}
+          It's recommended to build this formula on macOS #{TARGET_MACOS.to_s.humanize.titleize}
           (the oldest version that can run Homebrew).
         EOS
       end

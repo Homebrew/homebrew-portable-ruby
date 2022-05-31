@@ -23,10 +23,13 @@ class PortableReadline < PortableFormula
   depends_on "portable-ncurses" => :build if OS.linux?
 
   def install
-    system "./configure", "--prefix=#{prefix}",
-                          "--enable-static",
-                          "--disable-shared",
-                          ("--with-curses" if OS.linux?)
+    args = portable_configure_args + %W[
+      --prefix=#{prefix}
+      --enable-static
+      --disable-shared
+    ]
+    args << "--with-curses" if OS.linux?
+    system "./configure", *args
     system "make", "install"
   end
 

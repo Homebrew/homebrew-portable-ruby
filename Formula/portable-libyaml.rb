@@ -8,7 +8,8 @@ class PortableLibyaml < PortableFormula
   license "MIT"
 
   def install
-    system "./configure", "--disable-dependency-tracking",
+    system "./configure", *portable_configure_args,
+                          "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
                           "--enable-static",
                           "--disable-shared"

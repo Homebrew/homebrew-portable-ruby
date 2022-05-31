@@ -11,7 +11,8 @@ class PortableLibxcrypt < PortableFormula
     # Compling util-xbzero.c crashes with "invalid argument to gimple call" on Wheezy's GCC 4.7.2.
     # Use the GCC 4.9 backport to avoid this.
     ENV["HOMEBREW_CC"] = "/usr/lib/gcc-4.9-backport/bin/gcc" if ENV["HOMEBREW_ON_DEBIAN7"].present?
-    system "./configure", *std_configure_args,
+    system "./configure", *portable_configure_args,
+                          *std_configure_args,
                           "--enable-static",
                           "--disable-shared",
                           "--disable-obsolete-api",
