@@ -34,6 +34,12 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
+      - run: brew test-bot --only-cleanup-before
+
+      - run: brew test-bot --only-setup
+
+      - run: brew test-bot --only-tap-syntax
+
       - name: Build Docker image
         if: runner.os == 'Linux'
         run: |
@@ -72,3 +78,9 @@ jobs:
             docker run --rm -v $(pwd):/data -e HOMEBREW_RUBY_PATH=/data/portable-ruby/bin/ruby \
               homebrew-portable-test /bin/bash -c "brew config"
           fi
+
+      - name: Post cleanup
+        if: always()
+        run: |
+          brew test-bot --only-cleanup-after
+          rm -rvf bottles portable-ruby
