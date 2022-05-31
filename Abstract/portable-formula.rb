@@ -6,7 +6,7 @@ module PortableFormulaMixin
       oldest_macos = if Hardware::CPU.arm?
         :big_sur
       else
-        :yosemite
+        :el_capitan
       end
       if OS::Mac.version > oldest_macos
         opoo <<~EOS
