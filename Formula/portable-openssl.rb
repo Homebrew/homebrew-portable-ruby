@@ -3,10 +3,10 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.1.1n.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1n.tar.gz"
-  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1n.tar.gz"
-  sha256 "40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a"
+  url "https://www.openssl.org/source/openssl-1.1.1o.tar.gz"
+  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1o.tar.gz"
+  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1o.tar.gz"
+  sha256 "9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f"
   license "OpenSSL"
 
   resource "cacert" do
