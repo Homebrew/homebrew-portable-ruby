@@ -16,10 +16,17 @@ class PortableZlib < PortableFormula
   end
 
   # Patch for configure issue
-  # https://github.com/madler/zlib/pull/607
+  # Remove with the next release
   patch do
     url "https://github.com/madler/zlib/commit/05796d3d8d5546cf1b4dfe2cd72ab746afae505d.patch?full_index=1"
     sha256 "68573842f1619bb8de1fa92071e38e6e51b8df71371e139e4e96be19dd7e9694"
+  end
+
+  # Patch for CRC compatibility issue
+  # Remove with the next release
+  patch do
+    url "https://github.com/madler/zlib/commit/ec3df00224d4b396e2ac6586ab5d25f673caa4c2.patch?full_index=1"
+    sha256 "c7d1cbb58b144c48b7fa8b52c57531e9fd80ab7d87c5d58ba76a9d33c12cb047"
   end
 
   def install
