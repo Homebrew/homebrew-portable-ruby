@@ -15,6 +15,18 @@ class PortableOpenssl < PortableFormula
     sha256 "1979e7fe618c51ed1c9df43bba92f977a0d3fe7497ffa2a5e80dfc559a1e5a29"
   end
 
+  # Fix failing test due to expired certificates.
+  # Remove with the next version (1.1.1p).
+  patch do
+    url "https://github.com/openssl/openssl/commit/73db5d82489b3ec09ccc772dfcee14fef0e8e908.patch?full_index=1"
+    sha256 "4b04ce0b7a3132c640bdc7726c7efaeb28572c5b8cdffcdc80fea700ded964e3"
+  end
+
+  patch do
+    url "https://github.com/openssl/openssl/commit/b7ce611887cfac633aacc052b2e71a7f195418b8.patch?full_index=1"
+    sha256 "6a81f4b2edb9ca3d56d897b4c85faac59fb488434dae6f0b5c525e9f96c879df"
+  end
+
   def openssldir
     libexec/"etc/openssl"
   end
