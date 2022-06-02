@@ -8,6 +8,10 @@ Just `brew install homebrew/portable-ruby/<formula>`.
 
 ## How do I build packages for these formulae
 
+[An automated release workflow is available to use](https://github.com/Homebrew/homebrew-portable-ruby/actions/workflows/release.yml). Dispatch the workflow and all steps of building, tagging and uploading should be handled automatically.
+
+Manual steps are documented below.
+
 ### macOS
 
 Run `brew portable-package ruby` inside an OS X 10.11 VM (so it is compatible with all working Homebrew macOS versions).

@@ -1,0 +1,74 @@
+name: Build
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  HOMEBREW_DEVELOPER: 1
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_CHANGE_ARCH_TO_ARM: 1
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: ["10.11-cross", "11-arm64", "ubuntu-latest"]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - run: brew test-bot --only-cleanup-before
+
+      - run: brew test-bot --only-setup
+
+      - run: brew test-bot --only-tap-syntax
+
+      - name: Build Docker image
+        if: runner.os == 'Linux'
+        run: |
+          docker build -f Dockerfile -t homebrew-portable .
+          docker build -f Dockerfile --build-arg img=homebrew/brew -t homebrew-portable-test .
+
+      - name: Build Portable Ruby
+        run: |
+          if [ "$RUNNER_OS" = 'macOS' ]; then
+            mkdir -p bottle/
+            cd bottle
+            brew portable-package --verbose portable-ruby
+          else
+            docker run --name=homebrew-portable -w /bottle \
+              -v $(pwd):/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/${GITHUB_REPOSITORY,,} \
+              homebrew-portable brew portable-package --verbose portable-ruby
+            docker cp homebrew-portable:/bottle .
+          fi
+
+      - name: Upload Portable Ruby
+        uses: actions/upload-artifact@v3
+        with:
+          name: bottles
+          path: bottle
+
+      - name: Test Portable Ruby
+        run: |
+          mkdir -p portable-ruby/
+          tar --strip-components 2 -C portable-ruby -xf bottle/portable-ruby--*.tar.gz
+          if [ "$RUNNER_OS" = 'macOS' ]; then
+            export HOMEBREW_RUBY_PATH=$PWD/portable-ruby/bin/ruby
+            # These cannot be queried at the macOS level on GitHub Actions.
+            export HOMEBREW_LANGUAGES=en-GB
+            brew config
+          else
+            docker run --rm -v $(pwd):/data -e HOMEBREW_RUBY_PATH=/data/portable-ruby/bin/ruby \
+              homebrew-portable-test /bin/bash -c "brew config"
+          fi
+
+      - name: Post cleanup
+        if: always()
+        run: |
+          brew test-bot --only-cleanup-after
+          rm -rvf bottle portable-ruby

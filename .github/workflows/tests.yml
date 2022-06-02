@@ -1,13 +1,13 @@
 name: CI
+
 on:
   push:
     branches:
       - master
   pull_request:
 
-env:
-  HOMEBREW_DEVELOPER: 1
-  HOMEBREW_NO_AUTO_UPDATE: 1
+permissions:
+  contents: read
 
 concurrency:
   group: "${{ github.ref }}"
@@ -18,69 +18,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Check Dockerfile
         run: docker run --rm -i hadolint/hadolint < Dockerfile
 
   tests:
-    strategy:
-      matrix:
-        os: ["macos-latest", "ubuntu-latest"]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
+    uses: ./.github/workflows/build.yml
+
+  # This job is used as a required status check, instead of requiring each build matrix element.
+  # When using ephemeral runners, the name of those runs change every time so they cannot be set as required.
+  conclusion:
+    needs: tests
+    runs-on: ubuntu-latest
+    if: always()
     steps:
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
-
-      - run: brew test-bot --only-cleanup-before
-
-      - run: brew test-bot --only-setup
-
-      - run: brew test-bot --only-tap-syntax
-
-      - name: Build Docker image
-        if: runner.os == 'Linux'
-        run: |
-          docker build -f Dockerfile -t homebrew-portable .
-          docker build -f Dockerfile --build-arg img=homebrew/brew -t homebrew-portable-test .
-
-      - name: Build Portable Ruby
-        run: |
-          if [ "$RUNNER_OS" = 'macOS' ]; then
-            mkdir -p bottle/
-            cd bottle
-            brew portable-package --verbose portable-ruby
-          else
-            docker run --name=homebrew-portable -w /bottle \
-              -v $(pwd):/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/homebrew/homebrew-portable-ruby \
-              homebrew-portable brew portable-package --verbose portable-ruby
-            docker cp homebrew-portable:/bottle .
-          fi
-
-      - name: Upload Portable Ruby
-        uses: actions/upload-artifact@master
-        with:
-          name: portable-ruby-${{ matrix.os }}
-          path: bottle
-
-      - name: Test Portable Ruby
-        run: |
-          mkdir -p portable-ruby/
-          tar --strip-components 2 -C portable-ruby -xf bottle/portable-ruby--*.tar.gz
-          if [ "$RUNNER_OS" = 'macOS' ]; then
-            export HOMEBREW_RUBY_PATH=$PWD/portable-ruby/bin/ruby
-            # These cannot be queried at the macOS level on GitHub Actions.
-            export HOMEBREW_LANGUAGES=en-GB
-            brew config
-          else
-            docker run --rm -v $(pwd):/data -e HOMEBREW_RUBY_PATH=/data/portable-ruby/bin/ruby \
-              homebrew-portable-test /bin/bash -c "brew config"
-          fi
-
-      - name: Post cleanup
-        if: always()
-        run: |
-          brew test-bot --only-cleanup-after
-          rm -rvf bottles portable-ruby
+      - name: Result
+        run: ${{ needs.tests.result == 'success' }}
