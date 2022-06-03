@@ -7,6 +7,7 @@ class PortableRuby < PortableFormula
   url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.8.tar.xz"
   sha256 "8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fcaa18e593eb"
   license "Ruby"
+  revision 1
 
   bottle do
     root_url "https://ghcr.io/v2/homebrew/portable-ruby"
