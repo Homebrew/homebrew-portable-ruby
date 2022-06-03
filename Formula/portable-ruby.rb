@@ -48,26 +48,27 @@ class PortableRuby < PortableFormula
     # Correct MJIT_CC to not use superenv shim
     args << "MJIT_CC=/usr/bin/#{DevelopmentTools.default_compiler}"
 
-    paths = [
-      readline.opt_prefix,
-      libyaml.opt_prefix,
-      openssl.opt_prefix,
+    args += %W[
+      --with-readline-dir=#{readline.opt_prefix}
+      --with-libyaml-dir=#{libyaml.opt_prefix}
+      --with-openssl-dir=#{openssl.opt_prefix}
     ]
 
     if OS.linux?
-      paths << libxcrypt.opt_prefix
+      ENV["XCFLAGS"] = "-I#{libxcrypt.opt_include}"
+      ENV["XLDFLAGS"] = "-L#{libxcrypt.opt_lib}"
 
       # We want Ruby to link to our ncurses, instead of libtermcap in CentOS 5
-      paths << ncurses.opt_prefix
       inreplace "ext/readline/extconf.rb" do |s|
         s.gsub! "dir_config('termcap')", ""
         s.gsub! 'have_library("termcap", "tgetnum") ||', ""
       end
 
-      paths << zlib.opt_prefix
+      args += %W[
+        --with-ncurses-dir=#{ncurses.opt_prefix}
+        --with-zlib-dir=#{zlib.opt_prefix}
+      ]
     end
-
-    args << "--with-opt-dir=#{paths.join(":")}"
 
     # Append flags rather than override
     ENV["cflags"] = ENV.delete("CFLAGS")
