@@ -9,13 +9,6 @@ class PortableRuby < PortableFormula
   license "Ruby"
   revision 1
 
-  bottle do
-    root_url "https://ghcr.io/v2/homebrew/portable-ruby"
-    sha256 cellar: :any_skip_relocation, arm64_big_sur: "f2d5cab5a4dd49e5b3de780a3cd0a1f61642fea247d1c25aa40cd43f1be290b5"
-    sha256 cellar: :any_skip_relocation, yosemite:      "0cb1cc7af109437fe0e020c9f3b7b95c3c709b140bde9f991ad2c1433496dd42"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cd7fffb18ef9338baa670fc5e8fce99b0e3cc0f0fd7627bcbb56f3c8d54161d4"
-  end
-
   depends_on "pkg-config" => :build
   depends_on "portable-readline" => :build
   depends_on "portable-libyaml" => :build

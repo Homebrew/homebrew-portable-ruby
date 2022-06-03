@@ -16,13 +16,8 @@ module Homebrew
       EOS
       switch "--no-uninstall-deps",
              description: "Don't uninstall all dependencies of portable formulae before testing."
-      switch "--no-rebuild",
-             description: "Remove `rebuild`."
-      switch "--keep-old",
-             description: "Attempt to keep `rebuild` at its original value."
       switch "-v", "--verbose",
              description: "Pass `--verbose` to `brew` commands."
-      conflicts "--no-rebuild", "--keep-old"
       named_args :formula, min: 1
     end
   end
@@ -55,9 +50,8 @@ module Homebrew
           --skip-relocation
           --root-url=https://ghcr.io/v2/homebrew/portable-ruby
           --json
+          --no-rebuild
         ]
-        bottle_args << "--no-rebuild" if args.no_rebuild?
-        bottle_args << "--keep-old" if args.keep_old?
         safe_system "brew", "bottle", *verbose, *bottle_args, name
         Pathname.glob("*.bottle*.tar.gz") do |bottle_filename|
           bottle_file = bottle_filename.realpath

@@ -36,12 +36,10 @@ Copy the bottle `bottle*.tar.gz` and `bottle*.json` files into a directory on yo
 Upload these files to GitHub Packages with:
 
 ```sh
-brew pr-upload --root-url=https://ghcr.io/v2/homebrew/portable-ruby
+brew pr-upload --upload-only --root-url=https://ghcr.io/v2/homebrew/portable-ruby
 ```
 
-This will create a bottle commit. Open a PR and merge this into master.
-
-Once the commit is in master, create a new GitHub tag with:
+And to GitHub releases:
 
 ```sh
 brew pr-upload --upload-only --root-url=https://github.com/Homebrew/homebrew-portable-ruby/releases/download/$VERSION
