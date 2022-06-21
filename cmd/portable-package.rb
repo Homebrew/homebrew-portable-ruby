@@ -31,6 +31,9 @@ module Homebrew
     verbose << "--verbose" if args.verbose?
     verbose << "--debug" if args.debug?
 
+    # If test-bot cleanup is performed and auto-updates are disabled, this might not already be installed.
+    safe_system "brew", "install", "ca-certificates" unless DevelopmentTools.ca_file_handles_most_https_certificates?
+
     args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
       begin
