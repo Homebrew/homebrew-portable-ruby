@@ -37,9 +37,21 @@ module Homebrew
     args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
       begin
-        deps = Utils.safe_popen_read("brew", "deps", "-n", "--include-build", name).split("\n")
+        # On Linux, install glibc@2.13 and linux-headers from bottles and don't install their build dependencies.
+        bottled_dep_allowlist = %w[glibc@2.13 linux-headers@4.4]
+        deps = Dependency.expand(Formula[name], cache_key: "portable-package-#{name}") do |_dependent, dep|
+          Dependency.prune if dep.test? || dep.optional?
 
-        # Avoid installing glibc. Bottles depend on glibc.
+          next unless bottled_dep_allowlist.include?(dep.name)
+
+          Dependency.keep_but_prune_recursive_deps
+        end.map(&:name)
+
+        bottled_deps, deps = deps.partition { |dep| bottled_dep_allowlist.include?(dep) }
+
+        safe_system "brew", "install", *verbose, *bottled_deps if bottled_deps.present?
+
+        # Build bottles for all other dependencies.
         safe_system "brew", "install", "--build-bottle", *verbose, *deps
 
         safe_system "brew", "install", "--build-bottle", *verbose, name
