@@ -14,15 +14,6 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  dockerfile-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v3
-
-      - name: Check Dockerfile
-        run: docker run --rm -i hadolint/hadolint < Dockerfile
-
   tests:
     uses: ./.github/workflows/build.yml
 

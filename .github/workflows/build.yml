@@ -15,12 +15,20 @@ jobs:
   build:
     strategy:
       matrix:
-        os:
-          - '10.11-cross-${{github.run_id}}-${{github.run_attempt}}'
-          - '11-arm64'
-          - 'ubuntu-latest'
+        include:
+          - os: '10.11-cross-${{github.run_id}}-${{github.run_attempt}}'
+          - os: '11-arm64'
+          - os: 'ubuntu-latest'
+            container:
+              image: ghcr.io/homebrew/ubuntu16.04:master
+              options: --user=linuxbrew
+            workdir: /github/home
       fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{matrix.os}}
+    container: ${{matrix.container}}
+    defaults:
+      run:
+        working-directory: ${{matrix.workdir || github.workspace}}
     steps:
       - name: Set environment variables
         if: runner.os == 'macOS'
@@ -36,44 +44,26 @@ jobs:
 
       - run: brew test-bot --only-tap-syntax
 
-      - name: Build Docker image
-        if: runner.os == 'Linux'
-        run: |
-          docker build -f Dockerfile -t homebrew-portable .
-          docker build -f Dockerfile --build-arg img=homebrew/brew -t homebrew-portable-test .
-
       - name: Build Portable Ruby
         run: |
-          if [ "$RUNNER_OS" = 'macOS' ]; then
-            mkdir -p bottle/
-            cd bottle
-            brew portable-package --verbose portable-ruby
-          else
-            docker run --name=homebrew-portable -w /bottle \
-              -v $(pwd):/home/linuxbrew/.linuxbrew/Homebrew/Library/Taps/${GITHUB_REPOSITORY,,} \
-              homebrew-portable brew portable-package --verbose portable-ruby
-            docker cp homebrew-portable:/bottle .
-          fi
+          mkdir -p bottle/
+          cd bottle
+          brew portable-package --verbose portable-ruby
 
       - name: Upload Portable Ruby
         uses: actions/upload-artifact@v3
         with:
           name: bottles
-          path: bottle
+          path: ${{matrix.workdir || github.workspace}}/bottle
 
       - name: Test Portable Ruby
         run: |
           mkdir -p portable-ruby/
           tar --strip-components 2 -C portable-ruby -xf bottle/portable-ruby--*.tar.gz
-          if [ "$RUNNER_OS" = 'macOS' ]; then
-            export HOMEBREW_RUBY_PATH=$PWD/portable-ruby/bin/ruby
-            # These cannot be queried at the macOS level on GitHub Actions.
-            export HOMEBREW_LANGUAGES=en-GB
-            brew config
-          else
-            docker run --rm -v $(pwd):/data -e HOMEBREW_RUBY_PATH=/data/portable-ruby/bin/ruby \
-              homebrew-portable-test /bin/bash -c "brew config"
-          fi
+          export PATH="${PWD}/portable-ruby/bin:${PATH}"
+          export HOMEBREW_USE_RUBY_FROM_PATH=1
+          rm -rf "$(brew --repo)/Library/Homebrew/vendor/portable-ruby"
+          brew config | awk -v s="${PWD}/portable-ruby/bin/ruby" '$0~s{r=1} 1; END{exit(!r)}'
 
       - name: Post cleanup
         if: always()
