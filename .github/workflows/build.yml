@@ -15,10 +15,18 @@ jobs:
   build:
     strategy:
       matrix:
-        os: ["10.11-cross", "11-arm64", "ubuntu-latest"]
+        os:
+          - '10.11-cross-${{github.run_id}}-${{github.run_attempt}}'
+          - '11-arm64'
+          - 'ubuntu-latest'
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Set environment variables
+        if: runner.os == 'macOS'
+        run: |
+          echo 'PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin' >> $GITHUB_ENV
+
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
