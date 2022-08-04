@@ -32,7 +32,9 @@ module Homebrew
     verbose << "--debug" if args.debug?
 
     # If test-bot cleanup is performed and auto-updates are disabled, this might not already be installed.
-    safe_system "brew", "install", "ca-certificates" unless DevelopmentTools.ca_file_handles_most_https_certificates?
+    unless DevelopmentTools.ca_file_handles_most_https_certificates?
+      safe_system HOMEBREW_BREW_FILE, "install", "ca-certificates"
+    end
 
     args.named.each do |name|
       name = "portable-#{name}" unless name.start_with? "portable-"
@@ -49,25 +51,25 @@ module Homebrew
 
         bottled_deps, deps = deps.partition { |dep| bottled_dep_allowlist.include?(dep) }
 
-        safe_system "brew", "install", *verbose, *bottled_deps if bottled_deps.present?
+        safe_system HOMEBREW_BREW_FILE, "install", *verbose, *bottled_deps if bottled_deps.present?
 
         # Build bottles for all other dependencies.
-        safe_system "brew", "install", "--build-bottle", *verbose, *deps
+        safe_system HOMEBREW_BREW_FILE, "install", "--build-bottle", *verbose, *deps
 
-        safe_system "brew", "install", "--build-bottle", *verbose, name
+        safe_system HOMEBREW_BREW_FILE, "install", "--build-bottle", *verbose, name
         unless args.no_uninstall_deps?
-          safe_system "brew", "uninstall", "--force", "--ignore-dependencies", *verbose, *deps
+          safe_system HOMEBREW_BREW_FILE, "uninstall", "--force", "--ignore-dependencies", *verbose, *deps
         end
-        safe_system "brew", "test", *verbose, name
+        safe_system HOMEBREW_BREW_FILE, "test", *verbose, name
         puts "Linkage information:"
-        safe_system "brew", "linkage", *verbose, name
+        safe_system HOMEBREW_BREW_FILE, "linkage", *verbose, name
         bottle_args = %w[
           --skip-relocation
           --root-url=https://ghcr.io/v2/homebrew/portable-ruby
           --json
           --no-rebuild
         ]
-        safe_system "brew", "bottle", *verbose, *bottle_args, name
+        safe_system HOMEBREW_BREW_FILE, "bottle", *verbose, *bottle_args, name
         Pathname.glob("*.bottle*.tar.gz") do |bottle_filename|
           bottle_file = bottle_filename.realpath
           bottle_cache = HOMEBREW_CACHE/bottle_filename
