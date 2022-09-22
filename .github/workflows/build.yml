@@ -20,7 +20,7 @@ jobs:
           - os: '11-arm64'
           - os: 'ubuntu-latest'
             container:
-              image: ghcr.io/homebrew/ubuntu16.04:master
+              image: ghcr.io/homebrew/ubuntu22.04:master
               options: --user=linuxbrew
             workdir: /github/home
       fail-fast: false
