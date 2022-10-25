@@ -10,18 +10,18 @@ class PortableRuby < PortableFormula
   revision 1
 
   depends_on "pkg-config" => :build
-  depends_on "portable-readline" => :build
   depends_on "portable-libyaml" => :build
   depends_on "portable-openssl" => :build
 
   on_linux do
+    depends_on "portable-libedit" => :build
     depends_on "portable-libxcrypt" => :build
     depends_on "portable-ncurses" => :build
     depends_on "portable-zlib" => :build
   end
 
   def install
-    readline = Formula["portable-readline"]
+    libedit = Formula["portable-libedit"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
     libxcrypt = Formula["portable-libxcrypt"]
@@ -34,6 +34,7 @@ class PortableRuby < PortableFormula
       --with-static-linked-ext
       --with-out-ext=tk,sdbm,gdbm,dbm
       --without-gmp
+      --enable-libedit
       --disable-install-doc
       --disable-install-rdoc
       --disable-dependency-tracking
@@ -43,7 +44,7 @@ class PortableRuby < PortableFormula
     args << "MJIT_CC=/usr/bin/#{DevelopmentTools.default_compiler}"
 
     args += %W[
-      --with-readline-dir=#{readline.opt_prefix}
+      --with-libedit-dir=#{libedit.opt_prefix}
       --with-libyaml-dir=#{libyaml.opt_prefix}
       --with-openssl-dir=#{openssl.opt_prefix}
     ]
@@ -110,18 +111,18 @@ class PortableRuby < PortableFormula
     cp_r Dir["#{prefix}/*"], testpath
     ENV["PATH"] = "/usr/bin:/bin"
     ruby = (testpath/"bin/ruby").realpath
-    assert_equal version.to_s.split("-").first, shell_output("#{ruby} -e 'puts RUBY_VERSION'").strip
-    assert_equal ruby.to_s, shell_output("#{ruby} -e 'puts RbConfig.ruby'").strip
+    assert_equal version.to_s.split("-").first, shell_output("#{ruby} -e 'puts RUBY_VERSION'").chomp
+    assert_equal ruby.to_s, shell_output("#{ruby} -e 'puts RbConfig.ruby'").chomp
     assert_equal "3632233996",
-      shell_output("#{ruby} -rzlib -e 'puts Zlib.crc32(\"test\")'").strip
-    assert_equal "\"'",
-      shell_output("#{ruby} -rreadline -e 'puts Readline.basic_quote_characters'").strip
+      shell_output("#{ruby} -rzlib -e 'puts Zlib.crc32(\"test\")'").chomp
+    assert_equal " \t\n\"\\'`@$><=;|&{(",
+      shell_output("#{ruby} -rreadline -e 'puts Readline.basic_word_break_characters'").chomp
     assert_equal '{"a"=>"b"}',
-      shell_output("#{ruby} -ryaml -e 'puts YAML.load(\"a: b\")'").strip
+      shell_output("#{ruby} -ryaml -e 'puts YAML.load(\"a: b\")'").chomp
     assert_equal "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").strip
+      shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").chomp
     assert_match "200",
-      shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").strip
+      shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").chomp
     system testpath/"bin/gem", "environment"
     system testpath/"bin/bundle", "init"
     # install gem with native components
