@@ -7,6 +7,7 @@ class PortableRuby < PortableFormula
   url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.10.tar.xz"
   sha256 "5fd8ded51321b88fdc9c1b4b0eb1b951d2eddbc293865da0151612c2e814c1f2"
   license "Ruby"
+  revision 1
 
   depends_on "pkg-config" => :build
   depends_on "portable-libyaml" => :build
@@ -62,6 +63,9 @@ class PortableRuby < PortableFormula
         --with-ncurses-dir=#{ncurses.opt_prefix}
         --with-zlib-dir=#{zlib.opt_prefix}
       ]
+
+      # Ensure compatibility with older Ubuntu when built with Ubuntu 22.04
+      args << "MKDIR_P=/bin/mkdir -p"
     end
 
     # Append flags rather than override
