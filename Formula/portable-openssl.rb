@@ -46,6 +46,11 @@ class PortableOpenssl < PortableFormula
   end
 
   def install
+    # OpenSSL is not fully portable and certificate paths are backed into the library.
+    # We therefore need to set the certificate path at runtime via an environment variable.
+    # We however don't want to touch _other_ OpenSSL usages, so we change the variable name to differ.
+    inreplace "include/internal/cryptlib.h", "\"SSL_CERT_FILE\"", "\"PORTABLE_RUBY_SSL_CERT_FILE\""
+
     system "perl", "./Configure", *(configure_args + arch_args)
     system "make"
     system "make", "test"
