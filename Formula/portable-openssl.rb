@@ -3,16 +3,16 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.1.1q.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1q.tar.gz"
-  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1q.tar.gz"
-  sha256 "d7939ce614029cdff0b6c20f0e2e5703158a489a72b2507b8bd51bf8c8fd10ca"
+  url "https://www.openssl.org/source/openssl-1.1.1t.tar.gz"
+  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1t.tar.gz"
+  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1t.tar.gz"
+  sha256 "8dee9b24bdb1dcbf0c3d1e9b02fb8f6bf22165e807f45adeb7c9677536859d3b"
   license "OpenSSL"
 
   resource "cacert" do
     # https://curl.se/docs/caextract.html
-    url "https://curl.se/ca/cacert-2022-10-11.pem"
-    sha256 "2cff03f9efdaf52626bd1b451d700605dc1ea000c5da56bd0fc59f8f43071040"
+    url "https://curl.se/ca/cacert-2023-01-10.pem"
+    sha256 "fb1ecd641d0a02c01bc9036d513cb658bbda62a75e246bedbc01764560a639f0"
   end
 
   def openssldir
