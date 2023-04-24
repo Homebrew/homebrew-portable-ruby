@@ -3,11 +3,9 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  # This is the version shipped in macOS 11.7.1/12.6.1/13.
-  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.10.tar.xz"
-  sha256 "5fd8ded51321b88fdc9c1b4b0eb1b951d2eddbc293865da0151612c2e814c1f2"
+  url "https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.4.tar.gz"
+  sha256 "a3d55879a0dfab1d7141fdf10d22a07dbf8e5cdc4415da1bde06127d5cc3c7b6"
   license "Ruby"
-  revision 1
 
   depends_on "pkg-config" => :build
   depends_on "portable-libyaml" => :build
@@ -15,16 +13,18 @@ class PortableRuby < PortableFormula
 
   on_linux do
     depends_on "portable-libedit" => :build
+    depends_on "portable-libffi" => :build
     depends_on "portable-libxcrypt" => :build
     depends_on "portable-ncurses" => :build
     depends_on "portable-zlib" => :build
   end
 
   def install
-    libedit = Formula["portable-libedit"]
     libyaml = Formula["portable-libyaml"]
-    openssl = Formula["portable-openssl"]
     libxcrypt = Formula["portable-libxcrypt"]
+    openssl = Formula["portable-openssl"]
+    libedit = Formula["portable-libedit"]
+    libffi = Formula["portable-libffi"]
     ncurses = Formula["portable-ncurses"]
     zlib = Formula["portable-zlib"]
 
@@ -32,7 +32,7 @@ class PortableRuby < PortableFormula
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
-      --with-out-ext=tk,sdbm,gdbm,dbm
+      --with-out-ext=win32,win32ole
       --without-gmp
       --enable-libedit
       --disable-install-doc
@@ -43,10 +43,9 @@ class PortableRuby < PortableFormula
     # Correct MJIT_CC to not use superenv shim
     args << "MJIT_CC=/usr/bin/#{DevelopmentTools.default_compiler}"
 
+    # We don't specify OpenSSL as we want it to use the pkg-config, which `--with-openssl-dir` will disable
     args += %W[
-      --with-libedit-dir=#{libedit.opt_prefix}
       --with-libyaml-dir=#{libyaml.opt_prefix}
-      --with-openssl-dir=#{openssl.opt_prefix}
     ]
 
     if OS.linux?
@@ -60,6 +59,8 @@ class PortableRuby < PortableFormula
       end
 
       args += %W[
+        --with-libedit-dir=#{libedit.opt_prefix}
+        --with-libffi-dir=#{libffi.opt_prefix}
         --with-ncurses-dir=#{ncurses.opt_prefix}
         --with-zlib-dir=#{zlib.opt_prefix}
       ]
@@ -75,14 +76,17 @@ class PortableRuby < PortableFormula
 
     # Usually cross-compiling requires a host Ruby of the same version.
     # In our scenario though, we can get away with using miniruby as it should run on newer macOS.
+    make_args = []
     if OS.mac? && CROSS_COMPILING
       ENV["MINIRUBY"] = "./miniruby -I$(srcdir)/lib -I. -I$(EXTOUT)/common"
-      run_opts = "#{Dir.pwd}/tool/runruby.rb --extout=.ext"
+      make_args << "HAVE_BASERUBY=no"
+      make_args << "PREP=miniruby"
+      make_args << "RUN_OPTS=#{Dir.pwd}/tool/runruby.rb --extout=.ext"
     end
 
     system "./configure", *args
-    system "make", "RUN_OPTS=#{run_opts}"
-    system "make", "install", "RUN_OPTS=#{run_opts}"
+    system "make", *make_args
+    system "make", "install", *make_args
 
     # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
     # We don't need the binstub so remove it.
@@ -96,6 +100,8 @@ class PortableRuby < PortableFormula
       inreplace lib/"ruby/#{abi_version}/#{abi_arch}/rbconfig.rb" do |s|
         s.gsub! ENV.cxx, "c++"
         s.gsub! ENV.cc, "cc"
+        # C++ compiler might have been disabled because we break it with glibc@2.13 builds
+        s.sub!(/(CONFIG\["CXX"\] = )"false"/, '\\1"c++"')
       end
 
       cp_r ncurses.share/"terminfo", share/"terminfo"
@@ -125,7 +131,7 @@ class PortableRuby < PortableFormula
     assert_equal "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").chomp
     assert_match "200",
-      shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").chomp
+      shell_output("#{ruby} -ropen-uri -e 'URI.open(\"https://google.com\") { |f| puts f.status.first }'").chomp
     system testpath/"bin/gem", "environment"
     system testpath/"bin/bundle", "init"
     # install gem with native components
