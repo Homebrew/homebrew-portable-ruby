@@ -3,9 +3,8 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  # This is the version shipped in macOS 11.7.1/12.6.1/13.
-  url "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.10.tar.xz"
-  sha256 "5fd8ded51321b88fdc9c1b4b0eb1b951d2eddbc293865da0151612c2e814c1f2"
+  url "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz"
+  sha256 "96c57558871a6748de5bc9f274e93f4b5aad06cd8f37befa0e8d94e7b8a423bc"
   license "Ruby"
   revision 1
 
@@ -15,16 +14,21 @@ class PortableRuby < PortableFormula
 
   on_linux do
     depends_on "portable-libedit" => :build
+    depends_on "portable-libffi" => :build
     depends_on "portable-libxcrypt" => :build
     depends_on "portable-ncurses" => :build
     depends_on "portable-zlib" => :build
   end
 
+  # Fix macOS 10.11 compile
+  patch :DATA
+
   def install
-    libedit = Formula["portable-libedit"]
     libyaml = Formula["portable-libyaml"]
     openssl = Formula["portable-openssl"]
     libxcrypt = Formula["portable-libxcrypt"]
+    libedit = Formula["portable-libedit"]
+    libffi = Formula["portable-libffi"]
     ncurses = Formula["portable-ncurses"]
     zlib = Formula["portable-zlib"]
 
@@ -44,7 +48,6 @@ class PortableRuby < PortableFormula
     args << "MJIT_CC=/usr/bin/#{DevelopmentTools.default_compiler}"
 
     args += %W[
-      --with-libedit-dir=#{libedit.opt_prefix}
       --with-libyaml-dir=#{libyaml.opt_prefix}
       --with-openssl-dir=#{openssl.opt_prefix}
     ]
@@ -60,6 +63,8 @@ class PortableRuby < PortableFormula
       end
 
       args += %W[
+        --with-libedit-dir=#{libedit.opt_prefix}
+        --with-libffi-dir=#{libffi.opt_prefix}
         --with-ncurses-dir=#{ncurses.opt_prefix}
         --with-zlib-dir=#{zlib.opt_prefix}
       ]
@@ -75,14 +80,18 @@ class PortableRuby < PortableFormula
 
     # Usually cross-compiling requires a host Ruby of the same version.
     # In our scenario though, we can get away with using miniruby as it should run on newer macOS.
+    make_args = []
     if OS.mac? && CROSS_COMPILING
       ENV["MINIRUBY"] = "./miniruby -I$(srcdir)/lib -I. -I$(EXTOUT)/common"
-      run_opts = "#{Dir.pwd}/tool/runruby.rb --extout=.ext"
+      make_args << "BOOTSTRAPRUBY=#{ENV["MINIRUBY"]}"
+      make_args << "BOOTSTRAPRUBY_OPT="
+      make_args << "BOOTSTRAPRUBY_FAKE="
+      make_args << "RUN_OPTS=#{Dir.pwd}/tool/runruby.rb --extout=.ext"
     end
 
     system "./configure", *args
-    system "make", "RUN_OPTS=#{run_opts}"
-    system "make", "install", "RUN_OPTS=#{run_opts}"
+    system "make", *make_args
+    system "make", "install", *make_args
 
     # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
     # We don't need the binstub so remove it.
@@ -125,7 +134,7 @@ class PortableRuby < PortableFormula
     assert_equal "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").chomp
     assert_match "200",
-      shell_output("#{ruby} -ropen-uri -e 'open(\"https://google.com\") { |f| puts f.status.first }'").chomp
+      shell_output("#{ruby} -ropen-uri -e 'URI.open(\"https://google.com\") { |f| puts f.status.first }'").chomp
     system testpath/"bin/gem", "environment"
     system testpath/"bin/bundle", "init"
     # install gem with native components
@@ -134,3 +143,54 @@ class PortableRuby < PortableFormula
       shell_output("#{testpath}/bin/byebug --version")
   end
 end
+
+__END__
+diff --git a/process.c b/process.c
+index dbe2be5b56..c91390d030 100644
+--- a/process.c
++++ b/process.c
+@@ -8361,9 +8361,12 @@ rb_clock_gettime(int argc, VALUE *argv, VALUE _)
+ 
+     VALUE unit = (rb_check_arity(argc, 1, 2) == 2) ? argv[1] : Qnil;
+     VALUE clk_id = argv[0];
++#if defined(HAVE_CLOCK_GETTIME)
+     clockid_t c;
++#endif
+ 
+     if (SYMBOL_P(clk_id)) {
++#if defined(HAVE_CLOCK_GETTIME)
+ #ifdef CLOCK_REALTIME
+         if (clk_id == RUBY_CLOCK_REALTIME) {
+             c = CLOCK_REALTIME;
+@@ -8390,6 +8393,7 @@ rb_clock_gettime(int argc, VALUE *argv, VALUE _)
+             c = CLOCK_THREAD_CPUTIME_ID;
+             goto gettime;
+         }
++#endif
+ #endif
+ 
+         /*
+@@ -8587,12 +8591,15 @@ rb_clock_getres(int argc, VALUE *argv, VALUE _)
+     timetick_int_t denominators[2];
+     int num_numerators = 0;
+     int num_denominators = 0;
++#if defined(HAVE_CLOCK_GETRES)
+     clockid_t c;
++#endif
+ 
+     VALUE unit = (rb_check_arity(argc, 1, 2) == 2) ? argv[1] : Qnil;
+     VALUE clk_id = argv[0];
+ 
+     if (SYMBOL_P(clk_id)) {
++#if defined(HAVE_CLOCK_GETRES)
+ #ifdef CLOCK_REALTIME
+         if (clk_id == RUBY_CLOCK_REALTIME) {
+             c = CLOCK_REALTIME;
+@@ -8620,6 +8627,7 @@ rb_clock_getres(int argc, VALUE *argv, VALUE _)
+             goto getres;
+         }
+ #endif
++#endif
+ 
+ #ifdef RUBY_GETTIMEOFDAY_BASED_CLOCK_REALTIME
+         if (clk_id == RUBY_GETTIMEOFDAY_BASED_CLOCK_REALTIME) {
