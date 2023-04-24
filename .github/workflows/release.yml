@@ -34,7 +34,7 @@ jobs:
           raise "Tag #{tag} already exists" if existing_tag.present?
 
           puts "Preparing for #{tag} release."
-          puts "::set-output name=tag::#{tag}"
+          File.open(ENV["GITHUB_OUTPUT"], "a") { |f| f.puts "tag=#{tag}" }
           EOS
           )"
 
