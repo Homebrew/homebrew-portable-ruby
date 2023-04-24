@@ -3,11 +3,11 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableOpenssl < PortableFormula
   desc "SSL/TLS cryptography library"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-1.1.1w.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-1.1.1w.tar.gz"
-  mirror "https://www.openssl.org/source/old/1.1.1/openssl-1.1.1w.tar.gz"
-  sha256 "cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8"
-  license "OpenSSL"
+  url "https://www.openssl.org/source/openssl-3.1.4.tar.gz"
+  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-3.1.4.tar.gz"
+  mirror "https://www.openssl.org/source/old/3.1/openssl-3.1.4.tar.gz"
+  sha256 "840af5366ab9b522bde525826be3ef0fb0af81c6a9ebd84caa600fea1731eee3"
+  license "Apache-2.0"
 
   resource "cacert" do
     # https://curl.se/docs/caextract.html
@@ -41,6 +41,9 @@ class PortableOpenssl < PortableFormula
     %W[
       --prefix=#{prefix}
       --openssldir=#{openssldir}
+      --libdir=#{lib}
+      no-legacy
+      no-module
       no-shared
     ]
   end
@@ -51,11 +54,12 @@ class PortableOpenssl < PortableFormula
     # We however don't want to touch _other_ OpenSSL usages, so we change the variable name to differ.
     inreplace "include/internal/cryptlib.h", "\"SSL_CERT_FILE\"", "\"PORTABLE_RUBY_SSL_CERT_FILE\""
 
+    openssldir.mkpath
     system "perl", "./Configure", *(configure_args + arch_args)
     system "make"
     system "make", "test"
 
-    system "make", "install_sw"
+    system "make", "install_dev"
 
     # Ruby doesn't support passing --static to pkg-config.
     # Unfortunately, this means we need to modify the OpenSSL pc file.
@@ -68,12 +72,29 @@ class PortableOpenssl < PortableFormula
   end
 
   test do
-    (testpath/"testfile.txt").write("This is a test file")
-    expected_checksum = "e2d0fe1585a63ec6009c8016ff8dda8b17719a637405a4e23c0ff81339148249"
-    system bin/"openssl", "dgst", "-sha256", "-out", "checksum.txt", "testfile.txt"
-    open("checksum.txt") do |f|
-      checksum = f.read(100).split("=").last.strip
-      assert_equal checksum, expected_checksum
-    end
+    (testpath/"test.c").write <<~EOS
+      #include <openssl/evp.h>
+      #include <stdio.h>
+      #include <string.h>
+
+      int main(int argc, char *argv[])
+      {
+        if (argc < 2)
+          return -1;
+
+        unsigned char md[EVP_MAX_MD_SIZE];
+        unsigned int size;
+
+        if (!EVP_Digest(argv[1], strlen(argv[1]), md, &size, EVP_sha256(), NULL))
+          return 1;
+
+        for (unsigned int i = 0; i < size; i++)
+          printf("%02x", md[i]);
+        return 0;
+      }
+    EOS
+    system ENV.cc, "test.c", "-L#{lib}", "-lcrypto", "-o", "test"
+    assert_equal "717ac506950da0ccb6404cdd5e7591f72018a20cbca27c8a423e9c9e5626ac61",
+                 shell_output("./test 'This is a test string'")
   end
 end
