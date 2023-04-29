@@ -56,6 +56,12 @@ jobs:
           name: bottles
           path: ${{matrix.workdir || github.workspace}}/bottle
 
+      - name: Install gems
+        if: github.ref_name == "ruby3"
+        run: |
+          cd $(brew --repo)/Library/Homebrew
+          bundle install
+
       - name: Test Portable Ruby
         run: |
           mkdir -p portable-ruby/
