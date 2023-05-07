@@ -60,7 +60,7 @@ jobs:
           path: ${{matrix.workdir || github.workspace}}/bottle
 
       - name: Install gems
-        if: github.ref_name == 'ruby3'
+        if: github.ref_name == 'ruby3' || github.base_ref == 'refs/heads/ruby3'
         run: |
           cd $(brew --repo)/Library/Homebrew
           bundle install
