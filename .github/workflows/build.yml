@@ -40,10 +40,6 @@ jobs:
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
-        
-      - name: Cleanup 3.2 gems
-        if: github.ref_name == 'ruby3' || github.base_ref == 'ruby3'
-        run: rm -rf cd $(brew --repo)/Library/Homebrew/vendor/bundle/ruby/3.*
 
       - run: brew test-bot --only-cleanup-before
 
@@ -88,3 +84,4 @@ jobs:
         run: |
           brew test-bot --only-cleanup-after
           rm -rvf bottle portable-ruby
+          rm -rvf cd $(brew --repo)/Library/Homebrew/vendor/bundle/ruby/3.*
