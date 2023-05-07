@@ -59,16 +59,20 @@ jobs:
           name: bottles
           path: ${{matrix.workdir || github.workspace}}/bottle
 
+      - name: Extract Portable Ruby
+        run: |
+          mkdir -p portable-ruby/
+          tar --strip-components 2 -C portable-ruby -xf bottle/portable-ruby--*.tar.gz
+
       - name: Install gems
         if: github.ref_name == 'ruby3' || github.base_ref == 'ruby3'
         run: |
+          export PATH="${PWD}/portable-ruby/bin:${PATH}"
           cd $(brew --repo)/Library/Homebrew
           bundle install
 
       - name: Test Portable Ruby
         run: |
-          mkdir -p portable-ruby/
-          tar --strip-components 2 -C portable-ruby -xf bottle/portable-ruby--*.tar.gz
           export PATH="${PWD}/portable-ruby/bin:${PATH}"
           export HOMEBREW_USE_RUBY_FROM_PATH=1
           rm -rf "$(brew --repo)/Library/Homebrew/vendor/portable-ruby"
