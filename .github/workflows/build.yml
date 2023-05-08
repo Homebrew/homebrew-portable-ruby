@@ -1,9 +1,6 @@
 name: Build
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/build.yml
   workflow_call:
 
 permissions:
