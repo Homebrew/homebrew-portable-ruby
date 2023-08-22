@@ -22,14 +22,18 @@ class PortableNcurses < PortableFormula
                           "--prefix=#{prefix}",
                           "--enable-static",
                           "--disable-shared",
+                          "--without-ada",
                           "--without-cxx-binding",
+                          "--without-manpages",
+                          "--without-progs",
+                          "--without-tests",
                           "--enable-pc-files",
                           "--with-pkg-config-libdir=#{lib}/pkgconfig",
                           "--enable-sigwinch",
                           "--enable-symlinks",
                           "--enable-widec",
-                          "--with-gpm=no",
-                          "--without-ada"
+                          "--with-gpm=no"
+
     system "make", "install"
     make_libncurses_symlinks
   end
@@ -56,9 +60,6 @@ class PortableNcurses < PortableFormula
   end
 
   test do
-    cp_r Dir["#{prefix}/*"], testpath
-    system testpath/"bin/tput", "cols"
-
     (testpath/"test.c").write <<~EOS
       #include <ncursesw/curses.h>
       int main()
