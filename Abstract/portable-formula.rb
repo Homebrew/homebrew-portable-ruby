@@ -33,10 +33,12 @@ module PortableFormulaMixin
   def install
     if OS.mac?
       if OS::Mac.version > TARGET_MACOS
+        target_macos_humanized = TARGET_MACOS.to_s.tr("_", " ").split.map(&:capitalize).join(" ")
+
         opoo <<~EOS
           You are building portable formula on #{OS::Mac.version}.
           As result, formula won't be able to work on older macOS versions.
-          It's recommended to build this formula on macOS #{TARGET_MACOS.to_s.humanize.titleize}
+          It's recommended to build this formula on macOS #{target_macos_humanized}
           (the oldest version that can run Homebrew).
         EOS
       end
