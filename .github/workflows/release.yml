@@ -8,8 +8,7 @@ env:
   HOMEBREW_NO_AUTO_UPDATE: 1
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 jobs:
   determine-tag:
@@ -47,6 +46,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TAG: ${{ needs.determine-tag.outputs.tag }}
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -54,10 +56,10 @@ jobs:
           test-bot: false
 
       - name: Checkout branch
-        run: git checkout "${{ github.ref_name }}"
+        run: git checkout "${GITHUB_REF_NAME}"
 
       - name: Install gems
-        run: brew install-bundler-gems
+        run: brew install-bundler-gems --groups=pr_upload
 
       - name: Configure Git user
         uses: Homebrew/actions/git-user-config@master

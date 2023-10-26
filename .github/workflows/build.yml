@@ -9,14 +9,13 @@ permissions:
 env:
   HOMEBREW_DEVELOPER: 1
   HOMEBREW_NO_AUTO_UPDATE: 1
-  HOMEBREW_CHANGE_ARCH_TO_ARM: 1
 
 jobs:
   build:
     strategy:
       matrix:
         include:
-          - os: '10.11-cross-${{github.run_id}}-${{github.run_attempt}}'
+          - os: '10.11-cross-${{github.run_id}}'
           - os: '11-arm64'
           - os: 'ubuntu-latest'
             container:
@@ -30,11 +29,6 @@ jobs:
       run:
         working-directory: ${{matrix.workdir || github.workspace}}
     steps:
-      - name: Set environment variables
-        if: runner.os == 'macOS'
-        run: |
-          echo 'PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin' >> $GITHUB_ENV
-
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
