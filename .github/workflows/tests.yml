@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  push:
+    branches: master
   pull_request:
 
 permissions:
@@ -8,18 +10,28 @@ permissions:
 
 concurrency:
   group: "${{ github.ref }}"
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  tests:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - run: brew test-bot --only-tap-syntax
+
+  build:
+    needs: syntax
+    if: github.event_name != 'push'
     uses: ./.github/workflows/build.yml
 
   # This job is used as a required status check, instead of requiring each build matrix element.
   # When using ephemeral runners, the name of those runs change every time so they cannot be set as required.
   conclusion:
-    needs: tests
+    needs: build
     runs-on: ubuntu-latest
-    if: always()
+    if: github.event_name != 'push' && !cancelled()
     steps:
       - name: Result
-        run: ${{ needs.tests.result == 'success' }}
+        run: ${{ needs.build.result == 'success' }}

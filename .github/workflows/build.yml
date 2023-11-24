@@ -36,8 +36,6 @@ jobs:
 
       - run: brew test-bot --only-setup
 
-      - run: brew test-bot --only-tap-syntax
-
       - name: Build Portable Ruby
         run: |
           mkdir -p bottle/
