@@ -3,11 +3,7 @@
 require "cli/parser"
 
 module Homebrew
-  include FileUtils
-
-  module_function
-
-  def portable_package_args
+  def self.portable_package_args
     Homebrew::CLI::Parser.new do
       usage_banner <<~EOS
         `portable-package` <formulae>
@@ -22,7 +18,7 @@ module Homebrew
     end
   end
 
-  def portable_package
+  def self.portable_package
     args = portable_package_args.parse
 
     ENV["HOMEBREW_DEVELOPER"] = "1"
@@ -70,19 +66,9 @@ module Homebrew
           --no-rebuild
         ]
         safe_system HOMEBREW_BREW_FILE, "bottle", *verbose, *bottle_args, name
-        Pathname.glob("*.bottle*.tar.gz") do |bottle_filename|
-          bottle_file = bottle_filename.realpath
-          bottle_cache = HOMEBREW_CACHE/bottle_filename
-          ln bottle_file, bottle_cache, force: true
-        end
       rescue => e
         ofail e
       end
-    end
-
-    Pathname.glob("*.bottle*.tar.gz") do |bottle_filename|
-      bottle_cache = HOMEBREW_CACHE/bottle_filename
-      rm_f bottle_cache
     end
   end
 end
