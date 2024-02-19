@@ -67,6 +67,10 @@ class PortableRuby < PortableFormula
 
       # Ensure compatibility with older Ubuntu when built with Ubuntu 22.04
       args << "MKDIR_P=/bin/mkdir -p"
+
+      # Don't make libruby link to zlib as it means all extensions will require it
+      # It's also not used with the older glibc we use anyway
+      args << "ac_cv_lib_z_uncompress=no"
     end
 
     # Append flags rather than override
