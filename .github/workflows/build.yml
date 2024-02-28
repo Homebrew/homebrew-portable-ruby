@@ -16,7 +16,7 @@ jobs:
       matrix:
         include:
           - os: '10.11-cross-${{github.run_id}}'
-          - os: '11-arm64'
+          - os: '11-arm64-cross-${{github.run_id}}'
           - os: 'ubuntu-latest'
             container:
               image: ghcr.io/homebrew/ubuntu22.04:master
