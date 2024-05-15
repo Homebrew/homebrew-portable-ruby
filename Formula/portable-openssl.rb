@@ -1,18 +1,18 @@
 require File.expand_path("../Abstract/portable-formula", __dir__)
 
 class PortableOpenssl < PortableFormula
-  desc "SSL/TLS cryptography library"
+  desc "Cryptography and SSL/TLS Toolkit"
   homepage "https://openssl.org/"
-  url "https://www.openssl.org/source/openssl-3.1.4.tar.gz"
-  mirror "https://www.mirrorservice.org/sites/ftp.openssl.org/source/openssl-3.1.4.tar.gz"
-  mirror "https://www.openssl.org/source/old/3.1/openssl-3.1.4.tar.gz"
-  sha256 "840af5366ab9b522bde525826be3ef0fb0af81c6a9ebd84caa600fea1731eee3"
+  url "https://github.com/openssl/openssl/releases/download/openssl-3.3.0/openssl-3.3.0.tar.gz"
+  mirror "https://www.openssl.org/source/openssl-3.3.0.tar.gz"
+  mirror "http://fresh-center.net/linux/misc/openssl-3.3.0.tar.gz"
+  sha256 "53e66b043322a606abf0087e7699a0e033a37fa13feb9742df35c3a33b18fb02"
   license "Apache-2.0"
 
   resource "cacert" do
     # https://curl.se/docs/caextract.html
-    url "https://curl.se/ca/cacert-2023-08-22.pem"
-    sha256 "23c2469e2a568362a62eecf1b49ed90a15621e6fa30e29947ded3436422de9b9"
+    url "https://curl.se/ca/cacert-2024-03-11.pem"
+    sha256 "1794c1d4f7055b7d02c2170337b61b48a2ef6c90d77e95444fd2596f4cac609f"
   end
 
   def openssldir
@@ -52,7 +52,7 @@ class PortableOpenssl < PortableFormula
     # OpenSSL is not fully portable and certificate paths are backed into the library.
     # We therefore need to set the certificate path at runtime via an environment variable.
     # We however don't want to touch _other_ OpenSSL usages, so we change the variable name to differ.
-    inreplace "include/internal/cryptlib.h", "\"SSL_CERT_FILE\"", "\"PORTABLE_RUBY_SSL_CERT_FILE\""
+    inreplace "include/internal/common.h", "\"SSL_CERT_FILE\"", "\"PORTABLE_RUBY_SSL_CERT_FILE\""
 
     openssldir.mkpath
     system "perl", "./Configure", *(configure_args + arch_args)
