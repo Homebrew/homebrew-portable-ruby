@@ -42,4 +42,4 @@ Used in production for Homebrew/brew.
 
 ## License
 
-Code is under the [BSD 2 Clause (NetBSD) license](https://github.com/Homebrew/homebrew-portable-ruby/blob/master/LICENSE.txt).
+Code is under the [BSD 2-Clause "Simplified" License](https://github.com/Homebrew/homebrew-portable-ruby/blob/master/LICENSE.txt).
