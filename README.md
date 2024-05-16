@@ -10,9 +10,13 @@ Just `brew install homebrew/portable-ruby/<formula>`.
 
 Homebrew Portable Ruby is designed only for usage internally to Homebrew. If Portable Ruby isn't available for your platform, it is recommended you instead use Ruby from your system's package manager (if available) or rbenv/ruby-build. Usage of Portable Ruby outside of Homebrew, such as embedding into your own apps, is not a goal for this project.
 
-For issuing new Portable Ruby releases, [an automated release workflow is available to use](https://github.com/Homebrew/homebrew-portable-ruby/actions/workflows/release.yml). Dispatch the workflow and all steps of building, tagging and uploading should be handled automatically.
+## How do I issue a new release
 
-Manual steps are documented below.
+[An automated release workflow is available to use](https://github.com/Homebrew/homebrew-portable-ruby/actions/workflows/release.yml).
+Dispatch the workflow and all steps of building, tagging and uploading should be handled automatically.
+
+<details>
+<summary>Manual steps are documented below.</summary>
 
 ### Build
 
@@ -35,6 +39,7 @@ brew pr-upload --upload-only --root-url=https://github.com/Homebrew/homebrew-por
 ```
 
 where `$VERSION` is the new package version.
+</details>
 
 ## Current Status
 
