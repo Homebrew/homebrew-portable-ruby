@@ -7,6 +7,11 @@ class PortableLibxcrypt < PortableFormula
   sha256 "e5e1f4caee0a01de2aee26e3138807d6d3ca2b8e67287966d1fefd65e1fd8943"
   license "LGPL-2.1-or-later"
 
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   def install
     system "./configure", *portable_configure_args,
                           *std_configure_args,
