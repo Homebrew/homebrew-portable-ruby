@@ -8,8 +8,7 @@ class PortableLibffi < PortableFormula
   license "MIT"
 
   livecheck do
-    url :stable
-    strategy :github_latest
+    formula "libffi"
   end
 
   def install
