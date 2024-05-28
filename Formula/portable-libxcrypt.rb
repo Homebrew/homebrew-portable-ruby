@@ -8,8 +8,7 @@ class PortableLibxcrypt < PortableFormula
   license "LGPL-2.1-or-later"
 
   livecheck do
-    url :stable
-    strategy :github_latest
+    formula "libxcrypt"
   end
 
   def install

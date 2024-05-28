@@ -8,8 +8,7 @@ class PortableLibyaml < PortableFormula
   license "MIT"
 
   livecheck do
-    url :stable
-    strategy :github_latest
+    formula "libyaml"
   end
 
   def install
