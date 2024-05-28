@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       formulae:
-        description: Custom list of formulae to livecheck and bump if outdated
+        description: Custom list of portable-ruby formulae to livecheck and bump if outdated
         required: false
   schedule:
     # Daily at midnight
@@ -41,11 +41,11 @@ jobs:
         with:
           username: ${{ (github.event_name == 'workflow_dispatch' && github.actor) || 'BrewTestBot' }}
 
-      - name: Get list of autobump formulae
+      - name: Get list of autobump portable-ruby formulae
         id: autobump
         run: echo "autobump_list=$(xargs < "$(brew --repo homebrew/homebrew-portable-ruby)"/.github/autobump.txt)" >> "$GITHUB_OUTPUT"
 
-      - name: Bump formulae
+      - name: Bump portable-ruby formulae
         uses: Homebrew/actions/bump-packages@master
         continue-on-error: true
         with:
