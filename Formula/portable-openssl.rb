@@ -10,14 +10,37 @@ class PortableOpenssl < PortableFormula
   license "Apache-2.0"
 
   livecheck do
-    url "https://www.openssl.org/source/"
-    regex(/href=.*?openssl[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    url :stable
+    strategy :github_releases do |json, regex|
+      json.filter_map do |release|
+        next if release["draft"] || release["prerelease"]
+
+        match = release["tag_name"]&.match(regex)
+        next if match.blank?
+
+        version = Version.new(match[1])
+        next if version.patch.to_i.zero?
+
+        version
+      end
+    end
   end
 
   resource "cacert" do
     # https://curl.se/docs/caextract.html
     url "https://curl.se/ca/cacert-2024-03-11.pem"
     sha256 "1794c1d4f7055b7d02c2170337b61b48a2ef6c90d77e95444fd2596f4cac609f"
+
+    livecheck do
+      url "https://curl.se/ca/cadate.t"
+      regex(/^#define\s+CA_DATE\s+(.+)$/)
+      strategy :page_match do |page, regex|
+        match = page.match(regex)
+        next if match.blank?
+
+        Date.parse(match[1]).iso8601
+      end
+    end
   end
 
   def openssldir
