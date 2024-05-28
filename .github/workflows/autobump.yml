@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   autobump:
-    if: github.repository == 'Homebrew/homebrew-core'
+    if: github.repository == 'Homebrew/homebrew-portable-ruby'
     runs-on: ubuntu-22.04
     container:
       image: ghcr.io/homebrew/ubuntu22.04:master
@@ -32,7 +32,7 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
         with:
-          core: true
+          core: false
           cask: false
           test-bot: false
 
@@ -43,13 +43,13 @@ jobs:
 
       - name: Get list of autobump formulae
         id: autobump
-        run: echo "autobump_list=$(xargs < "$(brew --repo homebrew/core)"/.github/autobump.txt)" >> "$GITHUB_OUTPUT"
+        run: echo "autobump_list=$(xargs < "$(brew --repo homebrew/homebrew-portable-ruby)"/.github/autobump.txt)" >> "$GITHUB_OUTPUT"
 
       - name: Bump formulae
         uses: Homebrew/actions/bump-packages@master
         continue-on-error: true
         with:
-          token: ${{ secrets.HOMEBREW_CORE_REPO_WORKFLOW_TOKEN }}
+          token: ${{ secrets.HOMEBREW_PORTABLE_RUBY_REPO_WORKFLOW_TOKEN }}
           formulae: ${{ github.event.inputs.formulae || steps.autobump.outputs.autobump_list }}
         env:
           HOMEBREW_TEST_BOT_AUTOBUMP: 1
