@@ -11,8 +11,7 @@ class PortableZlib < PortableFormula
   license "Zlib"
 
   livecheck do
-    url :homepage
-    regex(/href=.*?zlib[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    formula "zlib"
   end
 
   # https://zlib.net/zlib_how.html
