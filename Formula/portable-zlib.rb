@@ -10,6 +10,11 @@ class PortableZlib < PortableFormula
   sha256 "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23"
   license "Zlib"
 
+  livecheck do
+    url :homepage
+    regex(/href=.*?zlib[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   # https://zlib.net/zlib_how.html
   resource "test_artifact" do
     url "https://zlib.net/zpipe.c"

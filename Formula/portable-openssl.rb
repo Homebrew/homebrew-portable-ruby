@@ -9,6 +9,11 @@ class PortableOpenssl < PortableFormula
   sha256 "53e66b043322a606abf0087e7699a0e033a37fa13feb9742df35c3a33b18fb02"
   license "Apache-2.0"
 
+  livecheck do
+    url "https://www.openssl.org/source/"
+    regex(/href=.*?openssl[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   resource "cacert" do
     # https://curl.se/docs/caextract.html
     url "https://curl.se/ca/cacert-2024-03-11.pem"

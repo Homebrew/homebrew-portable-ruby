@@ -7,6 +7,11 @@ class PortableLibffi < PortableFormula
   sha256 "b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e"
   license "MIT"
 
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   def install
     system "./configure", *portable_configure_args,
                           *std_configure_args,

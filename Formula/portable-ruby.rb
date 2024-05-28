@@ -7,6 +7,11 @@ class PortableRuby < PortableFormula
   sha256 "8dc2af2802cc700cd182d5430726388ccf885b3f0a14fcd6a0f21ff249c9aa99"
   license "Ruby"
 
+  livecheck do
+    url "https://www.ruby-lang.org/en/downloads/releases/"
+    regex(/href=.*?ruby[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   depends_on "pkg-config" => :build
   depends_on "portable-libyaml" => :build
   depends_on "portable-openssl" => :build
