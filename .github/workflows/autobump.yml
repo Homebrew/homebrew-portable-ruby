@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   autobump:
-    if: github.repository == 'Homebrew/homebrew-portable-ruby'
+    if: github.repository_owner == 'Homebrew'
     runs-on: ubuntu-22.04
     container:
       image: ghcr.io/homebrew/ubuntu22.04:master
@@ -43,7 +43,7 @@ jobs:
 
       - name: Get list of autobump portable-ruby formulae
         id: autobump
-        run: echo "autobump_list=$(xargs < "$(brew --repo homebrew/homebrew-portable-ruby)"/.github/autobump.txt)" >> "$GITHUB_OUTPUT"
+        run: echo "autobump_list=$(brew tap-info --json "${GITHUB_REPOSITORY}" | jq -r '.[].formula_names[]')" >> "$GITHUB_OUTPUT"
 
       - name: Bump portable-ruby formulae
         uses: Homebrew/actions/bump-packages@master

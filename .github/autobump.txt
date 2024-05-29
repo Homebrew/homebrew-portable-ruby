@@ -1,6 +1,0 @@
-portable-libffi
-portable-libxcrypt
-portable-libyaml
-portable-openssl
-portable-ruby
-portable-zlib
