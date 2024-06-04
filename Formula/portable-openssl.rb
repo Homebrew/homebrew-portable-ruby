@@ -73,6 +73,7 @@ class PortableOpenssl < PortableFormula
       no-legacy
       no-module
       no-shared
+      no-engine
     ]
   end
 
