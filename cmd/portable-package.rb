@@ -12,9 +12,9 @@ module Homebrew
           Build and package portable formulae.
         EOS
         switch "--no-uninstall-deps",
-              description: "Don't uninstall all dependencies of portable formulae before testing."
+               description: "Don't uninstall all dependencies of portable formulae before testing."
         switch "-v", "--verbose",
-              description: "Pass `--verbose` to `brew` commands."
+               description: "Pass `--verbose` to `brew` commands."
         named_args :formula, min: 1
       end
 
