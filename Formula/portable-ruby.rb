@@ -140,6 +140,9 @@ class PortableRuby < PortableFormula
         # C++ compiler might have been disabled because we break it with glibc@2.13 builds
         s.sub!(/(CONFIG\["CXX"\] = )"false"/, '\\1"c++"') if Hardware::CPU.intel?
       end
+
+      # Ship libcrypt.a so that building native gems doesn't need system libcrypt installed.
+      cp libxcrypt.lib/"libcrypt.a", lib/"libcrypt.a"
     end
 
     libexec.mkpath
