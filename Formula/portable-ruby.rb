@@ -23,7 +23,47 @@ class PortableRuby < PortableFormula
     depends_on "portable-zlib" => :build
   end
 
+  resource "msgpack" do
+    url "https://rubygems.org/downloads/msgpack-1.7.2.gem"
+    sha256 "59ab62fd8a4d0dfbde45009f87eb6f158ab2628a7c48886b0256f175166baaa8"
+
+    livecheck do
+      url "https://rubygems.org/api/v1/versions/msgpack.json"
+      strategy :json do |json|
+        json.first["number"]
+      end
+    end
+  end
+
+  resource "bootsnap" do
+    url "https://rubygems.org/downloads/bootsnap-1.18.3.gem"
+    sha256 "d7b70de761e2fb1d63d21dd941b393c881c5cab5575211369cede788dfc034eb"
+
+    livecheck do
+      url "https://rubygems.org/api/v1/versions/bootsnap.json"
+      strategy :json do |json|
+        json.first["number"]
+      end
+    end
+  end
+
   def install
+    # Remove almost all bundled gems and replace with our own set.
+    rm_r ".bundle"
+    allowed_gems = ["debug"]
+    bundled_gems = File.foreach("gems/bundled_gems").select do |line|
+      line.blank? || line.start_with?("#") || allowed_gems.any? { |gem| line.match?(/\A#{Regexp.escape(gem)}\s/) }
+    end
+    rm_r(Dir["gems/*.gem"].reject do |gem_path|
+      gem_basename = File.basename(gem_path)
+      allowed_gems.any? { |gem| gem_basename.match?(/\A#{Regexp.escape(gem)}-\d/) }
+    end)
+    resources.each do |resource|
+      resource.stage "gems"
+      bundled_gems << "#{resource.name} #{resource.version}\n"
+    end
+    File.write("gems/bundled_gems", bundled_gems.join)
+
     libyaml = Formula["portable-libyaml"]
     libxcrypt = Formula["portable-libxcrypt"]
     openssl = Formula["portable-openssl"]
@@ -34,6 +74,7 @@ class PortableRuby < PortableFormula
       --prefix=#{prefix}
       --enable-load-relative
       --with-static-linked-ext
+      --with-baseruby=#{RbConfig.ruby}
       --with-out-ext=win32,win32ole
       --without-gmp
       --disable-install-doc
@@ -68,23 +109,23 @@ class PortableRuby < PortableFormula
     ENV["cppflags"] = ENV.delete("CPPFLAGS")
     ENV["cxxflags"] = ENV.delete("CXXFLAGS")
 
-    # Usually cross-compiling requires a host Ruby of the same version.
-    # In our scenario though, we can get away with using miniruby as it should run on newer macOS.
-    make_args = []
-    if OS.mac? && CROSS_COMPILING
-      ENV["MINIRUBY"] = "./miniruby -I$(srcdir)/lib -I. -I$(EXTOUT)/common"
-      make_args << "HAVE_BASERUBY=no"
-      make_args << "PREP=miniruby"
-      make_args << "RUN_OPTS=#{Dir.pwd}/tool/runruby.rb --extout=.ext"
+    system "./configure", *args
+    system "make", "extract-gems"
+    system "make"
+
+    # Add a helper load path file so bundled gems can be easily used (used by brew's standalone/init.rb)
+    system "make", "ruby.pc"
+    arch = Utils.safe_popen_read("pkg-config", "--variable=arch", "./ruby-#{version.major_minor}.pc").chomp
+    mkdir_p "lib/#{arch}"
+    File.open("lib/#{arch}/portable_ruby_gems.rb", "w") do |file|
+      (Dir["extensions/*/*/*", base: ".bundle"] + Dir["gems/*/lib", base: ".bundle"]).each do |require_path|
+        file.write <<~RUBY
+          $:.unshift "\#{RbConfig::CONFIG["rubylibprefix"]}/gems/\#{RbConfig::CONFIG["ruby_version"]}/#{require_path}"
+        RUBY
+      end
     end
 
-    system "./configure", *args
-    system "make", *make_args
-    system "make", "install", *make_args
-
-    # rake is a binstub for the RubyGem in 2.3 and has a hardcoded PATH.
-    # We don't need the binstub so remove it.
-    rm bin/"rake"
+    system "make", "install"
 
     abi_version = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["ruby_version"]'`
     abi_arch = `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["arch"]'`
@@ -126,6 +167,7 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").chomp
     assert_match "200",
       shell_output("#{ruby} -ropen-uri -e 'URI.open(\"https://google.com\") { |f| puts f.status.first }'").chomp
+    system ruby, "--disable-gems", "-rrbconfig", "-rportable_ruby_gems", "-rdebug", "-rfiddle", "-rbootsnap", "-e", ""
     system testpath/"bin/gem", "environment"
     system testpath/"bin/bundle", "init"
     # install gem with native components
