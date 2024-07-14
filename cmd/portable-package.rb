@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "abstract_command"
+require "development_tools"
+require "dependency"
 
 module Homebrew
   module Cmd
