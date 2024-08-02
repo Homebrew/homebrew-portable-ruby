@@ -6,6 +6,7 @@ class PortableRuby < PortableFormula
   url "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.tar.gz"
   sha256 "fe6a30f97d54e029768f2ddf4923699c416cdbc3a6e96db3e2d5716c7db96a34"
   license "Ruby"
+  revision 1
 
   # This regex restricts matching to versions other than X.Y.0.
   livecheck do
@@ -45,6 +46,13 @@ class PortableRuby < PortableFormula
         json.first["number"]
       end
     end
+  end
+
+  # Fix rare hang on forking. Affected Homebrew/core CI, especially on macOS 14 x86_64.
+  # Patch in production use at Stripe.
+  patch do
+    url "https://raw.githubusercontent.com/sorbet/sorbet/2d91ebab7b642b900e02233bd49f593ad355469d/third_party/ruby/reinit_native_sched_lock.patch"
+    sha256 "ded85ab6979b897d5b39af14ba46434e8d235200ac8cc82af2345f2166b5d185"
   end
 
   def install
