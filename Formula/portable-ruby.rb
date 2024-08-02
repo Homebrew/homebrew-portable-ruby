@@ -50,6 +50,7 @@ class PortableRuby < PortableFormula
 
   # Fix rare hang on forking. Affected Homebrew/core CI, especially on macOS 14 x86_64.
   # Patch in production use at Stripe.
+  # https://github.com/sorbet/sorbet/pull/7928
   patch do
     url "https://raw.githubusercontent.com/sorbet/sorbet/2d91ebab7b642b900e02233bd49f593ad355469d/third_party/ruby/reinit_native_sched_lock.patch"
     sha256 "ded85ab6979b897d5b39af14ba46434e8d235200ac8cc82af2345f2166b5d185"
