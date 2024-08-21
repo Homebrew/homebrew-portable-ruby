@@ -1,3 +1,4 @@
+# typed: strict
 # frozen_string_literal: true
 
 require "abstract_command"
@@ -20,6 +21,7 @@ module Homebrew
         named_args :formula, min: 1
       end
 
+      sig { override.void }
       def run
         ENV["HOMEBREW_DEVELOPER"] = "1"
 
