@@ -3,10 +3,9 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.tar.gz"
-  sha256 "fe6a30f97d54e029768f2ddf4923699c416cdbc3a6e96db3e2d5716c7db96a34"
+  url "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.5.tar.gz"
+  sha256 "3781a3504222c2f26cb4b9eb9c1a12dbf4944d366ce24a9ff8cf99ecbce75196"
   license "Ruby"
-  revision 1
 
   # This regex restricts matching to versions other than X.Y.0.
   livecheck do
@@ -37,8 +36,8 @@ class PortableRuby < PortableFormula
   end
 
   resource "bootsnap" do
-    url "https://rubygems.org/downloads/bootsnap-1.18.3.gem"
-    sha256 "d7b70de761e2fb1d63d21dd941b393c881c5cab5575211369cede788dfc034eb"
+    url "https://rubygems.org/downloads/bootsnap-1.18.4.gem"
+    sha256 "ac4c42af397f7ee15521820198daeff545e4c360d2772c601fbdc2c07d92af55"
 
     livecheck do
       url "https://rubygems.org/api/v1/versions/bootsnap.json"
@@ -48,12 +47,33 @@ class PortableRuby < PortableFormula
     end
   end
 
-  # Fix rare hang on forking. Affected Homebrew/core CI, especially on macOS 14 x86_64.
-  # Patch in production use at Stripe.
-  # https://github.com/sorbet/sorbet/pull/7928
+  # Fix gem warning breaking change introduced in Ruby 3.3.5 (reverted in 3.3.6).
+  # https://bugs.ruby-lang.org/issues/20713
   patch do
-    url "https://raw.githubusercontent.com/sorbet/sorbet/2d91ebab7b642b900e02233bd49f593ad355469d/third_party/ruby/reinit_native_sched_lock.patch"
-    sha256 "ded85ab6979b897d5b39af14ba46434e8d235200ac8cc82af2345f2166b5d185"
+    url "https://github.com/ruby/ruby/commit/4e59e7d35fbd6ff87f63cd0aa5d6a2f923323fee.patch?full_index=1"
+    sha256 "b031c4f838ee78866e3f4b0de7ea60fbd4b4a4ae57eb3f9de620f1c8e26e4ab2"
+  end
+
+  # Fix .lock files being created in the `bin` directory.
+  # https://bugs.ruby-lang.org/issues/20721
+  # Instead of cherry-picking the relevant fixes (which themselves had since-fixed regressions),
+  # do what upstream do and simply update Rubygems to 3.5.20.
+  # Remove with Ruby 3.3.6.
+  patch do
+    url "https://github.com/ruby/ruby/commit/95f72a4a32396cae7475b39d7739fb534242b625.patch?full_index=1"
+    sha256 "24764ed8fc29dfd88235db7c5050f4fba40aa9dac0e2e41aff47fc016b633e76"
+  end
+  patch do
+    url "https://github.com/ruby/ruby/commit/ef3c4a7aa7c0a79a00f4daa50e0be1184d9fe536.patch?full_index=1"
+    sha256 "e893cd4b6a61f91b2095192bc905825c2b54bf849c1f5714256c7923f8b1dae4"
+  end
+  patch do
+    url "https://github.com/ruby/ruby/commit/3894841182c32de231b3998502bf1a9dba7cdb4f.patch?full_index=1"
+    sha256 "cf1b9aaa805426b3911bbcd29957dd5beb3fdfacea910a01b4a5c374f2afb9c2"
+  end
+  patch do
+    url "https://github.com/ruby/ruby/commit/77fb1bf434d7be9cf5d892404b04b20c18fa6f06.patch?full_index=1"
+    sha256 "744deac64ba9f52b1b03e7169333a8a6df42d77eb351130c16837ab69647ae5a"
   end
 
   def install
@@ -179,7 +199,13 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").chomp
     assert_match "200",
       shell_output("#{ruby} -ropen-uri -e 'URI.open(\"https://google.com\") { |f| puts f.status.first }'").chomp
-    system ruby, "--disable-gems", "-rrbconfig", "-rportable_ruby_gems", "-rdebug", "-rfiddle", "-rbootsnap", "-e", ""
+    system ruby, "-rrbconfig", "-e", <<~EOS
+      Gem.discover_gems_on_require = false
+      require "portable_ruby_gems"
+      require "debug"
+      require "fiddle"
+      require "bootsnap"
+    EOS
     system testpath/"bin/gem", "environment"
     system testpath/"bin/bundle", "init"
     # install gem with native components
