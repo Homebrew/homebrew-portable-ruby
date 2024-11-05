@@ -47,35 +47,6 @@ class PortableRuby < PortableFormula
     end
   end
 
-  # Fix gem warning breaking change introduced in Ruby 3.3.5 (reverted in 3.3.6).
-  # https://bugs.ruby-lang.org/issues/20713
-  patch do
-    url "https://github.com/ruby/ruby/commit/4e59e7d35fbd6ff87f63cd0aa5d6a2f923323fee.patch?full_index=1"
-    sha256 "b031c4f838ee78866e3f4b0de7ea60fbd4b4a4ae57eb3f9de620f1c8e26e4ab2"
-  end
-
-  # Fix .lock files being created in the `bin` directory.
-  # https://bugs.ruby-lang.org/issues/20721
-  # Instead of cherry-picking the relevant fixes (which themselves had since-fixed regressions),
-  # do what upstream do and simply update Rubygems to 3.5.20.
-  # Remove with Ruby 3.3.6.
-  patch do
-    url "https://github.com/ruby/ruby/commit/95f72a4a32396cae7475b39d7739fb534242b625.patch?full_index=1"
-    sha256 "24764ed8fc29dfd88235db7c5050f4fba40aa9dac0e2e41aff47fc016b633e76"
-  end
-  patch do
-    url "https://github.com/ruby/ruby/commit/ef3c4a7aa7c0a79a00f4daa50e0be1184d9fe536.patch?full_index=1"
-    sha256 "e893cd4b6a61f91b2095192bc905825c2b54bf849c1f5714256c7923f8b1dae4"
-  end
-  patch do
-    url "https://github.com/ruby/ruby/commit/3894841182c32de231b3998502bf1a9dba7cdb4f.patch?full_index=1"
-    sha256 "cf1b9aaa805426b3911bbcd29957dd5beb3fdfacea910a01b4a5c374f2afb9c2"
-  end
-  patch do
-    url "https://github.com/ruby/ruby/commit/77fb1bf434d7be9cf5d892404b04b20c18fa6f06.patch?full_index=1"
-    sha256 "744deac64ba9f52b1b03e7169333a8a6df42d77eb351130c16837ab69647ae5a"
-  end
-
   def install
     # Remove almost all bundled gems and replace with our own set.
     rm_r ".bundle"
