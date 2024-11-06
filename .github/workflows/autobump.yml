@@ -21,7 +21,7 @@ permissions:
 jobs:
   autobump:
     if: github.repository_owner == 'Homebrew'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     container:
       image: ghcr.io/homebrew/ubuntu22.04:master
     steps:
