@@ -34,4 +34,7 @@ jobs:
     if: github.event_name != 'push' && !cancelled()
     steps:
       - name: Result
-        run: ${{ needs.build.result == 'success' }}
+        env:
+          RESULT: ${{ needs.build.result }}
+        run: |
+          [[ "${RESULT}" == success ]]
