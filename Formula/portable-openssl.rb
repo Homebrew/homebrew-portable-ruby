@@ -28,8 +28,8 @@ class PortableOpenssl < PortableFormula
 
   resource "cacert" do
     # https://curl.se/docs/caextract.html
-    url "https://curl.se/ca/cacert-2024-09-24.pem"
-    sha256 "189d3cf6d103185fba06d76c1af915263c6d42225481a1759e853b33ac857540"
+    url "https://curl.se/ca/cacert-2024-11-26.pem"
+    sha256 "bb1782d281fe60d4a2dcf41bc229abe3e46c280212597d4abcc25bddf667739b"
 
     livecheck do
       url "https://curl.se/ca/cadate.t"
