@@ -3,8 +3,8 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableLibxcrypt < PortableFormula
   desc "Extended crypt library for descrypt, md5crypt, bcrypt, and others"
   homepage "https://github.com/besser82/libxcrypt"
-  url "https://github.com/besser82/libxcrypt/releases/download/v4.4.36/libxcrypt-4.4.36.tar.xz"
-  sha256 "e5e1f4caee0a01de2aee26e3138807d6d3ca2b8e67287966d1fefd65e1fd8943"
+  url "https://github.com/besser82/libxcrypt/releases/download/v4.4.37/libxcrypt-4.4.37.tar.xz"
+  sha256 "902aa2976f959b5ebe55679b1722b8479f8f13cd4ce2ef432b0a84ae298fffd0"
   license "LGPL-2.1-or-later"
 
   livecheck do
