@@ -34,7 +34,7 @@ jobs:
         if: matrix.bootstrap
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends curl git gcc libc-dev make
+          apt-get install -y --no-install-recommends curl git gcc libc-dev make gawk
           mkdir -p /home/linuxbrew/.linuxbrew/bin
           git clone https://github.com/Homebrew/brew /home/linuxbrew/.linuxbrew/Homebrew
           ln -s ../Homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew
