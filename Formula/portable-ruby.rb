@@ -24,8 +24,8 @@ class PortableRuby < PortableFormula
   end
 
   resource "msgpack" do
-    url "https://rubygems.org/downloads/msgpack-1.7.5.gem"
-    sha256 "ffb04979f51e6406823c03abe50e1da2c825c55a37dee138518cdd09d9d3aea8"
+    url "https://rubygems.org/downloads/msgpack-1.8.0.gem"
+    sha256 "e64ce0212000d016809f5048b48eb3a65ffb169db22238fb4b72472fecb2d732"
 
     livecheck do
       url "https://rubygems.org/api/v1/versions/msgpack.json"
