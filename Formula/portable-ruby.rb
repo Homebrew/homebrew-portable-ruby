@@ -47,6 +47,9 @@ class PortableRuby < PortableFormula
     end
   end
 
+  # Workaround missing `clock_gettime` on OS X <= 10.11
+  patch :DATA
+
   def install
     # Remove almost all bundled gems and replace with our own set.
     rm_r ".bundle"
@@ -185,3 +188,22 @@ class PortableRuby < PortableFormula
       shell_output("#{testpath}/bin/byebug --version")
   end
 end
+
+__END__
+diff --git a/ext/socket/ipsocket.c b/ext/socket/ipsocket.c
+index efaca265d5..958891c3c3 100644
+--- a/ext/socket/ipsocket.c
++++ b/ext/socket/ipsocket.c
+@@ -308,9 +308,13 @@ static struct timespec
+ current_clocktime_ts(void)
+ {
+     struct timespec ts;
++
++#ifdef CLOCK_MONOTONIC
+     if ((clock_gettime(CLOCK_MONOTONIC, &ts)) < 0) {
+         rb_syserr_fail(errno, "clock_gettime(2)");
+     }
++#endif
++
+     return ts;
+ }
