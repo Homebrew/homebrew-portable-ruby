@@ -9,6 +9,7 @@ permissions:
 env:
   HOMEBREW_DEVELOPER: 1
   HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_ARM64_TESTING: 1
 
 jobs:
   build:
@@ -23,7 +24,6 @@ jobs:
           - os: ubuntu-22.04-arm
             container: '{"image": "ghcr.io/homebrew/ubuntu22.04:master", "options": "--user=linuxbrew"}'
             workdir: /github/home
-            allow-only-setup-failure: true
       fail-fast: false
     runs-on: ${{matrix.os}}
     container: ${{matrix.container && fromJSON(matrix.container) || ''}}
@@ -37,7 +37,6 @@ jobs:
       - run: brew test-bot --only-cleanup-before
 
       - run: brew test-bot --only-setup
-        continue-on-error: ${{ matrix.allow-only-setup-failure }}
 
       - name: Build Portable Ruby
         run: |
