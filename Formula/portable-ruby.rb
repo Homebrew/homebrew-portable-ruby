@@ -3,8 +3,8 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.7.tar.gz"
-  sha256 "9c37c3b12288c7aec20ca121ce76845be5bb5d77662a24919651aaf1d12c8628"
+  url "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.2.tar.gz"
+  sha256 "41328ac21f2bfdd7de6b3565ef4f0dd7543354d37e96f157a1552a6bd0eb364b"
   license "Ruby"
 
   # This regex restricts matching to versions other than X.Y.0.
@@ -46,6 +46,9 @@ class PortableRuby < PortableFormula
       end
     end
   end
+
+  # Workaround missing `clock_gettime` on OS X <= 10.11
+  patch :DATA
 
   def install
     # Remove almost all bundled gems and replace with our own set.
@@ -164,7 +167,7 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -rzlib -e 'puts Zlib.crc32(\"test\")'").chomp
     assert_equal " \t\n`><=;|&{(",
       shell_output("#{ruby} -rreadline -e 'puts Readline.basic_word_break_characters'").chomp
-    assert_equal '{"a"=>"b"}',
+    assert_equal '{"a" => "b"}',
       shell_output("#{ruby} -ryaml -e 'puts YAML.load(\"a: b\")'").chomp
     assert_equal "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").chomp
@@ -185,3 +188,22 @@ class PortableRuby < PortableFormula
       shell_output("#{testpath}/bin/byebug --version")
   end
 end
+
+__END__
+diff --git a/ext/socket/ipsocket.c b/ext/socket/ipsocket.c
+index efaca265d5..958891c3c3 100644
+--- a/ext/socket/ipsocket.c
++++ b/ext/socket/ipsocket.c
+@@ -308,9 +308,13 @@ static struct timespec
+ current_clocktime_ts(void)
+ {
+     struct timespec ts;
++
++#ifdef CLOCK_MONOTONIC
+     if ((clock_gettime(CLOCK_MONOTONIC, &ts)) < 0) {
+         rb_syserr_fail(errno, "clock_gettime(2)");
+     }
++#endif
++
+     return ts;
+ }
