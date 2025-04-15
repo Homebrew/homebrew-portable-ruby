@@ -3,8 +3,8 @@ require File.expand_path("../Abstract/portable-formula", __dir__)
 class PortableRuby < PortableFormula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.8.tar.gz"
-  sha256 "5ae28a87a59a3e4ad66bc2931d232dbab953d0aa8f6baf3bc4f8f80977c89cab"
+  url "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.3.tar.gz"
+  sha256 "55a4cd1dcbe5ca27cf65e89a935a482c2bb2284832939266551c0ec68b437f46"
   license "Ruby"
 
   # This regex restricts matching to versions other than X.Y.0.
@@ -45,6 +45,12 @@ class PortableRuby < PortableFormula
         json.first["number"]
       end
     end
+  end
+
+  # Fix compile on macOS 10.11
+  patch do
+    url "https://github.com/Bo98/ruby/commit/7aec5ca6e8ec13d92307615c32a511e02437d7de.patch?full_index=1"
+    sha256 "644f706bbbb708c2e1d32de65138c335c3710e6d47f86624f9dd98806627e83f"
   end
 
   def install
@@ -164,7 +170,7 @@ class PortableRuby < PortableFormula
       shell_output("#{ruby} -rzlib -e 'puts Zlib.crc32(\"test\")'").chomp
     assert_equal " \t\n`><=;|&{(",
       shell_output("#{ruby} -rreadline -e 'puts Readline.basic_word_break_characters'").chomp
-    assert_equal '{"a"=>"b"}',
+    assert_equal '{"a" => "b"}',
       shell_output("#{ruby} -ryaml -e 'puts YAML.load(\"a: b\")'").chomp
     assert_equal "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       shell_output("#{ruby} -ropenssl -e 'puts OpenSSL::Digest::SHA256.hexdigest(\"\")'").chomp
