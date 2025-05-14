@@ -36,8 +36,8 @@ class PortableRuby < PortableFormula
   end
 
   resource "bootsnap" do
-    url "https://rubygems.org/downloads/bootsnap-1.18.4.gem"
-    sha256 "ac4c42af397f7ee15521820198daeff545e4c360d2772c601fbdc2c07d92af55"
+    url "https://rubygems.org/downloads/bootsnap-1.18.5.gem"
+    sha256 "92d3f860ccc03c5d139ef522ef0f3b850e7123453d9788024c710343e8912f69"
 
     livecheck do
       url "https://rubygems.org/api/v1/versions/bootsnap.json"
