@@ -32,7 +32,7 @@ jobs:
         working-directory: ${{matrix.workdir || github.workspace}}
     steps:
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@main
 
       - run: brew test-bot --only-cleanup-before
 
