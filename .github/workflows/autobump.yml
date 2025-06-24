@@ -3,7 +3,7 @@ name: Bump formulae on schedule or request
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - .github/workflows/autobump.yml
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
     if: github.repository_owner == 'Homebrew'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/homebrew/ubuntu22.04:master
+      image: ghcr.io/homebrew/ubuntu22.04:main
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew

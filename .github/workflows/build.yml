@@ -19,10 +19,10 @@ jobs:
           - os: 10.11-cross-${{github.run_id}}
           - os: 11-arm64-cross-${{github.run_id}}
           - os: ubuntu-latest
-            container: '{"image": "ghcr.io/homebrew/ubuntu22.04:master", "options": "--user=linuxbrew"}'
+            container: '{"image": "ghcr.io/homebrew/ubuntu22.04:main", "options": "--user=linuxbrew"}'
             workdir: /github/home
           - os: ubuntu-22.04-arm
-            container: '{"image": "ghcr.io/homebrew/ubuntu22.04:master", "options": "--user=linuxbrew"}'
+            container: '{"image": "ghcr.io/homebrew/ubuntu22.04:main", "options": "--user=linuxbrew"}'
             workdir: /github/home
       fail-fast: false
     runs-on: ${{matrix.os}}
