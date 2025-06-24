@@ -17,7 +17,7 @@ jobs:
       tag: ${{ steps.determine-tag.outputs.tag }}
     steps:
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@main
         with:
           test-bot: false
 
@@ -51,7 +51,7 @@ jobs:
       packages: write
     steps:
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@main
         with:
           test-bot: false
 
@@ -62,7 +62,7 @@ jobs:
         run: brew install-bundler-gems --groups=pr_upload
 
       - name: Configure Git user
-        uses: Homebrew/actions/git-user-config@master
+        uses: Homebrew/actions/git-user-config@main
 
       - name: Setup directory
         run: mkdir bottles

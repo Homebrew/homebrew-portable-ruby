@@ -3,7 +3,7 @@ name: Bump formulae on schedule or request
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - .github/workflows/autobump.yml
   workflow_dispatch:
@@ -23,18 +23,18 @@ jobs:
     if: github.repository_owner == 'Homebrew'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/homebrew/ubuntu22.04:master
+      image: ghcr.io/homebrew/ubuntu22.04:main
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@main
         with:
           core: false
           cask: false
           test-bot: false
 
       - name: Configure Git user
-        uses: Homebrew/actions/git-user-config@master
+        uses: Homebrew/actions/git-user-config@main
         with:
           username: ${{ (github.event_name == 'workflow_dispatch' && github.actor) || 'BrewTestBot' }}
 
@@ -43,7 +43,7 @@ jobs:
         run: echo "autobump_list=$(brew tap-info --json "${GITHUB_REPOSITORY}" | jq -r '.[].formula_names|join(" ")')" >> "$GITHUB_OUTPUT"
 
       - name: Bump portable-ruby formulae
-        uses: Homebrew/actions/bump-packages@master
+        uses: Homebrew/actions/bump-packages@main
         continue-on-error: true
         with:
           token: ${{ secrets.HOMEBREW_PORTABLE_RUBY_REPO_WORKFLOW_TOKEN }}
