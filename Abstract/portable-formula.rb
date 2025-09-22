@@ -6,15 +6,15 @@ module PortableFormulaMixin
       TARGET_MACOS = :big_sur
       TARGET_DARWIN_VERSION = Version.new("20.1.0").freeze
     else
-      TARGET_MACOS = :el_capitan
-      TARGET_DARWIN_VERSION = Version.new("15.0.0").freeze
+      TARGET_MACOS = :catalina
+      TARGET_DARWIN_VERSION = Version.new("19.0.0").freeze
     end
 
     CROSS_COMPILING = OS.kernel_version.major != TARGET_DARWIN_VERSION.major
   end
 
   def portable_configure_args
-    # Allow cross-compile between Darwin versions (used by our fake El Capitan on High Sierra setup)
+    # Allow cross-compile between Darwin versions
     if OS.mac? && CROSS_COMPILING
       cpu = if Hardware::CPU.arm?
         "aarch64"
